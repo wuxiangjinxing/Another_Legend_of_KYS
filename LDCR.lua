@@ -27423,7 +27423,7 @@ function WarShowHead(id)
 	local sm = {
 			{{WAR.QFY2, 4376,"鼓舞"..string.format("%s", WAR.QFY2[pid]or 0).."时序"}, {WAR.WYY, 4377,"点破"..string.format("%s", WAR.WYY[pid]or 0).."时序"}, {WAR.ATKDOWN, 4377,"破兵"..string.format("%s", WAR.ATKDOWN[pid]or 0).."时序"}},
 			{{WAR.QFY3, 4378,"铁壁"..string.format("%s", WAR.QFY3[pid]or 0).."时序"}, {WAR.DEFDOWN, 4379,"破甲"..string.format("%s", WAR.DEFDOWN[pid]or 0).."时序"}},
-			{{WAR.QFY1, 4380,"羁绊"..string.format("%s", WAR.QFY1[pid]or 0).."时序"}, {WAR.DYWY, 4380,"神照"..string.format("%s", WAR.DYWY[pid]or 0).."时序"}, {WAR.QIZHEN, 4381,"奇阵"..string.format("%s", WAR.QIZHEN[pid]or 0).."时序"}, {WAR.SPDDOWN, 4381,"羁绊"..string.format("%s", WAR.SPDDOWN[pid]or 0).."时序"}},
+			{{WAR.QFY1, 4380,"神行"..string.format("%s", WAR.QFY1[pid]or 0).."时序"}, {WAR.DYWY, 4380,"神照"..string.format("%s", WAR.DYWY[pid]or 0).."时序"}, {WAR.QIZHEN, 4381,"奇阵"..string.format("%s", WAR.QIZHEN[pid]or 0).."时序"}, {WAR.SPDDOWN, 4381,"羁绊"..string.format("%s", WAR.SPDDOWN[pid]or 0).."时序"}},
 			{{WAR.L_HQNZL, 4382,"补益"..string.format("%s", WAR.L_HQNZL[pid]or 0).."时序"}, {WAR.L_WNGZL, 4383,"毒击"..string.format("%s", WAR.L_WNGZL[pid]or 0).."时序"}},
 			{{WAR.KHCM, 4384,"盲目"}, {WAR.BZ, 4387,"封印"}},
 			{{WAR.L_NOT_MOVE, 4386,"缠足"}, {WAR.SH, 4391,"锁喉"..string.format("%s", WAR.SH[pid]or 0).."时序"}, {WAR.YJZD, 4391,"太极"..string.format("%s", WAR.YJZD[pid]or 0).."时序"}, {WAR.JG, 4391,"金刚"..string.format("%s", WAR.JG[pid]or 0).."时序"}, {WAR.SZWH, 4390,"晕眩"..string.format("%s", WAR.SZWH[pid]or 0).."时序"}},
@@ -27567,7 +27567,7 @@ function WarShowHead(id)
 		local sm = {
 			{{WAR.QFY2, 4376,"鼓舞"..string.format("%s", WAR.QFY2[pid]or 0).."时序"}, {WAR.WYY, 4377,"点破"..string.format("%s", WAR.WYY[pid]or 0).."时序"}, {WAR.ATKDOWN, 4377,"破兵"..string.format("%s", WAR.ATKDOWN[pid]or 0).."时序"}},
 			{{WAR.QFY3, 4378,"铁壁"..string.format("%s", WAR.QFY3[pid]or 0).."时序"}, {WAR.DEFDOWN, 4379,"破甲"..string.format("%s", WAR.DEFDOWN[pid]or 0).."时序"}},
-			{{WAR.QFY1, 4380,"羁绊"..string.format("%s", WAR.QFY1[pid]or 0).."时序"}, {WAR.DYWY, 4380,"神照"..string.format("%s", WAR.DYWY[pid]or 0).."时序"}, {WAR.QIZHEN, 4381,"奇阵"..string.format("%s", WAR.QIZHEN[pid]or 0).."时序"}, {WAR.SPDDOWN, 4381,"羁绊"..string.format("%s", WAR.SPDDOWN[pid]or 0).."时序"}},
+			{{WAR.QFY1, 4380,"神行"..string.format("%s", WAR.QFY1[pid]or 0).."时序"}, {WAR.DYWY, 4380,"神照"..string.format("%s", WAR.DYWY[pid]or 0).."时序"}, {WAR.QIZHEN, 4381,"奇阵"..string.format("%s", WAR.QIZHEN[pid]or 0).."时序"}, {WAR.SPDDOWN, 4381,"羁绊"..string.format("%s", WAR.SPDDOWN[pid]or 0).."时序"}},
 			{{WAR.L_HQNZL, 4382,"补益"..string.format("%s", WAR.L_HQNZL[pid]or 0).."时序"}, {WAR.L_WNGZL, 4383,"毒击"..string.format("%s", WAR.L_WNGZL[pid]or 0).."时序"}},
 			{{WAR.KHCM, 4384,"盲目"}, {WAR.BZ, 4387,"封印"}},
 			{{WAR.L_NOT_MOVE, 4386,"缠足"}, {WAR.SH, 4391,"锁喉"..string.format("%s", WAR.SH[pid]or 0).."时序"}, {WAR.YJZD, 4391,"太极"..string.format("%s", WAR.YJZD[pid]or 0).."时序"}, {WAR.JG, 4391,"金刚"..string.format("%s", WAR.JG[pid]or 0).."时序"}, {WAR.SZWH, 4390,"晕眩"..string.format("%s", WAR.SZWH[pid]or 0).."时序"}},
@@ -37712,11 +37712,13 @@ function War_Fight_Sub(id, wugongnum, x, y)
 				end
 			end
 		end	
-		if WAR.Person[id][CC.TXWZ1] == nil then 
-	        WAR.Person[id][CC.TXWZ1] = "弹指·"..JY.Wugong[WAR.TZPT]["名称"]
-	    else 
-	        WAR.Person[id][CC.TXWZ1] = WAR.Person[id][CC.TXWZ1].."+".."弹指·"..JY.Wugong[WAR.TZPT]["名称"]
-	    end
+		if WAR.TZPT > 0 then
+			if WAR.Person[id][CC.TXWZ1] == nil  then 
+				WAR.Person[id][CC.TXWZ1] = "弹指·"..JY.Wugong[WAR.TZPT]["名称"]
+			else 
+				WAR.Person[id][CC.TXWZ1] = WAR.Person[id][CC.TXWZ1].."+".."弹指·"..JY.Wugong[WAR.TZPT]["名称"]
+			end
+		end	
 	end	
 
     if (wglw(pid,183) or (DT(pid,615) and PersonGTJL(pid,183))) and JLSD(10,40,pid) then
@@ -54503,15 +54505,16 @@ end
             end--12.27改
 			
 			--金雁功领悟回气
-			if (wglw2(pid,192) or DT(pid,129)) and PersonKF(pid,192) and WAR.XKZ > 0 then
+			if (wglw2(id,192) or DT(id,129)) and PersonKF(id,192) and WAR.XKZ > 0 then
 				local aa=30*WAR.XKZ
-				if pid == 0 then
+				if id == 0 then
 					aa = math.modf(aa/3)
 				end	
 				WAR.Person[p].Time = WAR.Person[p].Time + aa
 				local tmppid = WAR.CurID
-				WAR.CurID = id
-				--DHdisplay(1966, 1981, "金雁凌空")
+				WAR.CurID = p
+				WarDrawMap(0)
+				DHdisplay(3281, 3309, "金雁凌空")
 				WAR.CurID=tmppid
 				WAR.XKZ=0
 			end	
@@ -71583,7 +71586,7 @@ function SBLNewGame()
 	            JY.Person[667]["半身像"] = 470
 				JY.Person[667]["排行"] = 8
 				JY.Person[667]["技能1"] = 13
-	            JY.Person[667]["技能2"] = 18
+	            JY.Person[667]["技能2"] = 134
 	            JY.Person[667]["技能3"] = 150
 	            JY.Person[667]["技能4"] = 145
 				JY.Person[667]["技能5"] = 149	
