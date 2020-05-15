@@ -1,5 +1,3 @@
-JY.Person[667]["¼¼ÄÜ2"] = 134
-
 local diymenu = function (list)
 	local menu = {}
 	for i,v in pairs(list) do
@@ -405,17 +403,6 @@ local menu = {
 		nil,
 		function()
 			WarMain(217) --Ê®°ËÍ­ÈË
-		end
-	},
-	{
-		"¾õĞÑ²âÊÔ",
-		nil,
-		function()
-			for i = 1, 158 do --Ê®°ËÍ­ÈË
-				if i > 143 and i < 151 then
-					instruct_32(i)
-				end
-			end	
 		end
 	},
 	{
