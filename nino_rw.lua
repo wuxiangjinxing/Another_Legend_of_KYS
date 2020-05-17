@@ -3850,16 +3850,16 @@ function getRW(k,teshu)
 				s = -1						
 			end					
 		elseif e == 105 then
-			head = 308
-			say("啊，差一点点就完成了，可是附近的药物都被买光了，奇怪....", 308, 0, "唐萌浅") --武骧金星：唐萌浅的任务改成找药
-			say("难道是温家的人在作怪？可恶....", 308, 0, "唐萌浅")
-			say("哎，看你这样子是要找任务的吧，有没有兴趣接下我的委托啊？", 308, 0, "唐萌浅")
+			head = 589
+			say("啊，差一点点就完成了，可是附近的药物都被买光了，奇怪....", head, 0, "唐萌浅") --武骧金星：唐萌浅的任务改成找药
+			say("难道是温家的人在作怪？可恶....", head, 0, "唐萌浅")
+			say("哎，看你这样子是要找任务的吧，有没有兴趣接下我的委托啊？", head, 0, "唐萌浅")
 			if yesno("要接受任务吗？") == false then
-				say("那我还是去找其他人吧。", 308, 0, "唐萌浅")
+				say("那我还是去找其他人吧。", head, 0, "唐萌浅")
 				displayRW(3, s, l)
 				do return end
 			else
-				say("那你去给我找各式丹药每样五个，我有急用。", 308, 0, "唐萌浅")
+				say("那你去给我找各式丹药每样五个，我有急用。", head, 0, "唐萌浅")
 				ts = s
 				t = l
 				displayRW(2, s, l)
@@ -3944,7 +3944,7 @@ function doneRW()
 			addthing(RW.target, -1)
 			say("竟然真的被你找到了！少侠果然名不虚传！小小薄礼，不成敬意。", RW.tmp, 0, "委托人")
 			tb(addfame(3))
-			tb(jiadian(math.modf(JY.Thing[RW.target]["价钱"] / 10)))		
+			tb(jiadian(math.modf(JY.Thing[RW.target]["价钱"] / 1.5)))		
 		elseif RW.event == 2 and RW.scene == JY.SubScene then
 			if RW.type == 1 then --1普通 2战书 3黑店
 				say("这一趟辛苦你了，这是你的酬金。", RW.tmp, 0, "委托人")
@@ -5260,7 +5260,7 @@ nEvent[104] = function()
 end
 
 nEvent[105] = function()	
-	say("找到了吗？", 308, 0, "唐萌浅")
+	say("找到了吗？", 589, 0, "唐萌浅")
 	displayRW(2, RW.targetscene, RW.target)
 	local t = true
 	for i = 0, 13 do --28, 35 武骧金星：唐萌浅的任务改成找药
@@ -5275,38 +5275,52 @@ nEvent[105] = function()
 	for i = 0, 13 do --28, 35 武骧金星：唐萌浅的任务改成找药
 		instruct_32(i, -5)
 	end	
-	say("做得不错，谢了~~这是你的奖励。", 308, 0, "唐萌浅")
+	say("做得不错，谢了~~这是你的奖励。", 589, 0, "唐萌浅")
 	setRW(RW.event - 100, 1)
 	rewardRW(2)
 	displayRW(3, RW.scene, RW.location)		
 	resetRW()
 	addthing(352)
 	if string.sub(JY.Person[0]["姓名"], 0, 2) == "唐" and MPPD(0) == 0 then 
-		say("嗯？原来你也姓唐？看你的武功也算不错，我们唐门现在正在招收弟子，你有没有兴趣？", 308, 0, "唐萌浅") 
+		say("嗯？原来你也姓唐？看你的武功也算不错，我们唐门现在正在招收弟子，你有没有兴趣？", 589, 0, "唐萌浅") 
 		if yesno("要加入唐门吗？") == false then
-			say("不要就算了，这可是你的损失哦。", 308, 0, "唐萌浅")
+			say("不要就算了，这可是你的损失哦。", 589, 0, "唐萌浅")
 		else
-			say("好，从今天起你就是我们唐门的打杂，啊不，新弟子了。这里有些暗器心法，你慢慢钻研吧。", 308, 0, "唐萌浅")
+			say("好，从今天起你就是我们唐门的打杂，啊不，新弟子了。这里有些暗器心法，你慢慢钻研吧。", 589, 0, "唐萌浅")
 			JoinMP(0, 9, 2)
 			QZXS(JY.Person[0]["姓名"].."成为唐门弟子！")	
 		end
 	end
 	if JY.Person[0]["轻功"] >= 600 and sixi(0,5) >= 200 then
-		say("是说看你身手真的挺不错的，本小姐今天就好人做到底吧！",308,0,"唐萌浅")
-		say("这里有我练「追魂无影」的一些心得，就给你吧",308,0,"唐萌浅")
+		say("是说看你身手真的挺不错的，本小姐今天就好人做到底吧！",589,0,"唐萌浅")
+		say("这里有我练「追魂无影」的一些心得，就给你吧",589,0,"唐萌浅")
 		if DrawStrBoxYesNo(-1, -1, "要收下吗？", C_WHITE, 30) == true then
 			QZXS("领悟追魂无影身法！")
 			instruct_0();
 			setLW2(191)
-			say("哈哈，难得当个好人的感觉挺不错的",308,0,"唐萌浅")
+			say("哈哈，难得当个好人的感觉挺不错的",589,0,"唐萌浅")
 		else
-			say("哼，给脸不要脸！！",308,0,"唐萌浅")
+			say("哼，给脸不要脸！！",589,0,"唐萌浅")
 			say("呜！！",0)
 			JY.Person[0]["生命"] = 100
 			JY.Person[0]["受伤程度"] = 100
 			JY.Person[0]["中毒程度"] = 100
 		end
 	end	
+	if JY.GOLD >= 30000 then
+		if instruct_9() then
+			say("(这家伙看起来呆头呆脑，不过好像很有钱。)",93)
+			say("想请本小姐帮你的忙？唐家收费可是很贵的哟。",93)
+			instruct_2(174, -30000)
+			instruct_10(93)
+			tb(JY.Person[93]["姓名"].."加入队伍")
+			setteam(93, 0)			
+			if MPPD(0) == 0 then
+				say("这样吧，看你那么有诚意，本小姐就破例收你做跟班。", 93)
+				if DrawStrBoxYesNo(-1, -1, "要做唐大小姐的跟班么？", C_WHITE, 30) == true then JoinMP(0, 9, 1) end
+			end
+		end
+	end
 	dark()
 	light()		
 end

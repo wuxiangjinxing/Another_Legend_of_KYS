@@ -6942,6 +6942,12 @@ OEVENTLUA[20011] = function()
 	setteam(3, 1)
 end
 
+OEVENTLUA[20012] = function()
+	say("唐大小姐，请你先回家休息，有需要时，我再去找你帮忙。")
+	instruct_21(93)
+	setteam(93, 1)
+end
+
 OEVENTLUA[10015] = function() --神雕邪
 	if instruct_18(153) and (instruct_16(58) or instruct_16(59)) then
 	

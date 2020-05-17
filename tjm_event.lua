@@ -2807,6 +2807,21 @@ else
 	say("传音入密：<我也同意。>", 599)
 	say("传音入密：<既然二位有此想法，老朽也作罢。>", 5)
 	say("传音入密：<嘿嘿！>", 455)
+	
+	if GetS(113,0,0,0) == 0 and MPPD(0) == 0 and PersonKFJ(0, 1) and PersonKFJ(0, 27) and PersonKFJ(0, 50) and PersonKFJ(0, 68) then 
+		Cls()  --清屏
+		instruct_13()  --场景变亮
+		say("我这一路行来，既无精深武学傍身，亦无师门护佑",0) 
+		say("竟以弱胜强，击败这等顶尖高手，实属不易，是否应该将所学武学为根基，走出自己的路？",0)
+		instruct_0();
+		if instruct_11(0,188) == true then 
+			QZXS("领悟草头百姓！")
+			setLW1(996)
+		else
+			say("也罢，再另寻其他机缘吧",0) 
+		end	
+	end
+	
 	do return end
 end
 end

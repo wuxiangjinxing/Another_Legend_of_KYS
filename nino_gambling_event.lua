@@ -417,18 +417,26 @@ OEVENTLUA[4001] = function() --积分换奖
 	local list = {}
 	local price = {}
 	if r == 1 then
-		list = {2, 6, 8, 11, 13, 14, 15, 16, 17, 256, 257, 258, 28, 29, 30, 31, 32, 33, 34, 35}		
+		--list = {2, 6, 8, 11, 13, 14, 15, 16, 17, 256, 257, 258, 28, 29, 30, 31, 32, 33, 34, 35}
+		for i = 0, JY.ThingNum - 1 do
+			if JY.Thing[i]["类型"] == 3 then
+				list[#list + 1] = i
+			end
+		end
 	elseif r == 2 then
-		list = {53,41,42,62,46,39,45,48,50,230,245,243,248}	
+		--list = {53,41,42,62,46,39,45,48,50,230,245,243,248}
+		for i = 0, JY.ThingNum - 1 do
+			if JY.Thing[i]["类型"] == 1 then
+				list[#list + 1] = i
+			end
+		end		
 	elseif r == 3 then
 		if (JY.Thing[203][WZ6] or 0) < 3 then
 			do return end
 		end
-		local num = 1
 		for i = 0, JY.ThingNum - 1 do
-			if JY.Thing[i]["练出武功"] > 0 then 
-				list[num] = i
-				num = num + 1
+			if JY.Thing[i]["类型"] == 2 then
+				list[#list + 1] = i
 			end
 		end
 	elseif r == 4 then
@@ -440,29 +448,30 @@ OEVENTLUA[4001] = function() --积分换奖
 		end
 		local menu = {}
 		for i = 1, #list do
-			menu[i] = {string.format("%-12s %5d",CC.HZ[list[i]][2],5000), nil, 1}
+			menu[i] = {string.format("%-12s %5d",CC.HZ[list[i]][2],25000), nil, 1}
 			if hasHZ(i) then
 				menu[i][3] = 0
 			end
 		end
 		local r = ShowMenu(menu,#menu,15,x1,y1+CC.SingleLineHeight,0,0,1,1,CC.DefaultFont,C_ORANGE,C_WHITE);
 		if r <= 0 then do return end end
-		if JY.Base["点数"] < 5000 then
+		if JY.Base["点数"] < 25000 then
 			say("对不起，客官你的积分不够。",220,0,"兼职小二") 	
 			do return end
 		end
 		addHZ(r)
-		tb(jiadian(-5000))		
+		tb(jiadian(-25000))		
 		do return end
 	end
 	for i = 1, #list do
-		if r == 1 then
-			price[i] = math.modf(JY.Thing[list[i]]["价钱"] / 10)
-		elseif r == 2 then
-			price[i] = math.modf(JY.Thing[list[i]]["价钱"] / 7)
-		elseif r == 3 then
-			price[i] = math.modf(JY.Thing[list[i]]["价钱"] / 4)
-		end	
+		--if r == 1 then
+		--	price[i] = math.modf(JY.Thing[list[i]]["价钱"] / 10)
+		--elseif r == 2 then
+		--	price[i] = math.modf(JY.Thing[list[i]]["价钱"] / 7)
+		--elseif r == 3 then
+		--	price[i] = math.modf(JY.Thing[list[i]]["价钱"] / 4)
+		--end
+		price[i] = JY.Thing[list[i]]["价钱"]
 	end	
 	local menu = {};
 	for i = 1, #list do
