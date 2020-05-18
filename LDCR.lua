@@ -41568,7 +41568,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 			end
 			for j = 0,WAR.PersonNum-1 do 
 				if WAR.Person[WAR.CurID]["我方"] ~= WAR.Person[j]["我方"] and WAR.Person[j]["死亡"] == false then
-					WAR.L_HQNZL[pid]=WAR.SZWH[pid] or 20
+					WAR.L_HQNZL[pid]=WAR.L_HQNZL[pid] or 20
 					
 					local tmpid = WAR.Person[j]["人物编号"]
 					WAR.XRWDNX[tmpid] = 10

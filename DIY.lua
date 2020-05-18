@@ -75,6 +75,17 @@ local menu = {
 		end
 	},
 	{
+		"查看武功",
+		nil,
+		function()
+			local menu1 = {}
+			for i,v in pairs(JY.Wugong) do
+				menu1[#menu1 + 1] = {i .. JY.Wugong[i]["名称"], i}
+			end
+			diymenu(menu1)
+		end
+	},
+	{
 		"获得物品",
 		nil,
 		function()
@@ -310,7 +321,7 @@ local menu = {
 					
 					DrawStrBoxWaitKey("请输入设置的数值", C_WHITE, CC.DefaultFont, 1)
 					local T = {}
-					for a = 1, 1000 do
+					for a = 1, 10000 do
 						local b = "" .. a
 						T[b] = a
 					end
@@ -352,7 +363,7 @@ local menu = {
 		"武功领悟",
 		nil,
 		function()
-			local r = JYMsgBox("武功领悟", "请选择领悟武功的类型", {"内功", "外功", "轻功"}, 3, 0)
+			local r = JYMsgBox("武功领悟", "请选择领悟武功的类型", {"内功", "外功", "轻功", "忘却"}, 4, 0)
 			
 			if r > 0 then
 				local leixing
@@ -364,6 +375,10 @@ local menu = {
 					leixing = boxdata1[r2]
 				elseif r == 3 then
 					leixing = 5
+				elseif r == 4 then
+				setLW(0)
+				setLW1(0)
+				setLW2(0)
 				end
 				if leixing ~= nil then
 					local menu2 = {}
