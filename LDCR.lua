@@ -63234,7 +63234,8 @@ end--导入其他模块
 function IncludeFile()
     dofile(CONFIG.ScriptPath .. "readkdef.hsk")
     dofile(CONFIG.ScriptPath .. "SAI.lua")
-    dofile(CONFIG.ScriptPath .. "MyHelp.lua") 
+	dofile(CONFIG.ScriptPath .. "MyHelp.lua")
+	dofile(CONFIG.ScriptPath .. "/move/move_by_category.lua")
 end--初始化主地图
 function Init_MMap()
     lib.PicInit()
@@ -76983,11 +76984,26 @@ function Menu_MCCS()
   Cls() 
   local md = JYMsgBox(CC.s59, CC.s60, {CC.s61, CC.s62}, 2, 119)
   if md == 1 then
-    local r = SelectSceneMenu(24, 24)
-    if r > 0 and JY.Scene[r - 1]["进入条件"] == 0 and JY.SubScene ~= 25 and r ~= 84 and r ~= 83 and r ~= 81 and r ~= 82 and r ~= 115 and r ~= 116 and r ~= 117 then
+	local id = move_category()
+	if id >= 0 then
+		moveBySceneId(id)
+	end
+  elseif md == 2 then
+    local r = GetPinyin1(32, CC.ScreenH - CC.Fontbig * 6)
+    for i = 0, JY.SceneNum-1 do
+    	if r == "" .. i then
+        	moveBySceneId(i)
+    	end
+    end
+  end
+end--运行DIY
+
+-- 转到指定id的场景
+function moveBySceneId(sceneId)
+	if sceneId >= 0 and JY.Scene[sceneId]["进入条件"] == 0 and JY.SubScene ~= 25 and sceneId ~= 84 and sceneId ~= 83 and sceneId ~= 81 and sceneId ~= 82 and sceneId ~= 115 and sceneId ~= 116 and sceneId ~= 117 then
       --instruct_2(174, -500) --马车500两
 	  Auto_SaveRecord()
-	  JY.SubScene = r - 1
+	  JY.SubScene = sceneId
       local ss = JY.SubScene
       while JY.Scene[ss]["外景入口X1"] == 0 and JY.Scene[ss]["外景入口Y1"] == 0 do
         ss = JY.Scene[ss]["跳转场景"]
@@ -77006,37 +77022,7 @@ function Menu_MCCS()
     else
       say(CC.s63, 119, 5, CC.s64)
     end
-  elseif md == 2 then
-    local r = GetPinyin1(32, CC.ScreenH - CC.Fontbig * 6)
-    for i = 0, JY.SceneNum-1 do
-      if r == "" .. i then
-        if JY.Scene[i]["进入条件"] == 0 and JY.SubScene ~= 25 and i ~= 82 and i ~= 83 and i ~= 81 and i ~= 84 then
-			--instruct_2(174, -500) --马车500两
-			Auto_SaveRecord()		  
-		  JY.SubScene = i
-          local ss = JY.SubScene
-          while JY.Scene[ss]["外景入口X1"] == 0 and JY.Scene[ss]["外景入口Y1"] == 0 do
-            ss = JY.Scene[ss]["跳转场景"]
-          end
-          JY.Base["人X"] = JY.Scene[ss]["外景入口X1"]
-          JY.Base["人Y"] = JY.Scene[ss]["外景入口Y1"]
-          if JY.Scene[JY.SubScene]["外景入口X1"] == 0 and JY.Scene[JY.SubScene]["外景入口Y1"] == 0 then
-            JY.Base["人X1"] = JY.Scene[JY.SubScene]["跳转口X2"]
-            JY.Base["人Y1"] = JY.Scene[JY.SubScene]["跳转口Y2"]
-          else
-            JY.Base["人X1"] = JY.Scene[JY.SubScene]["入口X"]
-            JY.Base["人Y1"] = JY.Scene[JY.SubScene]["入口Y"]
-          end
-          Init_SMap(1)
-		  
-		  addtime(3)
-      	else
-        	say(CC.s63, 119, 5, CC.s64)
-      	end
-    	end
-    end
-  end
-end--运行DIY
+end
 
 function Menu_MYDIY()
   Cls()
