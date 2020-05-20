@@ -77052,8 +77052,6 @@ function moveBySceneId(sceneId)
         JY.Base["人X1"] = JY.Scene[JY.SubScene]["入口X"]
         JY.Base["人Y1"] = JY.Scene[JY.SubScene]["入口Y"]
       end
-      Init_SMap(1)
-	  addtime(3)
     else
       say(CC.s63, 119, 5, CC.s64)
     end
