@@ -19344,7 +19344,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end	
 	
 	if hurt < 0 then hurt = 0 end
-	hurt = math.min(hurt, JY.Person[eid]["生命"])	
+	hurt = math.min(hurt, JY.Person[eid]["生命"] or 0)	
 	
     if (wglw(pid,592) or DT(pid,592)) and WAR.DGJY[pid] ~= nil then --17-2-10
 	    hurt = hurt + math.modf(JY.Person[eid]["生命最大值"]*0.04)
