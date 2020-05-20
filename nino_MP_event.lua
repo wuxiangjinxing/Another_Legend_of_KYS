@@ -44,6 +44,7 @@ OEVENTLUA[30000] = function() --叛教
 				SetS(106, MPPD(0), 0, 0, 1)
 				SetS(106, MPPD(0), 1, 0, 0)
 				instruct_0()
+				JY.Person[931]["无用13"] = 1
 				say("客官您已经脱离"..tmp.."了，请小心。",220,0,"神秘小二")
 				--[[
 				for i = 1 , JY.PersonNum - 1 do
