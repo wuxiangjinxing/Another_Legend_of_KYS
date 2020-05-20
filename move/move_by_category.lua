@@ -126,6 +126,7 @@ function createSceneData()
 		{JY.Scene[16]["名称"], JY.Scene[16]["进入条件"], 16}, -- 天龙寺
 		{JY.Scene[103]["名称"], JY.Scene[103]["进入条件"], 103}, -- 药王庙
 		{JY.Scene[62]["名称"], JY.Scene[62]["进入条件"], 62}, -- 破庙
+		{JY.Scene[109]["名称"], JY.Scene[109]["进入条件"], 109}, -- 树林
 		{JY.Scene[56]["名称"], JY.Scene[56]["进入条件"], 56}, -- 福威镖局
 		{JY.Scene[25]["名称"], JY.Scene[25]["进入条件"], 25}, -- 武道大会
 		{JY.Scene[113]["名称"], JY.Scene[113]["进入条件"], 113} -- 刀宗
