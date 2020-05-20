@@ -41564,7 +41564,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 			d = 20 --领悟草头百姓增加20%概率
 		end
 		--奥义·小人物的逆袭 同时学会九阴 九阳 易筋经 玄武 并到极 无门派 外功领悟草头百姓 满怒
-		if PersonKFJ(pid, 106) and PersonKFJ(pid, 107) and PersonKFJ(pid, 108) and PersonKFJ(pid, 181) and MPPD(pid) == 0 and GetS(113,0,0,0) == 996 and WAR.LQZ[pid] == 100 then
+		if PersonKF(pid, 106) and PersonKF(pid, 107) and PersonKF(pid, 108) and PersonKF(pid, 181) and MPPD(pid) == 0 and JY.Person[931]["无用13"] == 0 and GetS(113,0,0,0) == 996 and WAR.LQZ[pid] == 100 then
 			for i = 1715, 1727 do
 				CurIDTXDH(WAR.CurID, i, i, "奥义·小人物的逆袭", C_GOLD);
 				lib.Delay(40)
@@ -41585,7 +41585,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 				end 
 			end	
 		--小人物的逆袭 无门派 外功领悟草头百姓
-		elseif MPPD(pid) == 0 and GetS(113,0,0,0) == 996 and (JLSD(10,30,pid) or WAR.LQZ[pid] == 100) then
+		elseif MPPD(pid) == 0 and JY.Person[931]["无用13"] == 0 and GetS(113,0,0,0) == 996 and (JLSD(10,30,pid) or WAR.LQZ[pid] == 100) then
 			for i = 1715, 1727 do
 				CurIDTXDH(WAR.CurID, i, i, "小人物的逆袭", C_GOLD);
 				lib.Delay(40)
@@ -41601,7 +41601,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 					WAR.SPDDOWN[tmpid]=WAR.SPDDOWN[tmpid] or 20
 				end 
 			end	
-		elseif MPPD(pid) == 0 and WAR.LQZ[pid] == 100 then
+		elseif MPPD(pid) == 0 and JY.Person[931]["无用13"] == 0 and WAR.LQZ[pid] == 100 then
 			for i = 1574, 1578 do
 				CurIDTXDH(WAR.CurID, i, i, "奥义·小人物的愤怒", C_GOLD);
 				lib.Delay(40)
