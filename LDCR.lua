@@ -56765,7 +56765,7 @@ end
 		
         if WAR.ZDDH > 0 and WAR.ZDDH < 999 then
 			JY.Person[600]["生命最大值"] = JY.Person[600]["生命最大值"] + 1000
-			if JY.Person[600]["生命最大值"] <= 0 or JY.Person[600]["生命最大值"] >= 9999 then JY.Person[600]["生命最大值"] = 9999
+			if JY.Person[600]["生命最大值"] <= 0 or JY.Person[600]["生命最大值"] >= 9999 then JY.Person[600]["生命最大值"] = 9999 end
 			JY.Person[600]["生命"] = JY.Person[600]["生命最大值"]
 		end 	
 			
