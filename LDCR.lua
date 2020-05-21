@@ -56765,6 +56765,7 @@ end
 		
         if WAR.ZDDH > 0 and WAR.ZDDH < 999 then
 			JY.Person[600]["生命最大值"] = JY.Person[600]["生命最大值"] + 1000
+			if JY.Person[600]["生命最大值"] <= 0 or JY.Person[600]["生命最大值"] >= 9999 then JY.Person[600]["生命最大值"] = 9999
 			JY.Person[600]["生命"] = JY.Person[600]["生命最大值"]
 		end 	
 			
@@ -77052,6 +77053,7 @@ function moveBySceneId(sceneId)
         JY.Base["人X1"] = JY.Scene[JY.SubScene]["入口X"]
         JY.Base["人Y1"] = JY.Scene[JY.SubScene]["入口Y"]
       end
+	  addtime(3)
     else
       say(CC.s63, 119, 5, CC.s64)
     end
