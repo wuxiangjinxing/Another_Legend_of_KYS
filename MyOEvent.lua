@@ -145,37 +145,11 @@ function Fight()
 				QZXS("技能点加1500点")
 			end 	
 			if r == 9 then --天机盘龙阵
-				for i=64,143 do
-                    instruct_2(i,1)
-                end
-                for i=158,173 do
-                    instruct_2(i,1)
-                end
-                for i=175,181 do
-                    instruct_2(i,1)
-                end
-                for i=183,193 do
-                    instruct_2(i,1)
-                end
-                    instruct_2(235,1)
-                for i=237,242 do
-                    instruct_2(i,1)
-                end
-		            instruct_2(254,1)
-		        for i=260,290 do
-                    instruct_2(i,1)
-                end
-                for i=314,341 do
-                    instruct_2(i,1)
-                end
-				for i=343,363 do
-                    instruct_2(i,1)
-                end
-				--[[
-			    for i=1,999 do
-                    addHZ(i)              
-                end
-				]]
+				for i = 0, JY.ThingNum - 1 do
+					if JY.Thing[i]["类型"] == 2 then
+						instruct_2(i, 1)
+					end
+				end	
 				CC.SKpoint = CC.SKpoint + 2000
 				QZXS("技能点加2000点")
 			end 	
@@ -343,37 +317,17 @@ function Fight()
 				QZXS("技能点加1800点")
 			end 	
 			if r == 15 then  --作者阵
-			    for i=64,143 do
-                    instruct_2(i,1)
-                end
-                for i=158,173 do
-                    instruct_2(i,1)
-                end
-                for i=175,181 do
-                    instruct_2(i,1)
-                end
-                for i=183,193 do
-                    instruct_2(i,1)
-                end
-                    instruct_2(235,1)
-                for i=237,242 do
-                    instruct_2(i,1)
-                end
-		            instruct_2(254,1)
-		        for i=260,290 do
-                    instruct_2(i,1)
-                end
-                for i=314,341 do
-                    instruct_2(i,1)
-                end
-			    for i=343,362 do
-                    instruct_2(i,1)
-                end
-			    for i=1,166 do
+				say("恭喜你突破作者阵。", 576, 0, "字母君")
+				say("阵中诸位，都曾为山寨江湖添砖加瓦，开枝散叶。", 576, 0, "字母君")
+				say("你掌中的神兵，手底的绝招，都饱含他们的心血。", 576, 0, "字母君")
+				say("山寨江湖是开源游戏，我们欢迎任何有意参与制作的同好。", 576, 0, "字母君")
+				say("你，想不想成为作者阵的下一位成员呢？", 576, 0, "字母君")
+				say("哈哈，感谢你听我唠叨这几句，我送你些好东西吧。", 576, 0, "字母君")
+			    for i=1,#CC.TFlist do
                     addHZ(i)              
-                end
-				CC.SKpoint = CC.SKpoint + 2000
-				QZXS("技能点加2000点")
+                end				
+				CC.SKpoint = CC.SKpoint + 5000
+				QZXS("技能点加5000点")
 			end
 			
 		else
@@ -2790,9 +2744,7 @@ OEVENTLUA[8007] = function()
 			CC.DYRW2 = 617
 			say("百年往昔神来技，今朝再现绝世姿。怡红公子特来一会"..gettitle(0), 540, 1, "春风醉");
 			if WarMain(341) then 
-				for i=1,999 do
-                    addHZ(i)              
-                end
+				addHZ(140)
 			end
 			say("英雄出少年！平生得见如斯盛景，幸甚，幸甚，呵呵呵。", 232, 1, "百事通");
 		end
