@@ -44953,15 +44953,16 @@ function War_PersonTrainBook(pid)
     local wugongid = JY.Thing[thingid]["练出武功"]
     local wg = 0
     if JY.Person[pid]["武功12"] > 0 and wugongid >= 0 then
-    for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
-      if JY.Thing[thingid]["练出武功"] == JY.Person[pid]["武功" .. i] then
-        wg = 1
-      end
-    end
-    if wg == 0 then		--修复第一版本，不可修炼武功的BUG
-  	   return 
+		for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
+			if JY.Thing[thingid]["练出武功"] == JY.Person[pid]["武功" .. i] then
+				wg = 1
+				break
+			end
+		end
+		if wg == 0 then		--修复第一版本，不可修炼武功的BUG
+			return 
+		end
 	end
-end
     --[[
 	if JY.Person[pid]["武功" .. HHH_GAME_SETTING["WG_COUNT_MAX"] ] ~= nil and JY.Person[pid]["武功" .. HHH_GAME_SETTING["WG_COUNT_MAX"] ] > 0 
 		and JY.Person[pid]["武功等级" .. HHH_GAME_SETTING["WG_COUNT_MAX"] ] ~= nil and JY.Person[pid]["武功等级" .. HHH_GAME_SETTING["WG_COUNT_MAX"] ] >= 0 
@@ -45092,9 +45093,9 @@ end
         if MPPD(pid) == 17 or (GX(pid) and JX(pid)) then  --峨眉派系数
 	      AddPersonAttrib(pid, "拳掌功夫", JY.Thing[thingid]["加拳掌功夫"] * 3)
 	      AddPersonAttrib(pid, "御剑能力", JY.Thing[thingid]["加御剑能力"] * 3)
-	      AddPersonAttrib(pid, "耍刀技巧", JY.Thing[thingid]["加耍刀技巧"] * 2.5)
-	      AddPersonAttrib(pid, "特殊兵器", JY.Thing[thingid]["加特殊兵器"] * 2.5)
-		  AddPersonAttrib(pid, "暗器技巧", JY.Thing[thingid]["加暗器技巧"] * 2.5)
+	      AddPersonAttrib(pid, "耍刀技巧", math.modf(JY.Thing[thingid]["加耍刀技巧"] * 2.5))
+	      AddPersonAttrib(pid, "特殊兵器", math.modf(JY.Thing[thingid]["加特殊兵器"] * 2.5))
+		  AddPersonAttrib(pid, "暗器技巧", math.modf(JY.Thing[thingid]["加暗器技巧"] * 2.5))
 		end		
 
         if MPPD(pid) == 18 then  --崆峒拳系
@@ -45173,32 +45174,32 @@ end
 	    end
 	    
 	    if wugongid >= 0 then 
-	      yes2 = true
-	      local oldwugong = 0
-	      for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
-	        if p["武功" .. i] == wugongid then
-	          oldwugong = 1
-	          p["武功等级" .. i] = math.modf((p["武功等级" .. i] + 100) / 100) * 100
-	          kfnum = i
-	          break;
-	        end
-	      end
-	      if oldwugong == 0 then
-			    for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
+	       yes2 = true
+	       local oldwugong = 0
+	       for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
+	           if p["武功" .. i] == wugongid then
+	              oldwugong = 1
+	              p["武功等级" .. i] = math.modf((p["武功等级" .. i] + 100) / 100) * 100
+	              kfnum = i
+	              break;
+	           end
+	       end
+	       if oldwugong == 0 then
+			  for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
 			      if p["武功" .. i] == 0 then
-			        p["武功" .. i] = wugongid
-			        p["武功等级" .. i] = 0;
-			        kfnum = i
-			        break;
+			         p["武功" .. i] = wugongid
+			         p["武功等级" .. i] = 0;
+			         kfnum = i
+			         break;
 			      end
-			    end
 			  end
+		   end
 	    end
 	    
-	    else
+	  else
 	  	break;
-		end
-	    end
+	  end
+	end
 	if yes1 then
 		DrawStrBoxWaitKey(string.format(CC.WARS126, p["姓名"], JY.Thing[thingid]["名称"]), C_WHITE, CC.DefaultFont)
 	end
@@ -58627,7 +58628,8 @@ function FKJGN(k)
     elseif k == 285 then
       Menu_WPZL()
     elseif k == 286 then
-      dofile(CONFIG.ScriptPath .. "DIY.lua")
+      --dofile(CONFIG.ScriptPath .. "DIY.lua")
+	  Menu_MYDIY()
     elseif k == 287 then
       --Menu_SetMusic()
 	  Menu_HYZB()
@@ -77064,7 +77066,31 @@ function Menu_MYDIY()
   Cls()
   local MS = JYMsgBox("RUNDIY", "确定要运行DIY文件吗？", {"确定", "放弃"}, 2, 280)
   if MS == 1 then
-    dofile(CONFIG.ScriptPath .. "DIY.lua")
+	if isModuleAvailable("lfs") then
+		require "lfs"
+
+		local LUA_PATH =  CONFIG.ScriptPath .. "DIY"
+		local menu = {};
+		menu[#menu+1] = {"DIY.lua",nil,1}
+		for file in lfs.dir(LUA_PATH) do
+			if file ~= "." and file ~= ".." and string.find(file,"%.lua$") then
+				menu[#menu + 1] = {file,nil,1}
+			end
+		end
+
+		local r = ShowMenu(menu,#menu,15,10,10,0,0,1,1,CC.DefaultFont,C_ORANGE,C_WHITE)
+		if r > 0 then
+			local filename = menu[r][1]
+			local filepath = LUA_PATH .. "/" .. filename
+			if help.file.is_file_exists(filepath) then
+				dofile(filepath)
+			else
+				DrawStrBoxWaitKey("抱歉！文件不存在", C_WHITE, CC.DefaultFont, 1)
+			end
+		end
+	else
+		dofile(CONFIG.ScriptPath .. "DIY.lua")
+	end
   end
   return 1
 end--离队菜单
@@ -92991,4 +93017,20 @@ local pid = WAR.Person[WAR.CurID]["人物编号"]
 		Cls()
 		return rr
 	end	
+end
+
+--检测是否支持模块
+function isModuleAvailable(name)
+  if package.loaded[name] then
+    return true
+  else
+    for _,searcher in ipairs(package.searchers or package.loaders) do
+      local loader = searcher(name)
+      if type(loader) == 'function' then
+        package.preload[name] = loader
+        return true
+      end
+    end
+    return false
+  end
 end

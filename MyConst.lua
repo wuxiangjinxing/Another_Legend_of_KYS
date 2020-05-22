@@ -2370,3 +2370,6 @@ CC.AddEnemy = {
 -- 主菜单坐标参考
 CC.MainMenuX = 10
 CC.MainMenuY = 10
+
+--lfs模块初始化
+lfs = {}
