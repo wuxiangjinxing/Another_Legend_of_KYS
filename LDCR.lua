@@ -15146,8 +15146,9 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
         end
 	end	
 	
-    if DT(pid,600) and JLSD(10,35,pid) and not wglw(pid,181) and DWPD() then --强极十道
+    if DT(pid,600) and JLSD(10,35,pid) and (not wglw(pid,181)) and DWPD() then --强极十道
 	    WAR.WS = 1
+		--[[
         JY.Person[eid]["拳掌功夫"] = JY.Person[eid]["拳掌功夫"] - 999
 		if JY.Person[eid]["拳掌功夫"] < 1 then
 			JY.Person[eid]["拳掌功夫"] = 1
@@ -15188,6 +15189,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		if JY.Person[eid]["内力最大值"] < 1 then
 			JY.Person[eid]["内力最大值"] = 1
 		end	
+		]]
+		JY.Person[eid]["生命"] = math.min(1, JY.Person[eid]["生命"])
+		JY.Person[eid]["内力"] = math.min(1, JY.Person[eid]["内力"])
+		JY.Person[eid]["体力"] = math.min(1, JY.Person[eid]["体力"])
 		WAR.QJSD1 = 1
 	end			
 	
@@ -25246,7 +25251,8 @@ function WarSelectEnemy()
                 WAR.Data["敌人2"] = 597;
 				WAR.Data["敌人3"] = 585;	
                 WAR.Data["敌人4"] = 455;	
-				WAR.Data["敌人5"] = 667;			
+				WAR.Data["敌人5"] = 667;
+				WAR.Data["敌人6"] = 600;				
     		end
     		
     		WAR.Data["敌方X1"] = 45;
@@ -56747,6 +56753,7 @@ end
 			    say("一刀流的武学是不是很诡异？<嘻嘻>", 597)
 			    say("兽战拟法好玩吧？<嘻嘻>", 598)
 				say("翻袖扫邪云，补天浴日付一笑，御秋水神风", 667)
+				say("江湖后浪推前浪，老夫云游去也！", 600)
 				say("晚辈只是侥幸....<运气好，运气好！>", 0)
 	    end
 		
