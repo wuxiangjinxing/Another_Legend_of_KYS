@@ -1163,7 +1163,7 @@ OEVENTLUA[42] = function()
 		instruct_2(44,1);   --  2(2):得到物品[血刀][1]
 		instruct_0();   --  0(0)::空语句(清屏)
 		
-		if hasthing(71) == false then
+		if hasHZ(55) == false then
 		Talk(CC.LTalk84, 0);	--[主角]：天下宝物，能者居之。
 		Talk(CC.LTalk85, 97);		--[血刀老祖]：好一个“能者居之”，小子，你真有种。
 		DrawStrBoxWaitKey(CC.LTalk86, C_ORANGE, CC.DefaultFont);		--(系统提示：血刀老祖突然偷袭）

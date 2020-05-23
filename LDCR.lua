@@ -80228,15 +80228,15 @@ PNLBD[0] = function()
 end
 
 PNLBD[3] = function()
-  JY.Person[3]["生命"] = 750
-  JY.Person[3]["生命最大值"] = 750
-  JY.Person[3]["内力"] = 4000
-  JY.Person[3]["内力最大值"] = 4000
-  JY.Person[3]["攻击力"] = 450
-  JY.Person[3]["防御力"] = 300
-  JY.Person[3]["轻功"] = 250
-  JY.Person[3]["受伤程度"] = 0
-  JY.Person[3]["中毒程度"] = 0
+  JY.Person[72]["生命"] = 750
+  JY.Person[72]["生命最大值"] = 750
+  JY.Person[72]["内力"] = 4000
+  JY.Person[72]["内力最大值"] = 4000
+  JY.Person[72]["攻击力"] = 450
+  JY.Person[72]["防御力"] = 300
+  JY.Person[72]["轻功"] = 250
+  JY.Person[72]["受伤程度"] = 0
+  JY.Person[72]["中毒程度"] = 0
 end
 
 PNLBD[16] = function()
