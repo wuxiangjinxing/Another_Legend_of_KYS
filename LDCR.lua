@@ -594,11 +594,13 @@ function DT(id,p) --单通队友行动发生作用
 	if JY.Person[id]["无用12"] == p and T10XXZ(id) then
 		return true
 	end
+	--[[
 	if GetS(103, 0, 0, 1) == 1 then --弃用
 		if id == 583 and GetS(103, 0, 0, 1) == p then
 			return true
 		end
 	end	
+	]]
 	if ZJ(id) and GetS(103, 0, 0, 1) > 0 and GetS(103, 0, 0, 1) == p then --畅想
 		return true
 	end
@@ -651,12 +653,13 @@ function DT1(id,p) --单通队友在场上即发挥作用
 	if JY.Person[id]["无用12"] == p or (GetS(4, 7, 7, 5) == 1 and inteam(p) and ZJ(id)) then --单通
 		return true
 	end
+	--[[
 	if GetS(103, 0, 0, 0) == 1 then
 		if id == 583 and GetS(103, 0, 0, 1) == p then --弃用
 			return true
 		end
 	end
-	
+	]]
 	if ZJ(id) and GetS(103, 0, 0, 1) > 0 and GetS(103, 0, 0, 1) == p then --畅想
 		return true
 	end
@@ -923,7 +926,7 @@ function duiyou(pp)
 end
 
 function xiaobin(pp)
-	if pp == 419 or pp == 440 or pp == 430 or pp == 456 or pp == 457 or pp == 578 or pp == 580 or pp == 583 or pp == 607 or pp == 455 or pp == 597 or pp == 929 or pp == 598 or pp == 599 or pp == 600 or pp == 601 or pp == 602 or pp == 603 or pp == 617 or pp == 604 or pp == 605 or pp == 665 or pp == 666 or pp == 667 or pp == 930 or pp == 931 or pp == 932 then --武骧金星：添加无酒不欢
+	if pp == 419 or pp == 440 or pp == 430 or pp == 456 or pp == 457 or pp == 578 or pp == 580 or pp == 583 or pp == 584 or pp == 607 or pp == 455 or pp == 597 or pp == 929 or pp == 598 or pp == 599 or pp == 600 or pp == 601 or pp == 602 or pp == 603 or pp == 617 or pp == 604 or pp == 605 or pp == 665 or pp == 666 or pp == 667 or pp == 930 or pp == 931 or pp == 932 then --武骧金星：添加无酒不欢
 		return false
 	elseif pp >= 607 and pp <= 613 then
 		return false
@@ -936,7 +939,7 @@ function xiaobin(pp)
 	if pp >= 461 and pp <= 496 then
 		return true
 	end
-	if pp == 579 or (pp >= 583 and pp <= 584) then
+	if pp == 579 then
 		return true
 	end
 	if pp >= 598 and pp <= 605 then
@@ -73465,7 +73468,7 @@ SetGlobalConst = function()
     TeamP = {0, 1, 2, 4, 9, 16, 17, 25, 28, 29, 30, 35, 36, 37, 38, 44, 
     45, 47, 48, 49, 51, 52, 53, 54, 55, 56, 58, 59, 63, 66, 72, 73, 74, 
     75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 
-    92, 93, 581, 589, 590, 591, 61, 594, 595, 596, 11, 161, 582, 583, 614, 619, 616, 620, 3, 621, 625, 626, 627,
+    92, 93, 581, 589, 590, 591, 61, 594, 595, 596, 11, 161, 582, 614, 619, 616, 620, 3, 621, 625, 626, 627,
     628, 629, 630, 631, 632, 633, 635, 636, 176, 104, 638, 639, 655, 656, 657, 661, 662, 663, 664, 929}
   
     --新队友
