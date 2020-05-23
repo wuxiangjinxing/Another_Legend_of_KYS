@@ -38314,7 +38314,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	end
 
     --蓝烟清：南山刀法，杨家枪法增加机率
-    if wugong == 53 and (JLSD(20, 50) or (PersonKF(68, pid) and JLSD(20, 50))) then
+    if wugong == 53 and (JLSD(20, 50, pid) or (PersonKF(68, pid) and JLSD(20, 50, pid))) then
     	WAR.L_NSDFCC = 1;
     	if WAR.Person[id][CC.TXWZ3] ~= nil then
   			WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "·单刀破枪"
