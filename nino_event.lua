@@ -9478,29 +9478,32 @@ say("阁下有何见教？？",929);
 end
 OEVENTLUA[5007] = function()
 say("还有事么？",597);
-if MPPD(0) == 0 and JY.Person[0]["御剑能力"] >= 350 then 
-    say("我想加入刀宗，不知宗主可否答应？",0);
-    say("你？。。谢云流不在我还真不敢随便给他找徒弟，嘛，既然他给我找不自在，我也给他找一次。好吧我答应你了。",597);
-    say("多谢宗主",0);
-    say("如若叛门，杀无赦！",597);
-    say("弟子谨记。",0);
-	if DrawStrBoxYesNo(-1, -1, "要学一刀流的武功么？", C_WHITE, 30) == true then 
-		JoinMP(0, 11, 3) 
-        instruct_35(zj(), 0, 131,999)	
-		if zj() == 0 and (putong() > 0 or teshu() > 0) then 
-			DrawStrBoxWaitKey(string.format("%s 学会武功 %s", JY.Person[zj()]["姓名"], JY.Wugong[131]["名称"]), C_ORANGE, CC.DefaultFont)
-			if DrawStrBoxYesNo(-1, -1, "要切换外功精通么？", C_WHITE, 30) == true then 
-			    SetS(112,1,0,0,131)
+	if MPPD(0) == 0 and JY.Person[0]["御剑能力"] >= 350 then 
+		say("我想加入刀宗，不知宗主可否答应？",0);
+		say("你？。。谢云流不在我还真不敢随便给他找徒弟，嘛，既然他给我找不自在，我也给他找一次。好吧我答应你了。",597);
+		say("多谢宗主",0);
+		say("如若叛门，杀无赦！",597);
+		say("弟子谨记。",0);
+		if DrawStrBoxYesNo(-1, -1, "要学一刀流的武功么？", C_WHITE, 30) == true then 
+			JoinMP(0, 11, 3) 
+			instruct_2(268) 
+			instruct_2(340)
+			instruct_35(zj(), 0, 131,999)	
+			if zj() == 0 and (putong() > 0 or teshu() > 0) then 
+				DrawStrBoxWaitKey(string.format("%s 学会武功 %s", JY.Person[zj()]["姓名"], JY.Wugong[131]["名称"]), C_ORANGE, CC.DefaultFont)
+				if DrawStrBoxYesNo(-1, -1, "要切换外功精通么？", C_WHITE, 30) == true then 
+					SetS(112,1,0,0,131)
+				end
 			end
-	    end
+		end
 	end
-end
 	if GetS(111,0,0,0) == 0 and JY.Person[0]["觉醒"] > 0 and JY.Person[0]["御剑能力"] >= 350 then
 	    say("你的实力已经可以学习太虚剑意，需要参悟么？",597)
 		if instruct_11(0,188) == true then
 	        QZXS("领悟太虚剑意！")
 	        instruct_0();
-	        say("多谢！",0) 
+	        say("多谢！",0)  
+			instruct_2(340)
 	        SetS(111,0,0,0,180)
 		end
 	end	
