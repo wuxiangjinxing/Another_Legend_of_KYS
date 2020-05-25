@@ -594,13 +594,11 @@ function DT(id,p) --单通队友行动发生作用
 	if JY.Person[id]["无用12"] == p and T10XXZ(id) then
 		return true
 	end
-	--[[
 	if GetS(103, 0, 0, 1) == 1 then --弃用
-		if id == 583 and GetS(103, 0, 0, 1) == p then
+		if GetS(103, 0, 0, 1) == p then
 			return true
 		end
 	end	
-	]]
 	if ZJ(id) and GetS(103, 0, 0, 1) > 0 and GetS(103, 0, 0, 1) == p then --畅想
 		return true
 	end
@@ -653,13 +651,12 @@ function DT1(id,p) --单通队友在场上即发挥作用
 	if JY.Person[id]["无用12"] == p or (GetS(4, 7, 7, 5) == 1 and inteam(p) and ZJ(id)) then --单通
 		return true
 	end
-	--[[
 	if GetS(103, 0, 0, 0) == 1 then
-		if id == 583 and GetS(103, 0, 0, 1) == p then --弃用
+		if GetS(103, 0, 0, 1) == p then --弃用
 			return true
 		end
 	end
-	]]
+	
 	if ZJ(id) and GetS(103, 0, 0, 1) > 0 and GetS(103, 0, 0, 1) == p then --畅想
 		return true
 	end
@@ -926,7 +923,7 @@ function duiyou(pp)
 end
 
 function xiaobin(pp)
-	if pp == 419 or pp == 440 or pp == 430 or pp == 456 or pp == 457 or pp == 578 or pp == 580 or pp == 583 or pp == 584 or pp == 607 or pp == 455 or pp == 597 or pp == 929 or pp == 598 or pp == 599 or pp == 600 or pp == 601 or pp == 602 or pp == 603 or pp == 617 or pp == 604 or pp == 605 or pp == 665 or pp == 666 or pp == 667 or pp == 930 or pp == 931 or pp == 932 then --武骧金星：添加无酒不欢
+	if pp == 419 or pp == 440 or pp == 430 or pp == 456 or pp == 457 or pp == 578 or pp == 580 or pp == 583 or pp == 607 or pp == 455 or pp == 597 or pp == 929 or pp == 598 or pp == 599 or pp == 600 or pp == 601 or pp == 602 or pp == 603 or pp == 617 or pp == 604 or pp == 605 or pp == 665 or pp == 666 or pp == 667 or pp == 930 or pp == 931 or pp == 932 then --武骧金星：添加无酒不欢
 		return false
 	elseif pp >= 607 and pp <= 613 then
 		return false
@@ -939,7 +936,7 @@ function xiaobin(pp)
 	if pp >= 461 and pp <= 496 then
 		return true
 	end
-	if pp == 579 then
+	if pp == 579 or (pp >= 583 and pp <= 584) then
 		return true
 	end
 	if pp >= 598 and pp <= 605 then
@@ -18432,6 +18429,12 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		hurt = hurt * math.modf(JY.Person[eid]["内力最大值"] * 1 + a)
 	end 	
 
+    if DT(pid,5) and WAR.LQZ[pid] == 100 then 
+	    local a = math.modf(JY.Person[pid]["内力"] /10)
+	    hurt = hurt * math.modf(JY.Person[eid]["内力最大值"] * 1 * a)
+	    WAR.Person[emenyid][CC.TXWZ2] = "万道莫名"
+    end
+
     if DT(pid, 602) and JLSD(10, 60, pid) then 
 	    local a = math.modf(JY.Person[pid]["内力"] /10)
   	    WAR.HOT[eid] = 1
@@ -26648,6 +26651,7 @@ function WarSetGlobal()
   WAR.YUFENG=3 --小龙女御蜂指令
   WAR.JIBIAN=0 --杨过机变指令
   WAR.LINGGANG=0 --郭靖灵罡
+  WAR.SLZL=0 --森罗
   WAR.ZZZ={} --张召重激励
   WAR.QIZHEN={} --黄蓉奇阵记录
   WAR.QFY1={} --曲非烟指令飞燕凌波 50时序内速度+5
@@ -27275,6 +27279,16 @@ function WarSetGlobal()
 	WAR.XXQF={}---沼跃鱼：日月神教捧月派吸星气防
 	WAR.XMPM = 0----沼跃鱼：罗汉堂嗔恶退散
 	WAR.GBLJ = {} --丐帮连击点数
+	WAR.BeiMeiHuo = 0	--被魅惑
+	WAR.BeiHunluan = 0	--被混乱
+	WAR.XIANSHU_COUNT_INONEACTION = 0 --只有第一次耗费体力内力
+	WAR.YFS_COUNT = {}	--分身数目
+	WAR.BSFH_COUNT = {}	 --变身复活数目
+	WAR.YG_QG = {}	--消耗体力
+	WAR.YG_NS = {}	--消除内伤
+	WAR.BIANSHEN = {} --被变身的时序
+	WAR.BIANSHEN_PID = {} --被变身的集合
+	WAR.HUNLUAN	= {} -- 被混乱的集合
 end
 
 --显示非攻击时的点数
@@ -44900,6 +44914,13 @@ function War_Manual_Sub()
     end
     end     
   
+    --隼人森罗指令
+    if CXTRT(pid, 583) then
+    if WAR.SLZL > 0 then
+    	warmenu[11][3] = 0
+    end
+    end  
+
     --张召重激励指令
     if CXTRT(pid, 80) then
     if JY.Person[pid]["体力"] <= 15 then
@@ -47875,6 +47896,183 @@ end
 			DrawStrBoxWaitKey(CC.EVB176, C_WHITE, 30)
 			return 0
 	  end
+	end		
+
+    if ownPD(pid,583) then --隼人森罗指令
+		if WAR.SLZL == 0 then
+			local qishu = JYMsgBox("森罗", "要使用以下那种战术进行战斗？", {"天地","奇正", "阴阳", "生灭",  "取消"}, 5, pid)
+			if qishu == 1 then
+				local fenshen_count = (WAR.YFS_COUNT[pid] or 0)
+				if fenshen_count >= 6 then
+					DrawStrBoxWaitKey("已经为 "..JY.Person[pid]["姓名"].." 制造分身", C_WHITE, 30)
+					return 0
+				else				
+					say("天时合微逢·地表化九宫", pid) 
+					if WAR.XIANSHU_COUNT_INONEACTION == 0 then
+						AddPersonAttrib(pid, "体力", -10)
+						AddPersonAttrib(pid, "内力", -300)
+					end
+					local shadowCount = 1
+					if JY.DIFF >= 5 then
+						shadowCount = 3
+					elseif JY.DIFF >= 3 then
+						shadowCount = 2
+					end
+					local debug = false
+					if debug then
+						shadowCount = 6
+					end
+					local now_person_count = WAR.PersonNum - 1		-- 记录增加人之前的人数，一会循环用来从这个数以后遍历新的人
+					for iiiii=1,shadowCount do
+						local x, y = WE_xy(WAR.Person[WAR.CurID]["坐标X"], WAR.Person[WAR.CurID]["坐标Y"] - 1 -(iiiii-1))
+						NewWARPersonZJ(pid, true, x, y, false, 2);
+						WAR.Person[WAR.PersonNum - 1].Time	= WAR.Person[WAR.CurID].Time
+						WAR.Person[WAR.PersonNum - 1]["我方"] = true				--刚创建的是 WAR.Person[WAR.PersonNum - 1]
+					end
+					WAR.YFS_COUNT[pid]	= (WAR.YFS_COUNT[pid] or 0) + shadowCount
+					return 
+				end
+			elseif qishu == 2 then
+				local zl = JYMsgBox("复生", "复生战场上被击退任意一员*消耗：体力10点内力300点", CC.EVB173, 2, pid)
+				if zl == 1 then
+					local dxp = {}
+					local num = 1
+					for i = 0, WAR.PersonNum - 1 do 
+						if WAR.Person[i]["死亡"] and WAR.Person[i]["人物编号"] ~= pid then
+							dxp[num] = {}
+							dxp[num][1] = JY.Person[WAR.Person[i]["人物编号"]]["姓名"]
+							dxp[num][2] = nil
+							dxp[num][3] = 1
+							dxp[num][4] = i
+							num = num + 1
+						end
+					end
+					if num <= 1 then
+						DrawStrBoxWaitKey("目前无人被击退", C_WHITE, 30)
+						return 0
+					end
+					Cls()
+					local r = ShowMenu(dxp, num - 1, 10, CC.MainMenuX, CC.MainMenuY + 45, 0, 0, 1, 0, CC.DefaultFont, C_RED, C_GOLD)
+					if r > 0 then
+						say("奇道险五行·正朔极北风", pid) 
+						if WAR.XIANSHU_COUNT_INONEACTION == 0 then
+							AddPersonAttrib(pid, "体力", -10)
+							AddPersonAttrib(pid, "内力", -300)
+						end
+						Cls()
+						local mid = WAR.Person[dxp[r][4]]["人物编号"] 
+						local nx, ny = WE_xy(WAR.Person[WAR.CurID]["坐标X"], WAR.Person[WAR.CurID]["坐标Y"] - 1)
+						WAR.Person[dxp[r][4]]["死亡"] = false
+						WAR.Person[dxp[r][4]]["我方"] = true
+						lib.SetWarMap(nx, ny, 2, -1)
+						lib.SetWarMap(nx, ny, 5, -1)														
+						PlayWavE(28)
+						lib.Delay(10)
+						CurIDTXDH(WAR.CurID, 1760, 1777, "万道森罗·复生")
+						local Ocur = WAR.CurID
+						WAR.CurID = dxp[r][4] 
+						WarDrawMap(0)
+						PlayWavE(36)
+						lib.Delay(50)
+						lib.SetWarMap(nx, ny, 2, dxp[r][4])
+						lib.SetWarMap(nx, ny, 5, WAR.Person[dxp[r][4]]["贴图"])
+						WAR.Person[WAR.CurID]["坐标X"]	= nx
+						WAR.Person[WAR.CurID]["坐标Y"]	= ny
+						WAR.Person[dxp[r][4]]["人方向"] = WAR.Person[WAR.CurID]["人方向"]
+						CurIDTXDH(WAR.CurID, 1967, 1981, "")
+						lib.Delay(100)
+						WAR.CurID = Ocur
+						WarDrawMap(0)
+						JY.Person[mid]["体力"] = 100
+						JY.Person[mid]["生命"] = JY.Person[mid]["生命最大值"] 
+						JY.Person[mid]["内力"] = JY.Person[mid]["内力最大值"]
+					end
+				else
+					return 0
+				end
+			elseif qishu == 3 then	
+			    Cls()
+				say("阴像晨不物·阳威幕入穷", pid) 
+                local x1 = CC.MainSubMenuX
+                local y1 = CC.MainSubMenuY + CC.SingleLineHeight
+                CC.DYRW = -1
+                CC.DYRW2 = -1
+    	        DrawStrBox(x1, y1, "谁要替换天赋？",C_WHITE, CC.DefaultFont);
+	            local cc = {}
+	            local id = -1
+	            for j = 1, CC.TeamNum do
+		            cc[j] = {"", nil, 0}
+		            id = JY.Base["队伍" .. j]	
+		            if id >= 0 and duiyou(id) then
+			            cc[j] = { JY.Person[id]["姓名"], nil, 1}
+		            end
+	            end
+	            local numItem = table.getn(cc);
+	            local dd = CC.DefaultFont;
+	            local r = ShowMenu(cc,numItem,0,x1,y1+40,0,0,1,1,dd,C_ORANGE,C_WHITE);
+                if r == 0 then  
+		            do return end
+		        end	
+                id = JY.Base["队伍" .. r]
+	            CC.DYRW = id
+                Cls()
+                local aa = 0
+                local menu = {}
+                for aa = 1, #CC.TFlist do
+                    menu[aa] = {CC.TFlist[aa][1], nil, 1, aa}
+                end
+                local bb = ShowMenu3(menu,#menu,10,-2,-2,-2,-2,2,2,22,C_GOLD,C_WHITE,nil, nil,M_DimGray,C_RED)
+                Cls()
+                aa = menu[bb][4]
+                local a = JYMsgBox("隼人天隐","选择要替换的天赋",{"１","２","３","４","５"},5,545);
+                setTF(id, aa, a)
+			elseif qishu == 4 then	
+			    local nexty
+				local s;		
+	            local r;		
+	            local pid;		
+	            local f;		
+	            local kfid;		
+	            local i = nil
+			    Cls()
+			    say("生邦有迟命·灭世我称雄", pid) 
+				DrawStrBox(CC.MainSubMenuX, CC.MainSubMenuY, "森罗唯我·万道由心", C_WHITE, CC.DefaultFont);
+			    nexty = CC.MainSubMenuY + CC.SingleLineHeight;
+			    s = SelectTeamMenu(CC.MainSubMenuX, nexty);
+			    if s == 0 then 
+			        return 
+				end 	
+			    pid = JY.Base["队伍"..s];
+		        local wailw = 0
+				local ms1 = JYMsgBox(JY.Person[pid]["姓名"].."外功领悟",
+					"请选择想要领悟的外功："..
+					"*1降龙 2黯然 3太极剑 4六脉 5火焰刀 "..
+					"*6霹雳刀 7伏魔杖 8打狗棒 9生死符 10葵花针"..
+					"*11取消",
+					{"1","2","3","4","5","6","7","8","9","10","11"}
+					,11,320)
+				if ms1 == 1 then           wailw = 26    --领悟降龙
+				    elseif ms1 == 2 then   wailw = 25    --领悟黯然
+				    elseif ms1 == 3 then   wailw = 46    --领悟太极剑
+				    elseif ms1 == 4 then   wailw = 49    --领悟六脉
+				    elseif ms1 == 5 then   wailw = 66    --领悟火焰刀	
+				    elseif ms1 == 6 then   wailw = 141   --领悟霹雳刀
+				    elseif ms1 == 6 then   wailw = 86    --领悟伏魔杖
+				    elseif ms1 == 6 then   wailw = 80    --领悟打狗棒
+				    elseif ms1 == 6 then   wailw = 176   --生死符
+				    elseif ms1 == 6 then   wailw = 177   --葵花针
+				end
+				if pid == 0 then
+					setLW1(wailw)
+				elseif pid > 0 then
+					JY.Person[pid]["无用15"] = wailw
+				end
+				QZXS(JY.Person[pid]["姓名"].."领悟"..JY.Wugong[wailw]["名称"])		  
+			end			
+		else
+			DrawStrBoxWaitKey(CC.EVB176, C_WHITE, 30)
+		end
+		return 0
 	end		
 
 	if ownPD(pid,58) then --杨过机变指令
@@ -54269,16 +54467,27 @@ end
 				end	
 			end	
 			
-			if MPPD(pid) == 4 and PersonGT(pid,182) and JLSD(10,40,pid) then
-				local qbg = math.modf(sixi(pid,1)/10)
-				WAR.BG[pid] = (WAR.BG[pid] or 0) + qbg
-				WAR.WJ[pid] = (WAR.WJ[pid] or 0) + qbg
+			if MPPD(pid) == 4 then
+				if JLSD(10,40,pid) then
+					if PersonGT(pid,182) then
+						local qbg = math.modf(sixi(pid,1)/10)
+						WAR.BG[pid] = (WAR.BG[pid] or 0) + qbg
+						WAR.WJ[pid] = (WAR.WJ[pid] or 0) + qbg
+					end
+					if PersonGT(pid,99) then
+						local jbg = math.modf(sixi(pid,2)/10)
+						WAR.BG[pid] = (WAR.BG[pid] or 0) + jbg
+						WAR.WJ[pid] = (WAR.WJ[pid] or 0) + jbg
+					end
+				else
+					if WAR.BG[pid] ~= nil and WAR.BG[pid] < 1 then
+						WAR.BG[pid] = nil
+					end
+					if WAR.WJ[pid] ~= nil and WAR.WJ[pid] < 1 then
+						WAR.WJ[pid] = nil
+					end		
+				end
 			end	
-			if MPPD(pid) == 4 and PersonGT(pid,99) and JLSD(10,40,pid) then
-				local jbg = math.modf(sixi(pid,2)/10)
-				WAR.BG[pid] = (WAR.BG[pid] or 0) + jbg
-				WAR.WJ[pid] = (WAR.WJ[pid] or 0) + jbg
-			end
 			
 			if WAR.TZQJ12[pid] == 1 then
 				WAR.TZQJ12[pid] = nil
@@ -73829,7 +74038,7 @@ SetGlobalConst = function()
     TeamP = {0, 1, 2, 4, 9, 16, 17, 25, 28, 29, 30, 35, 36, 37, 38, 44, 
     45, 47, 48, 49, 51, 52, 53, 54, 55, 56, 58, 59, 63, 66, 72, 73, 74, 
     75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 
-    92, 93, 581, 589, 590, 591, 61, 594, 595, 596, 11, 161, 582, 614, 619, 616, 620, 3, 621, 625, 626, 627,
+    92, 93, 581, 589, 590, 591, 61, 594, 595, 596, 11, 161, 582, 583, 614, 619, 616, 620, 3, 621, 625, 626, 627,
     628, 629, 630, 631, 632, 633, 635, 636, 176, 104, 638, 639, 655, 656, 657, 661, 662, 663, 664, 929}
   
     --新队友
@@ -73963,6 +74172,10 @@ SetGlobalConst = function()
 	--杨过机变指令
 	GRTS[58] = "机变"
 	GRTSSAY[58] = "效果：可以切换使用不同的门派技能，每场战斗限一次"	
+	
+	--隼人森罗指令
+	GRTS[583] = "森罗"
+	GRTSSAY[583] = "效果：战场中使用不同战术，无限制使用次数"	
 
 	--张召重激励指令
 	GRTS[80] = "激励"
@@ -76790,7 +77003,7 @@ CC.FirstFile = CONFIG.PicturePath .. ff
 {"临     ", nil, 1}, 
 {"归", nil, 1}}
   local menux = (CC.ScreenW - 4 * CC.StartMenuFontSize - 2 * CC.MenuBorderPixel) / 2
-  --DrawString(720, 580, CC.EVB107, C_GOLD, 20)
+  DrawString(720, 580, CC.EVB107, C_GOLD, 20)
   local menuReturn = ShowMenu2(menu, 3, 0, menux-120, CC.StartMenuY + 30, 0, 0, 0, 0, 50, C_STARTMENU, C_GOLD)
   --local menuReturn = ShowMenu(menu, 3, 0, menux, CC.StartMenuY + 30, 0, 0, 0, 0, 35, C_GOLD, C_WHITE)
   if menuReturn == 1 then
@@ -80823,15 +81036,15 @@ PNLBD[0] = function()
 end
 
 PNLBD[3] = function()
-  JY.Person[72]["生命"] = 750
-  JY.Person[72]["生命最大值"] = 750
-  JY.Person[72]["内力"] = 4000
-  JY.Person[72]["内力最大值"] = 4000
-  JY.Person[72]["攻击力"] = 450
-  JY.Person[72]["防御力"] = 300
-  JY.Person[72]["轻功"] = 250
-  JY.Person[72]["受伤程度"] = 0
-  JY.Person[72]["中毒程度"] = 0
+  JY.Person[3]["生命"] = 750
+  JY.Person[3]["生命最大值"] = 750
+  JY.Person[3]["内力"] = 4000
+  JY.Person[3]["内力最大值"] = 4000
+  JY.Person[3]["攻击力"] = 450
+  JY.Person[3]["防御力"] = 300
+  JY.Person[3]["轻功"] = 250
+  JY.Person[3]["受伤程度"] = 0
+  JY.Person[3]["中毒程度"] = 0
 end
 
 PNLBD[16] = function()
