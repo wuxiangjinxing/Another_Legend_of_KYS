@@ -17539,13 +17539,13 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    end
 	    if a > 1000 then
 	        a = math.modf(a/6) + 800
-		 end
+		end
 	    --[[if a > 1200 then
 	        a = math.modf((a-600)/8) + 1200
 	    end]]  
 	    hurt = a
     end 
-    if hurt > 500 then
+    if hurt > 1000 then
 		hurt = hurt + hurt2
 	end	
 	--hurt=math.modf(hurt)
@@ -18429,7 +18429,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		hurt = hurt * math.modf(JY.Person[eid]["内力最大值"] * 1 + a)
 	end 	
 
-    if DT(pid,5) and WAR.LQZ[pid] == 100 then 
+    if DT(pid,583) and WAR.LQZ[pid] == 100 then 
 	    local a = math.modf(JY.Person[pid]["内力"] /10)
 	    hurt = hurt * math.modf(JY.Person[eid]["内力最大值"] * 1 * a)
 	    WAR.Person[emenyid][CC.TXWZ2] = "万道莫名"
