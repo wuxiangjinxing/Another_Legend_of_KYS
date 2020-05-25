@@ -72535,6 +72535,8 @@ function SBLNewGame()
 	JY.Person[668]["出招动画帧数3"] = 9
 	JY.Person[668]["出招动画延迟3"] = 8
 	JY.Person[668]["武功音效延迟3"] = 7			
+	JY.Person[929]["武功等级1"] = 999
+	JY.Person[929]["武功等级2"] = 999
 	JoinMP(929,11,3)
 	JoinMP(932,19,5)
 	JY.Person[932]["排行"] = 8
