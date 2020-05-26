@@ -11305,7 +11305,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    hurt = math.modf(hurt*2)
 	end
 	--³ÖÑşÇÙÕ½Òâ¼¼ÉËº¦Ç¿»¯
-	if WAR.TDSX >= 0 then
+	if WAR.TDSX > 0 then
 	    hurt = math.modf(hurt*2)
 	end
 	--ĞëÃÖÉ½ÁìÎòÉËº¦Ç¿»¯
@@ -11753,16 +11753,16 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	if WAR.QJSD1 == 1 then      --Ç¿¼«Ê®µÀÉËº¦+100
 		hurt = hurt + 100
 	end	
-	if WAR.JGZ_DMZ ~= nil then	--´ïÄ¦ÕÆ ÉËº¦+80
+	if WAR.JGZ_DMZ > 0 then	--´ïÄ¦ÕÆ ÉËº¦+80
 		hurt = hurt + 100
 	end
-	if WAR.RL ~= nil then		    --´ïÄ¦ÕÆ ÉËº¦+80
+	if WAR.RL > 0 then		    --´ïÄ¦ÕÆ ÉËº¦+80
 		hurt = hurt + 150
 	end
-    if WAR.LHQ_BNZ ~= nil then    --°ãÈôÕÆ ÉËº¦+50
+    if WAR.LHQ_BNZ > 0 then    --°ãÈôÕÆ ÉËº¦+50
 		hurt = hurt + 50
 	end
-	if WAR.XMS_QSRL~= nil then
+	if WAR.XMS_QSRL > 0 then
 		hurt = hurt + 200
 	end	
 	
