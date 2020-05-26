@@ -1107,22 +1107,17 @@ end
 	end		
 	instruct_37(1)
 	light()
-	say("佐佐木师傅，有劳你了。", 639)
-	say("嗨！", 517)
+	say("天隐大师，有劳你了。", 639)
+	say("嗨！", 583)
 	say("东瀛人？",0)
 	SetS(106, 63, 1, 0, 0)
-    SetS(106, 63, 2, 0, 517)
-	if WarMain(288) == false then
-		instruct_15(0);   
-		instruct_0();  
-		do return; end			
-	end
+    SetS(106, 63, 2, 0, 583)
+	if WarMain(288) == true then addHZ(63) end
 	instruct_37(1)
 	light()
-	addHZ(63)
-say("少侠当真武功了得，我们走。", 639)
-say("想来就来想走就走，给我留下。",0)
-say("玄冥二老。", 639)
+	say("少侠当真武功了得，我们走。", 639)
+	say("想来就来想走就走，给我留下。",0)
+	say("玄冥二老。", 639)
 	if WarMain(362) == false then
 		instruct_15(0);   
 		instruct_0();  
