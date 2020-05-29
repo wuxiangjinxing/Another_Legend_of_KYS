@@ -115,6 +115,7 @@ function createSceneData()
         {JY.Scene[4]["名称"], JY.Scene[4]["进入条件"], 4}, -- 昆仑仙境
         {JY.Scene[15]["名称"], JY.Scene[15]["进入条件"], 15}, -- 沙漠废墟
         {JY.Scene[5]["名称"], JY.Scene[5]["进入条件"], 5}, -- 闯王宝藏
+		{JY.Scene[85]["名称"], JY.Scene[85]["进入条件"], 85}, -- 闯王宝藏
         {JY.Scene[67]["名称"], JY.Scene[67]["进入条件"], 67} -- 鹿鼎山
     }
 	-- 其他场所
