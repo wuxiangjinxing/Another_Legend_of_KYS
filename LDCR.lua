@@ -15386,13 +15386,13 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		JY.Person[eid]["体力"] = math.min(1, JY.Person[eid]["体力"])
 		WAR.QJSD1 = 1
 	end			
-	
-    if WAR.WSXW == 1 then
+	--[[
+    if WAR.WSXW == 1 and DWPD() then
         JY.Person[eid]["攻击力"] = math.min(200, JY.Person[eid]["攻击力"])
 		JY.Person[eid]["防御力"] = math.min(200, JY.Person[eid]["防御力"])
 		JY.Person[eid]["轻功"] = math.min(200, JY.Person[eid]["轻功"])	
 	end	
-	
+	]]
     if WAR.XYFQ == 1 then 
 		for i = 0, WAR.PersonNum - 1 do 
 			if WAR.Person[i]["我方"] == false and WAR.Person[i]["死亡"] == false and i ~= WAR.CurID then
