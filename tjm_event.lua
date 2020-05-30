@@ -1533,6 +1533,25 @@ say("多谢。",8)
 say("多谢救命之恩。",8)
 say("我等就此别过，这是我等一点心意。",169)
 JoinMP(638,17,2)
+	if MPPD(0) == 0 and JY.Person[0]["品德"] >= 80 and JY.Person[0]["御剑能力"] >= 300 and JY.Person[0]["耍刀技巧"] >= 300 then 
+	    say("何掌门、何夫人请留步。",0)
+		say("少侠还有何事？",7)
+        say("晚辈对于昆仑的威名早有耳闻，希望能入昆仑精修武艺",0)
+		say("（这小子武功这么好，还想来昆仑？怕不是想持恩图我掌门之位？）",7)
+	    say("（太好了，最近何师弟越来越不把我放在眼里，他来正好能敲打敲打这蠢蛋！）",166)
+		say("少侠有恩于我派，我本不该拒绝，但是...",7)
+		say("没什么但是！我们自诩正派，本不可知恩不图报！",166)
+		say("如今我派坐忘峰正无一能人主持峰务，就有劳少侠担任我派坐忘峰主一职吧。",166)
+		say("「何师弟」，没问题吧？",166)
+		say("...夫人说的是...（咬牙切齿）",7)
+		say("晚辈多谢二位了。",0)
+	    JoinMP(0,19,2)
+		addHZ(8)
+		addHZ(9)
+		addHZ(22)
+		addthing(368,1)
+		addthing(369,1)
+	end	
 dark()
 instruct_17(109,1,30,29,0)
 instruct_17(109,1,30,30,0)
@@ -2631,6 +2650,17 @@ say("这时候还叫萧大侠么？",189)
 say("多谢岳丈大人。")
 say("哈哈哈，好好好，慧儿还不带你心上人去逛逛？",189)
 say("爹爹，讨厌。",77)
+    if GetS(113,0,0,0) == 0 then 
+	    say("贤婿！这套夫妻刀法你要好好参详。",189) 
+	    instruct_0();
+		if instruct_11(0,188) == true then 
+	        QZXS("领悟夫妻刀法！")
+	        instruct_0();
+	        setLW1(62)
+		else
+			say("如此，罢了。",189) 
+		end	
+	end
 dark()
 null(-2,17)
 teammate(77)
@@ -2837,65 +2867,86 @@ say("大师，不老长春谷在何处？", 0)
 say("无量山附近。", 470)
 say("知道了，大师放心，书信一定会交到高僧手中。", 0)
 say("有劳少侠！", 470)
+instruct_3(114,0,1,0,0,6006,0,6152,6152,6152,-2,-2,-2)	
 end
 
 OEVENTLUA[6006] = function() --不老长春谷
-addthing(342,-1)
-say("辛苦少侠送信！", 602)
-say("大师，信已送到请赶快相救段公子！", 0)
-say("老僧已是方外之人，红尘之事不在过问。", 602)
-say("但是段公子被鸠摩智擒去并扬言要在慕容博坟前火花，大师若不出手相救，恐怕！！！", 0)
-say("这样吧，老僧传你一些拳脚功夫，这样你就能抵挡鸠摩智了。", 602)
-say("大师我还没说要救人呢。", 0)
-say("少侠宅心仁厚，不会见死不救的！", 602)
-say("这.........", 0)
-say("少侠看好了！", 602)
-if WarMain(378, 0) == false then  --战斗开始
-	instruct_13()  --场景变亮
-	say("多谢前辈指点。", 0) 
-	if GetS(113,0,0,0) == 0 then 
-	    instruct_0();
-		if instruct_11(0,188) == true then 
-	        QZXS("领悟一阳指！")
-	        instruct_0();
-	        setLW1(17)
-			addthing(96)
+	addthing(342,-1)
+	if hasthing(147) then
+		say("大师就是段公子口中的段氏高人？", 0)
+		say("老衲不敢当。但感谢少侠相助段氏子弟！", 602)
+		say("也感谢少侠先前未因此事而来迫使老衲干涉红尘", 602)
+		say("为报少侠之恩，老衲就将此书赠与少侠吧", 602)
+		if DrawStrBoxYesNo(-1, -1, "是否收下秘籍？", C_WHITE, 30) == true then
+			say("这是「龙行虎步」？但却与段公子给我的不甚相像...？", 0)
+			say("此乃老衲加以修补过的身法，想来对少侠是有助益的", 602)
+			QZXS("领悟龙行虎步身法！")
+			setLW2(199)
+			addthing(359)
+			say("多谢大师！", 0)
+			say("阿弥陀佛！", 602)
 		else
-			say("阿弥陀佛",602) 
+			say("段公子脱困也非我一人之功", 0)
+			say("在下就「无功不受禄」了", 0)
+			say("也罢！缘分未至，不得强求", 602)
 		end	
-	end
-	    do return end  --无条件结束事件
-else
-	instruct_13()  --场景变亮
-    if GetS(111, 0, 0, 0) == 0 then  
-	    say("少侠短时间就学会这套功夫，真是天赋异禀！",602)		
-	    instruct_0();
-	    if instruct_11(0,188) == true then 
-	        QZXS("领悟天南易阳诀！")
-		    instruct_0();
-	        say("多谢前辈",0)
-	        SetS(111, 0, 0, 0,152)
-		    addthing(289)
-	    else
-		    say("阿弥陀佛！",602) 
-	    end	
-    end
-	if GetS(113,0,0,0) == 0 then 
-	    say("这套功夫你也一并传你，方便对付鸠摩智！",602) 
-	    instruct_0();
-		if instruct_11(0,188) == true then 
-	        QZXS("领悟六脉神剑！")
-			say("多谢前辈",0)
-	        instruct_0();
-	        setLW1(49)
-			addthing(113)         --获得六脉神剑剑谱   
+	else
+		say("辛苦少侠送信！", 602)
+		say("大师，信已送到请赶快相救段公子！", 0)
+		say("老僧已是方外之人，红尘之事不在过问。", 602)
+		say("但是段公子被鸠摩智擒去并扬言要在慕容博坟前火花，大师若不出手相救，恐怕！！！", 0)
+		say("这样吧，老僧传你一些拳脚功夫，这样你就能抵挡鸠摩智了。", 602)
+		say("大师我还没说要救人呢。", 0)
+		say("少侠宅心仁厚，不会见死不救的！", 602)
+		say("这.........", 0)
+		say("少侠看好了！", 602)
+		if WarMain(378, 0) == false then  --战斗开始
+			instruct_13()  --场景变亮
+			say("多谢前辈指点。", 0) 
+			if GetS(113,0,0,0) == 0 then 
+				instruct_0();
+				if instruct_11(0,188) == true then 
+					QZXS("领悟一阳指！")
+					instruct_0();
+					setLW1(17)
+					addthing(96)
+				else
+					say("阿弥陀佛",602) 
+				end	
+			end
+				do return end  --无条件结束事件
 		else
-			say("阿弥陀佛！",602) 
+			instruct_13()  --场景变亮
+			if GetS(111, 0, 0, 0) == 0 then  
+				say("少侠短时间就学会这套功夫，真是天赋异禀！",602)		
+				instruct_0();
+				if instruct_11(0,188) == true then 
+					QZXS("领悟天南易阳诀！")
+					instruct_0();
+					say("多谢前辈",0)
+					SetS(111, 0, 0, 0,152)
+					addthing(289)
+				else
+					say("阿弥陀佛！",602) 
+				end	
+			end
+			if GetS(113,0,0,0) == 0 then 
+				say("这套功夫你也一并传你，方便对付鸠摩智！",602) 
+				instruct_0();
+				if instruct_11(0,188) == true then 
+					QZXS("领悟六脉神剑！")
+					say("多谢前辈",0)
+					instruct_0();
+					setLW1(49)
+					addthing(113)         --获得六脉神剑剑谱   
+				else
+					say("阿弥陀佛！",602) 
+				end	
+			end
 		end	
-	end
-end	
-say("誉儿就有劳少侠了！",602)
-say("晚辈一定救出段公子的！",0)
+		say("誉儿就有劳少侠了！",602)
+		say("晚辈一定救出段公子的！",0)
+	end	
 end
 
 OEVENTLUA[1005] = function()
@@ -2954,6 +3005,19 @@ else
 	say("传音入密：<我也同意。>", 599)
 	say("传音入密：<既然二位有此想法，老朽也作罢。>", 5)
 	say("传音入密：<嘿嘿！>", 455)
+	if GetS(113,0,0,0) == 0 and MPPD(0) == 0 and PersonKFJ(0, 1) and PersonKFJ(0, 27) and PersonKFJ(0, 50) and PersonKFJ(0, 68) then 
+		Cls()  --清屏
+		instruct_13()  --场景变亮
+		say("我这一路行来，既无精深武学傍身，亦无师门护佑",0) 
+		say("竟以弱胜强，击败这等顶尖高手，实属不易，是否应该将所学武学为根基，走出自己的路？",0)
+		instruct_0();
+		if instruct_11(0,188) == true then 
+			QZXS("领悟草头百姓！")
+			setLW1(996)
+		else
+			say("也罢，再另寻其他机缘吧",0) 
+		end	
+	end	
 	do return end
 end
 end
@@ -3184,4 +3248,195 @@ if GetS(111, 0, 0, 0) == 0 then
 	end
 end
 	do return end
+end
+
+OEVENTLUA[6016] = function()
+instruct_2(77,-1)
+instruct_2(84,-1)
+say("这位前辈，请把东西还给我。", 0)
+say("能来到这里，看来你就是那个有缘人。", 599)
+say("前辈怎么知道？难道您就是......？", 0)
+say("既然你有缘来到这里，让我来考考你。", 599)
+say("请前辈指点。", 0)
+instruct_0();
+if GetS(111, 0, 0, 0) == 0 then
+	if WarMain(385) == false then
+	    instruct_13()  --场景变亮
+		say("还需要历练。", 599)
+		say(".......",0) 
+		instruct_2(77,1)
+	else
+		say("宝典内容如此博大精深，多谢前辈！",0) 
+		say("去吧，好好善用宝典！",599) 
+	    QZXS("领悟九阴真经！")
+	    instruct_0();
+	    SetS(111, 0, 0, 0, 107)
+		instruct_2(77,1)
+        instruct_2(84,1)
+	end
+end
+	do return end
+end
+
+OEVENTLUA[6017] = function() --不老长春谷欢总
+instruct_3(-2,-2,1,0,0,0,0,9284,9284,9284,-2,-2,-2)  --修改场景事件
+Cls()  --清屏
+say("少年，你想到山顶就必须接受考验。", 455)
+say("明白了，前辈请进招。", 0)
+say("好，小心了！", 455)
+if WarMain(385) == false then
+	instruct_13()  --场景变亮
+	say("回去吧！",455) 
+	say("..........",0) 
+else
+    say("多谢前辈手下留情。",0) 
+	say("不错不错，接下来就看你是否有能力通过三哥考验了。",455) 
+	say("前辈您这是？？？",0) 
+	say("我来帮你打通经脉，这些丹药是给你的。",455) 
+	say("再次感谢前辈。",0) 
+	instruct_0();
+	AddPersonAttrib(0, "拳掌功夫", 999)
+	AddPersonAttrib(0, "御剑能力", 999)
+	AddPersonAttrib(0, "耍刀技巧", 999)
+	AddPersonAttrib(0, "特殊兵器", 999)
+	AddPersonAttrib(0, "暗器技巧", 999)
+    QZXS("全系能力增加999")
+	instruct_2(8,20)  --天王保命丹
+	instruct_3(-2,-2,0,0,0,0,0,0,0,0,0,-2,-2)  --修改场景事件
+end
+end
+
+OEVENTLUA[6018] = function() --不老长春谷山顶
+    My_Enter_SubScene(116,54,25,1)
+end
+
+OEVENTLUA[6019] = function() --不老长春谷山顶
+    instruct_3(-2,0,0,0,0,0,0,0,0,0,-2,-2,-2); 
+	instruct_3(-2,116,0,0,0,0,0,0,0,0,-2,-2,-2); 
+end
+
+OEVENTLUA[6020] = function() --不老长春谷山顶
+    My_Enter_SubScene(114,49,14,1)
+end
+
+OEVENTLUA[6021] = function() --不老长春谷山顶
+instruct_3(-2,-2,1,0,0,0,0,5380,5380,5380,-2,-2,-2)  --修改场景事件
+Cls()  --清屏
+say("小友，你终于来了！", 5)
+say("张真人知道晚辈要来？？？", 0)
+say("呵呵，小友既然有能力来到这里，我们就在考考你。", 5)
+say("我们？？？？？？", 0)
+say("少侠，你忘了老和尚了吗？", 615)
+say("达摩祖师！", 0)
+say("哈哈！少侠小心了", 615)
+say("能得到两位前辈的考验，这是我的荣誉。", 0)
+if WarMain(386) == false then
+	instruct_13()  --场景变亮
+	say("还差点火候，小友下次努力吧。",5) 
+	say("多谢两位前辈的指点",0) 
+else
+    say("多谢两位前辈手下留情。",0) 
+	say("我们老了，哈哈哈！",615) 
+	say("小友，不错不错！",0) 
+	instruct_3(-2,-2,0,0,0,0,0,0,0,0,0,-2,-2)  --修改场景事件
+end
+end
+
+OEVENTLUA[6022] = function() --不老长春谷山顶
+instruct_3(-2,-2,1,0,0,0,0,5118,5118,5118,-2,-2,-2)  --修改场景事件
+Cls()  --清屏
+say("能走到这里，辛苦了。", 585)
+say("你是？", 0)
+say("很显然，我是一名店小二。", 585)
+say("所以呢？", 0)
+say(".........我能帮你合成一次内功。", 585)
+say(".........你用的着那么直白吗？", 0)
+say("时间紧迫，长话短说而已", 585)
+say("那么，肯定有代价！", 0)
+say("聪明！", 585)
+say("我打赢你就帮我合成是吗？", 0)
+say("不不不！", 585)
+say("..........", 0)
+say("少年你想得太简单了。", 585)
+say("要怎么打？直接说。", 0)
+say("你听过神州三绝吗？", 585)
+say("没有", 0)
+say(".........", 585)
+say("哎呀，不管怎么样，我来到这里了就不能空手而回。", 0)
+say("那么，骚年你小心了！", 585)
+say("来呀，谁怕谁！", 0)
+say("好，让你看看我们新旧三绝！", 585)
+if WarMain(387) == false then
+	instruct_13()  --场景变亮
+	say("骚年，看来你还是空手而回了",585) 
+	say("..........",0) 
+else
+    say("我还是挺厉害的。",0) 
+	say("不错不错，骚年看好了！",585) 
+	instruct_0();
+    local menu
+	local WGid
+	Cls();
+	DrawStrBox(CC.MainSubMenuX, CC.MainSubMenuY,"选择融合功体", C_WHITE, CC.DefaultFont);
+	menu = {};
+	for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
+		WGid = JY.Person[0]["武功"..i];
+		if yongnei(WGid, 0) and WGid ~= 91 then	---显示内功
+		   menu[#menu + 1] = {JY.Wugong[WGid]["名称"],nil,1,WGid};
+		end
+	end
+	local r = ShowMenu(menu,#menu,0,CC.MainSubMenuX,CC.MainSubMenuY+CC.SingleLineHeight,0,0,1,1,CC.DefaultFont,C_ORANGE,C_WHITE);
+	if r <= 0 then
+		return 0
+	end	
+
+	JY.Thing[224]["加攻击力"] = menu[r][4] --设置功体
+	local a = 0
+	for i = 1,HHH_GAME_SETTING["WG_COUNT_MAX"] do 
+	   if JY.Person[0]["武功"..i] == JY.Thing[224]["加攻击力"] then 
+	     -- JY.Person[0]["武功"..i] = JY.Person[0]["武功"..i+1]
+		 a=i
+	   end
+	end
+		Cls()
+		DrawStrBox(CC.MainSubMenuX, CC.MainSubMenuY,"选择融合功体", C_WHITE, CC.DefaultFont);
+		menu = {};
+		for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
+			WGid = JY.Person[0]["武功"..i];
+			if yongnei(WGid, 0) and WGid ~= 91 and WGid ~= JY.Thing[224]["加攻击力"] then	---显示内功
+			   menu[#menu + 1] = {JY.Wugong[WGid]["名称"],nil,1,WGid};
+			end
+		end	
+		local r = ShowMenu(menu,#menu,0,CC.MainSubMenuX,CC.MainSubMenuY+CC.SingleLineHeight,0,0,1,1,CC.DefaultFont,C_ORANGE,C_WHITE);
+		if r <= 0 then
+			return 0
+		end	
+    
+	JY.Thing[224]["加防御力"] = menu[r][4] --设置功体
+	JY.Person[0]["武功"..a] = 9999
+	JY.Person[0]["武功等级"..a] = 999
+	local a = 0
+	for i = 1,HHH_GAME_SETTING["WG_COUNT_MAX"] do 
+	   if JY.Person[0]["武功"..i] == JY.Thing[224]["加防御力"] then 
+	     -- JY.Person[0]["武功"..i] = JY.Person[0]["武功"..i+1]
+		 a=i
+	   end
+	end
+    for i = a,HHH_GAME_SETTING["WG_COUNT_MAX"] do 
+	      JY.Person[0]["武功"..i] = JY.Person[0]["武功"..i+1]
+		  JY.Person[0]["武功等级"..i] = JY.Person[0]["武功等级"..i+1] 
+	end
+		JY.Person[0]["武功"..HHH_GAME_SETTING["WG_COUNT_MAX"]] = 0
+		JY.Person[0]["武功等级"..HHH_GAME_SETTING["WG_COUNT_MAX"]] = 0
+		
+	JY.Thing[224]["名称2"] = "";
+	while JY.Thing[224]["名称2"] == "" do
+		JY.Thing[224]["名称2"] = Shurufa(32, CC.ScreenH - 6 * CC.Fontbig)
+		if JY.Thing[224]["名称2"] == "" then
+			DrawStrBoxWaitKey("请给你的武功命名", C_WHITE, 30)
+		end
+	end
+	JY.Wugong[9999]["名称"] = JY.Thing[224]["名称2"]
+	say("哈哈哈哈！")
+end
 end
