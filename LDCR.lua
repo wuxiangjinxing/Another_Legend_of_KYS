@@ -56187,6 +56187,8 @@ end
 				local a = math.random(2)
 				if a == 1 then
 					CleanWarMap(4, 0)
+					local x1 = WAR.Person[WAR.CurID]["×ø±êX"];
+					local y1 = WAR.Person[WAR.CurID]["×ø±êY"];
 					for ex = x1 - 99, x1 + 99 do
 				        for ey = y1 - 99, y1 + 99 do
 					        SetWarMap(ex, ey, 4, 1)
