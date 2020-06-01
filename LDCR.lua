@@ -16825,7 +16825,6 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		end
 		WAR.BXJFDZ1[pid] = nil
 	end
-	 	
 	 
 	
 	--[[豸苗：扫地僧隐忍
@@ -31984,7 +31983,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 					if WAR.Person[i]["我方"] == false and WAR.Person[i]["死亡"] == false and i ~= WAR.CurID then
 						WAR.Person[i].Time = math.max(WAR.Person[i].Time - dd, -500)
 						WAR.Person[i]["内伤程度"] = (WAR.Person[i]["内伤程度"] or 0) + AddPersonAttrib(WAR.Person[i]["人物编号"],"受伤程度", math.random(15,d))
-						WAR.XNXS[tmppid] = 1
+						WAR.XNXS[WAR.Person[i]["人物编号"]] = 1
 					end
 				end
 		elseif WAR.ZKSY == 3 then
@@ -32072,7 +32071,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 			if WAR.Person[i]["我方"] == false and WAR.Person[i]["死亡"] == false and i ~= WAR.CurID then
 				WAR.Person[i].Time = math.max(WAR.Person[i].Time-150,-150,300)
 				WAR.Person[i]["内伤程度"] = (WAR.Person[i]["内伤程度"] or 0) + AddPersonAttrib(WAR.Person[i]["人物编号"],"受伤程度", math.random(25))
-				WAR.XNXS[tmppid] = 1
+				WAR.XNXS[WAR.Person[i]["人物编号"]] = 1
 			end
 		end
 	    ng = ng + 1250		
@@ -58758,14 +58757,14 @@ function AddPersonAttrib(id, str, value)
 	end	
 
     if str == "中毒程度" and value < 0 then
-	if id == 0 and putong() == 8 then
-		value = 0
-	end
-	if JY.Status == GAME_WMAP then
-		if WAR.POISON[id] ~= nil and WAR.POISON[id] > 0 then
+		if id == 0 and putong() == 8 then
 			value = 0
 		end
-	end
+		if JY.Status == GAME_WMAP then
+			if WAR.POISON[id] ~= nil and WAR.POISON[id] > 0 then
+				value = 0
+			end
+		end
     end
     if str == "生命" and value > 0 then
 		if JY.Status == GAME_WMAP then
@@ -58801,6 +58800,7 @@ function AddPersonAttrib(id, str, value)
 			if wglw1(id,48) and WAR.BXJF2 == 1 then
 				value = 0
 			end	
+			--WAR.Person[id]["真伤点数"] = (WAR.Person[id]["真伤点数"] or 0) + value
 		end
     end
 	if str == "内力" and value < 0 then
