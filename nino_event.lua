@@ -9272,7 +9272,7 @@ OEVENTLUA[730] = function()  --林平之觉醒
 			do return end  --无条件结束事件
 			Cls()  --清屏
 
-		else
+		elseif PersonKF(0,105) then
 			instruct_3(-2, 0,0,0,0,0,0,0,0,0,0,0,0)  --修改场景事件
 			instruct_3(-2, 4,0,0,0,0,0,0,0,0,0,0,0)  --修改场景事件
 			instruct_3(-2, 3,0,0,0,0,0,0,0,0,0,0,0)  --修改场景事件
@@ -9300,6 +9300,20 @@ OEVENTLUA[730] = function()  --林平之觉醒
 			instruct_21(36)
 			null(70,25)
 			do return end  --无条件结束事件
+		else 
+			instruct_3(-2, 0,0,0,0,0,0,0,0,0,0,0,0)  --修改场景事件
+			instruct_3(-2, 4,0,0,0,0,0,0,0,0,0,0,0)  --修改场景事件
+			instruct_3(-2, 3,0,0,0,0,0,0,0,0,0,0,0)  --修改场景事件
+			instruct_3(-2, 2,0,0,0,0,0,0,0,0,0,0,0)  --修改场景事件
+			instruct_3(-2, 1,0,0,0,0,0,0,0,0,0,0,0)  --修改场景事件
+			addevent(56,1,1,8653,1,5862)
+			--JY.Person[36]["性别"] = 0
+			setJX(36)
+			Cls()  --清屏
+			instruct_13()  --场景变亮
+			instruct_37(-5)  --增加品德
+			say("哈...哈哈哈...爹、妈，我给你们报仇了！", 36, 0)
+			say("哈哈哈哈哈哈哈哈！！！", 36, 0)
 		end
 	else
 		TalkEx("嘿嘿嘿，我要想办法把青城*派发扬广大……", 24, 0)  --对话
@@ -9315,6 +9329,11 @@ OEVENTLUA[8653] = function()--辟邪领悟事件
 		say("青城派的野兽！！！！！", 36, 0)
 		SetS(106, 63, 1, 0, 0)
 		SetS(106, 63, 2, 0, 36)
+		JY.Person[36]["武功1"] = 48
+		JY.Person[36]["武功2"] = 105
+		JY.Person[36]["武功等级1"] = 999
+		JY.Person[36]["武功等级2"] = 999
+		JY.Person[36]["声望"] = 105
 		if WarMain(288) == false then  
 			instruct_15(0);   
 			instruct_0(); 
@@ -9389,6 +9408,11 @@ OEVENTLUA[8653] = function()--辟邪领悟事件
 		say("青城派的野兽！！！！！", 36, 0)
 		SetS(106, 63, 1, 0, 0)
 		SetS(106, 63, 2, 0, 36)
+		JY.Person[36]["武功1"] = 48
+		JY.Person[36]["武功2"] = 105
+		JY.Person[36]["武功等级1"] = 999
+		JY.Person[36]["武功等级2"] = 999
+		JY.Person[36]["声望"] = 105
 		if WarMain(288) == false then  
 			instruct_15(0);   
 			instruct_0(); 

@@ -1317,7 +1317,7 @@ function KHTZF(pid)
 	if wglw(pid,105) and wglw1(pid,177) and PersonKF(pid,48) and PersonKF(pid,177) and PersonGT(pid,105) then
 		return true
 	end
-	if DT(pid,27) and PersonKF(pid,177)  and PersonGT(pid,105) then --and JX(pid)
+	if DT(pid,27) and PersonKF(pid,177)  and PersonGT(pid,105) and JX(pid) then 
 		return true
 	end	
 	return false
@@ -2696,6 +2696,41 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .."+"..FLHSYL[5]		--难知如阴
 			else
 				WAR.Person[emenyid][CC.TXWZ2] = mc .. FLHSYL[5]		--难知如阴
+			end
+			WAR.ACT = 10
+			WAR.ZYHB = 0
+			WAR.FLHS5 = 1
+		end
+	end
+	if eid == 0 and zjtype() == 3 and JX(eid) and PersonKF(eid,91) and JLSD(20,50+lrjl,0) and DWPD() then
+		local mc = "六如玄蛟诀·"
+		local rs = math.random(6)
+		local ry = math.random(6)
+		local rl = math.random(6)
+		if rl > 3 then --3 = 如林
+			WAR.Person[emenyid][CC.TXDH] = 6
+			if WAR.Person[emenyid][CC.TXWZ2] ~= nil then
+				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .."+".."徐如林"
+			else
+				WAR.Person[emenyid][CC.TXWZ2] = mc .."徐如林"		--其徐如林
+			end
+			WAR.FLHS2 = WAR.FLHS2 + 3
+		end
+		if rs > 3 then -- 2 = 如山
+			WAR.Person[emenyid][CC.TXDH] = 6
+			if WAR.Person[emenyid][CC.TXWZ2] ~= nil then
+				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .."+".."不动如山"		--不动如山
+			else
+				WAR.Person[emenyid][CC.TXWZ2] = mc .."不动如山"		--不动如山
+			end
+			WAR.FLHS4 = 1
+		end
+		if ry > 3 and tianshu() > 4 then
+			WAR.Person[emenyid][CC.TXDH] = 6
+			if WAR.Person[emenyid][CC.TXWZ2] ~= nil then
+				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .."+".."难知如阴"		--难知如阴
+			else
+				WAR.Person[emenyid][CC.TXWZ2] = mc .."难知如阴"	--难知如阴
 			end
 			WAR.ACT = 10
 			WAR.ZYHB = 0
@@ -10719,7 +10754,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end	
 		
 	--杀戮魅影
-	if KHTJF(eid) and JY.Person[eid]["生命"] <= 500 and JLSD(10,40,eid) then --秘剑演武·剑势
+	if KHTJF(eid) and JY.Person[eid]["生命"] <= 500 and ((DT(eid,36) and JLSD(10,40,eid)) or JLSD(10,40,eid)) then --秘剑演武·剑势
 	    local str = ""
 	    if WAR.JSJY[eid] == nil and WAR.JSJY[200+eid] == nil then --剑势剑影
 			--local nydx = {}
@@ -23186,8 +23221,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     if WAR.GBWZ == 1 and DT(pid, 516) and math.random(10) < 6 and WAR.Person[emenyid]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and not jtyl(eid) and not wssz(eid) then --pid == 516
   	    WAR.Person[emenyid]["生命点数"] = -JY.Person[eid]["生命"];
         JY.Person[eid]["生命"] = 0
-    end
-
+    end		
+		
 
     if J2YSS(pid) and WAR.DUOMINGJIAN==15 and WAR.Person[emenyid]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and not jtyl(eid) and not wssz(eid) then --pid == 516
   	    WAR.Person[emenyid]["生命点数"] = -JY.Person[eid]["生命"];
@@ -23201,11 +23236,16 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		addeffect(WAR.ATKDOWN,eid,20)
 		WAR.LXXS[eid] = 1
 		str = "邪剑镇邪"
-		if JY.Person[eid]["生命"] < math.modf(JY.Person[eid]["生命最大值"]*0.15) and WAR.SPIRIT[eid] ~= nil and WAR.SPIRIT[eid] <= 120 and JLSD(10,40,pid) then
-			WAR.Person[emenyid]["生命点数"] = -JY.Person[eid]["生命"];
-			JY.Person[eid]["生命"] = 0
-			str1 = "·凶杀太岁"
-			--DIYdisplay("邪剑镇邪·凶杀太岁")
+		if JY.Person[eid]["生命"] < math.modf(JY.Person[eid]["生命最大值"]*0.15) and WAR.SPIRIT[eid] ~= nil and WAR.SPIRIT[eid] <= 120 then
+			if wugong == 48 and JLSD(10,40,pid) then
+				WAR.Person[emenyid]["生命点数"] = -JY.Person[eid]["生命"];
+				JY.Person[eid]["生命"] = 0
+				str1 = "·凶杀太岁"
+			elseif wugong ~= 48 and yongjian(wugong) and math.random(10) > 9 then
+				WAR.Person[emenyid]["生命点数"] = -JY.Person[eid]["生命"];
+				JY.Person[eid]["生命"] = 0
+				str1 = "·凶杀太岁"
+			end	
 		end	
 		if WAR.Person[emenyid][CC.TXWZ3] == nil then
 			WAR.Person[emenyid][CC.TXWZ3] = str..str1
@@ -34347,24 +34387,10 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		end
 		local t = math.random(6)
 		local p = math.random(6)
-		
-		--if GetS(10, 0, 11, 0) ~= 1 and JLSD(10, 60, pid) then --4如1-3
-		--	t = math.random(3)
-		--else
-		--	t = math.random(4) --6如1-4
-		--end
-
 		if putong() == 6  then --and GetS(10, 0, 11, 0) ~= 1 then --仁者4如2-3
 			t = math.random(8) + 1
 			p = math.random(8) + 1
 		end
-		--if putong() == 6 and GetS(10, 0, 11, 0) == 1 and JLSD(25, 75, pid) then --仁者6如2-3
-		--	t = math.random(2) + 1
-		--end
-		--if putong() == 6 and GetS(10, 0, 11, 0) == 1 and (t == 1 or t == 4) and WAR.FLHS6 > 2 then
-		--	t = math.random(2) + 1
-		--end
-
 		if t >3 and tianshu() >= 1 then -- t判定如风
 			WAR.Person[id][CC.TXDH] = 6
 			if WAR.Person[id][CC.TXWZ2] ~= nil then
@@ -34404,6 +34430,52 @@ function War_Fight_Sub(id, wugongnum, x, y)
 			WAR.FLHS6 = WAR.FLHS6 + 1
 		end
 	end
+	
+	if pid == 0 and zjtype() == 3 and JX(pid) and PersonKF(pid,91) and JLSD(20,50+lrjl,0) then
+		local mc = "六如玄蛟诀·"
+		local rf = math.random(6)
+		local rh = math.random(6)
+		local rl = math.random(6)
+		if rf >3 then -- t判定如风
+			WAR.Person[id][CC.TXDH] = 6
+			if WAR.Person[id][CC.TXWZ2] ~= nil then
+				WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .. "+".."疾如风"
+			else
+				WAR.Person[id][CC.TXWZ2] = mc .."疾如风"    --其疾如风
+			end
+			WAR.FLHS1 = 1
+			for j = 0, WAR.PersonNum - 1 do --如风+队友集气150
+				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] == WAR.Person[WAR.CurID]["我方"] then
+					WAR.Person[j].Time = WAR.Person[j].Time + 150
+				end
+				if WAR.Person[j].Time > 980 then
+					WAR.Person[j].Time = 980
+				end
+			end
+		end
+		if rh >3 then --p判定如火
+			WAR.Person[id][CC.TXDH] = 6
+			if WAR.Person[id][CC.TXWZ2] ~= nil then
+				WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .. "+".."侵略如火"   --侵略如火
+			else
+				WAR.Person[id][CC.TXWZ2] = mc .."侵略如火"   --侵略如火
+			end
+			ng = ng + 3000
+			WAR.FLHS3 = 1
+		end
+		
+		if ((rl > 3 and WAR.FLHS6 < 3) or WAR.FLHS6 == 3) and tianshu() > 5 then
+			WAR.Person[id][CC.TXDH] = 6
+			if WAR.Person[id][CC.TXWZ2] ~= nil then
+				WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .. "+".."动如雷霆"    --动如雷震
+			else
+				WAR.Person[id][CC.TXWZ2] = mc .."动如雷霆"    --动如雷震
+			end
+			fightnum = fightnum + 1
+			WAR.FLHS6 = WAR.FLHS6 + 1
+		end
+	end	
+		
    
 	--如果学会北冥神功或者角色是零二七
     if (PersonKF(pid, 85) or T1LEQ(pid)) and (JLSD(25, 75, pid) or DT(pid, 118) or DT(pid, 116)) then
@@ -51140,6 +51212,11 @@ function GetJiqi()
 				if wglw2(id,196) then
 					aa = aa + 5
 				end
+				if wglw1(id,177) then
+					aa = aa + math.random(10)
+				elseif wglw1(id,48) then
+					aa = aa + 5
+				end	
 				if JLSD(10, aa, id)	then
 					for j = 0,WAR.PersonNum -1 do
 						if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] == false then                            			   			                   
@@ -52115,7 +52192,7 @@ function GetJiqi()
 				local offset1 = math.abs(WAR.Person[i]["坐标X"] - WAR.Person[j]["坐标X"]) 
 				local offset2 = math.abs(WAR.Person[i]["坐标Y"] - WAR.Person[j]["坐标Y"])
 				local offset=offset1+offset2
-				if wglw1(df,48) or (DT(df,36) and PersonKF(df, 48) and JX(df) and WAR.LPZYL[df] >= 21 and WAR.LPZYL[df] <= 30)  then		
+				if wglw1(df,48) or (DT(df,36) and PersonKF(df, 48) and JX(df) and WAR.LPZYL[df] ~= nil and WAR.LPZYL[df] >= 21 and WAR.LPZYL[df] <= 30)  then		
 					if WAR.Person[j]["我方"] ~= WAR.Person[i]["我方"] and WAR.Person[j]["死亡"] == false  then
 						local xn = math.modf((JY.Person[df]["内力"])/300)
 						if xn <= 20 then
@@ -53610,7 +53687,7 @@ end
       WAR.Person[i].Time = 700
     end
     --林平之妖力
-	if DT(WAR.Person[i]["人物编号"], 36) and JX(WAR.Person[i]["人物编号"]) and PersonKF(WAR.Person[i]["人物编号"],48) and PersonGT(WAR.Person[i]["人物编号"],105) then
+	if DT(WAR.Person[i]["人物编号"], 36) and JX(WAR.Person[i]["人物编号"]) and  PersonGT(WAR.Person[i]["人物编号"],105) then
 		WAR.LPZYL[WAR.Person[i]["人物编号"]] = 0
 	end	
 	        
@@ -56315,19 +56392,7 @@ end
 	            ShowScreen()
 	            lib.Delay(2000)
 			    setJX(72,1)
-				for i,v in ipairs(CC.TFWG) do
-				  if v[1] == 72 then
-					 v[2] = 44
-					 break
-				  end
-				end
-				for i,v in ipairs(CC.TFWG1) do
-				  if v[1] == 72 then
-					 v[2] = 67
-					 break
-				  end
-				end
-	            WAR.TGN = 0
+				WAR.TGN = 0
 	        end
 			
 			if WAR.YJ2==1 then
@@ -56346,12 +56411,6 @@ end
 	            ShowScreen()
 	            lib.Delay(2000)
 			    setJX(4,1)
-				for i,v in ipairs(CC.TFWG) do
-				  if v[1] == 4 then
-					 v[2] = 67
-					 break
-				  end
-				end
 	            WAR.YJ2 = 0
 	        end
 			
@@ -74804,7 +74863,7 @@ SetGlobalConst = function()
     --新队友
     TeamN = {614, 619, 616, 620, 161, 3, 621, 625, 626, 627,
     628, 629, 630, 631, 632, 633, 635, 636, 176, 104, 638, 639, 655, 656, 657, 661, 662, 663, 664, 929, 93}
-    FLHSYL = {"其疾如风", "其徐如林", "侵略如火", "不动如山", "难知如阴", "动如雷震", "六如隼龙诀"}
+    FLHSYL = {"其疾如风", "其徐如林", "侵略如火", "不动如山", "难知如阴", "动若雷霆", "六如隼龙诀"}
     YYGZT = {"六如苍龙诀", "六如隼龙诀"}
     --TSXMLB = {"零二七", "水镜四奇", "萧雨客"}
     --TSXMLB = {"零二七", "水镜四奇", "王小石", "白愁飞"}
@@ -79379,6 +79438,7 @@ function NEvent7(keypress)
 					ts = ts + 1
 				end
 			end
+			--标主
 			if zjtype() == 1 then
 				if ts > 6 and juexing() == 0 then --如果7本书且没观武 且普通人物
 					say(CC.EVB27, 260, 0, CC.EVB26)
@@ -79468,149 +79528,6 @@ function NEvent7(keypress)
 							addHZ(87)
 						end						
 					end
-					setJX(zj()) --华山观武判定，一次觉醒
-						addHZ(152)
-						addHZ(153)
-						addHZ(154)
-						addHZ(155)
-				else
-					say(CC.EVB51, 260, 0, CC.EVB26)
-				end
-			end
-
-			if zjtype() == 3 or zjtype() == 4 then
-				if ts > 6 and juexing() == 0 then --如果7本书且没观武 且畅想人物
-					say(CC.EVB27, 260, 0, CC.EVB26)
-					if DrawStrBoxYesNo(-1, -1, CC.EVB28, C_ORANGE, CC.DefaultFont) then --观武
-						local X1, X2, X3, X4, Z1, Z2, Z3, Z4, D1, D2, D3, D4 = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
-						X1 = JY.Person[50][CC.EVB29] --观武清空四神物品
-						X2 = JY.Person[50][CC.EVB30]
-						X3 = JY.Person[50][CC.EVB31]
-						X4 = JY.Person[50][CC.EVB32]
-						JY.Person[50][CC.EVB29] = -1
-						JY.Person[50][CC.EVB30] = -1
-						JY.Person[50][CC.EVB31] = -1
-						JY.Person[50][CC.EVB32] = -1
-						Z1 = JY.Person[5][CC.EVB29]
-						Z2 = JY.Person[5][CC.EVB30]
-						Z3 = JY.Person[5][CC.EVB31]
-						Z4 = JY.Person[5][CC.EVB32]
-						JY.Person[5][CC.EVB29] = -1
-						JY.Person[5][CC.EVB30] = -1
-						JY.Person[5][CC.EVB31] = -1
-						JY.Person[5][CC.EVB32] = -1
-						D1 = JY.Person[27][CC.EVB29]
-						D2 = JY.Person[27][CC.EVB30]
-						D3 = JY.Person[27][CC.EVB31]
-						D4 = JY.Person[27][CC.EVB32]
-						JY.Person[27][CC.EVB29] = -1
-						JY.Person[27][CC.EVB30] = -1
-						JY.Person[27][CC.EVB31] = -1
-						JY.Person[27][CC.EVB32] = -1
-						say(CC.EVB33, 260, 0, CC.EVB26)
-						WarMain(229)
-						say(CC.EVB34, 260, 0, CC.EVB26)
-						WarMain(230)
-						say(CC.EVB35, 260, 0, CC.EVB26)
-						WarMain(231)
-						say(CC.EVB36, 260, 0, CC.EVB26)
-						WarMain(232)
-						say(CC.EVB37, 260, 0, CC.EVB26)
-						WarMain(233)
-						say(CC.EVB38, 260, 0, CC.EVB26)
-						WarMain(234)
-						JY.Person[50][CC.EVB29] = X1
-						JY.Person[50][CC.EVB30] = X2
-						JY.Person[50][CC.EVB31] = X3
-						JY.Person[50][CC.EVB32] = X4
-						JY.Person[5][CC.EVB29] = Z1
-						JY.Person[5][CC.EVB30] = Z2
-						JY.Person[5][CC.EVB31] = Z3
-						JY.Person[5][CC.EVB32] = Z4
-						JY.Person[27][CC.EVB29] = D1
-						JY.Person[27][CC.EVB30] = D2
-						JY.Person[27][CC.EVB31] = D3
-						JY.Person[27][CC.EVB32] = D4
-					else
-						instruct_14()
-						instruct_13()
-					end
-					say(CC.EVB39)
-					tb(JY.Person[0]["姓名"].."战斗力大幅度提升。")
-					Cls()
-                    DrawStrBox(-1, -1, CC.EVB46, C_ORANGE, CC.DefaultFont)
-					JY.Person[0]["武功2"] = 91
-					JY.Person[0]["武功等级2"] = 900
-					JY.Wugong[91][CC.EVB42] = CC.EVB43
-					JY.Wugong[91][CC.EVB44] = 1300
-					JY.Wugong[91][CC.EVB45] = 6
-					if zjtype() == 3 then
-						tb(JY.Person[0]["姓名"].."战斗力大幅度提升。")
-						if DT(0,72) then
-							JY.Person[0]["武功1"] = 44
-							JY.Person[0]["武功等级1"] = 999
-							JY.Person[0]["武功3"] = 67
-							JY.Person[0]["武功等级3"] = 999
-							JY.Person[0]["左右互搏"] = 1
-							for i,v in ipairs(CC.TFWG) do
-							  if v[1] == 72 then
-								 v[2] = 44
-								 break
-							  end
-							end
-							for i,v in ipairs(CC.TFWG1) do
-							  if v[1] == 72 then
-								 v[2] = 67
-								 break
-							  end
-							end
-							say("我终于掌握了胡苗两家的绝学，可以威震天下了，哈哈", 0) 
-							DrawStrBox(-1, -1,"田归农觉醒刀剑十杀奥义" , C_ORANGE, CC.DefaultFont)										
-						elseif DT(0,4) then
-							JY.Person[0]["武功1"] = 67
-							JY.Person[0]["武功等级1"] = 999
-							JY.Person[0]["用毒能力"]=500
-							JY.Person[0]["医疗能力"]=500
-							for i,v in ipairs(CC.TFWG) do
-							  if v[1] == 4 then
-								 v[2] = 67
-								 break
-							  end
-							end
-							say("看我把胡家刀法和毒术合起来用，哈哈，赚大发了", 0) 
-							SetS(112,1,0,0,67)
-							DrawStrBox(-1, -1,"阎基觉醒胡家毒刀奥义" , C_ORANGE, CC.DefaultFont)										
-						elseif DT(0,48) then
-							addthing(343)
-						elseif DT(0,619) then
-							JY.Person[0]["左右互搏"] = 1
-						elseif DT(0,55) then
-							JY.Person[0]["武功4"] = 148
-							JY.Person[0]["武功等级4"] = 999
-						elseif DT(0,455) then
-							JY.Person[0]["武功3"] = 105
-							JY.Person[0]["武功等级3"] = 999	
-						else
-					end
-						AddPersonAttrib(0, "攻击力", 30)
-						AddPersonAttrib(0, "防御力", 30)
-						AddPersonAttrib(0, "轻功", 30)
-						AddPersonAttrib(0, "拳掌功夫", 10)
-						AddPersonAttrib(0, "御剑能力", 10)
-						AddPersonAttrib(0, "耍刀技巧", 10)						
-						AddPersonAttrib(0, "特殊兵器", 10)
-						AddPersonAttrib(0, "暗器技巧", 10) --武骧金星：添加暗器
-						AddPersonAttrib(0, "武学常识", 50)					
-						tb(JY.Person[0]["姓名"].."攻防轻和兵器值上升！武学常识增加！")
-	
-					end
-					if JY.Person[0]["资质"] >= 30 and JY.Person[0]["资质"] <= 79 then
-						Cls()
-						say("中者，天下之正道，庸者，天下之定理。你资质中庸，却正好契合了不偏不倚的道理。我便再送你一样东西。", 260, 0, CC.EVB26)
-						addHZ(87)
-					end
-						SetS(10, 0, 12, 0, 1) 
-						SetD(43, 4, 2, 0)
 					setJX(zj()) --华山观武判定，一次觉醒
 						addHZ(152)
 						addHZ(153)
@@ -79951,6 +79868,215 @@ function NEvent7(keypress)
 						QZXS("步惊云领悟无求易诀！")					
 					end
 					setJX(zj(), 1) --判定3次觉醒
+				else
+					say(CC.EVB51, 260, 0, CC.EVB26)
+				end
+			end
+			--畅想
+			if zjtype() == 3 then
+				if ts > 3 and juexing() == 0 then --如果7本书且没观武 且畅想人物
+					say(CC.EVB27, 260, 0, CC.EVB26)
+					if DrawStrBoxYesNo(-1, -1, CC.EVB28, C_ORANGE, CC.DefaultFont) then --观武
+						local X1, X2, X3, X4, Z1, Z2, Z3, Z4, D1, D2, D3, D4 = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
+						X1 = JY.Person[50][CC.EVB29] --观武清空四神物品
+						X2 = JY.Person[50][CC.EVB30]
+						X3 = JY.Person[50][CC.EVB31]
+						X4 = JY.Person[50][CC.EVB32]
+						JY.Person[50][CC.EVB29] = -1
+						JY.Person[50][CC.EVB30] = -1
+						JY.Person[50][CC.EVB31] = -1
+						JY.Person[50][CC.EVB32] = -1
+						Z1 = JY.Person[5][CC.EVB29]
+						Z2 = JY.Person[5][CC.EVB30]
+						Z3 = JY.Person[5][CC.EVB31]
+						Z4 = JY.Person[5][CC.EVB32]
+						JY.Person[5][CC.EVB29] = -1
+						JY.Person[5][CC.EVB30] = -1
+						JY.Person[5][CC.EVB31] = -1
+						JY.Person[5][CC.EVB32] = -1
+						D1 = JY.Person[27][CC.EVB29]
+						D2 = JY.Person[27][CC.EVB30]
+						D3 = JY.Person[27][CC.EVB31]
+						D4 = JY.Person[27][CC.EVB32]
+						JY.Person[27][CC.EVB29] = -1
+						JY.Person[27][CC.EVB30] = -1
+						JY.Person[27][CC.EVB31] = -1
+						JY.Person[27][CC.EVB32] = -1
+						say(CC.EVB33, 260, 0, CC.EVB26)
+						WarMain(229)
+						say(CC.EVB34, 260, 0, CC.EVB26)
+						WarMain(230)
+						say(CC.EVB35, 260, 0, CC.EVB26)
+						WarMain(231)
+						say(CC.EVB36, 260, 0, CC.EVB26)
+						WarMain(232)
+						say(CC.EVB37, 260, 0, CC.EVB26)
+						WarMain(233)
+						say(CC.EVB38, 260, 0, CC.EVB26)
+						WarMain(234)
+						JY.Person[50][CC.EVB29] = X1
+						JY.Person[50][CC.EVB30] = X2
+						JY.Person[50][CC.EVB31] = X3
+						JY.Person[50][CC.EVB32] = X4
+						JY.Person[5][CC.EVB29] = Z1
+						JY.Person[5][CC.EVB30] = Z2
+						JY.Person[5][CC.EVB31] = Z3
+						JY.Person[5][CC.EVB32] = Z4
+						JY.Person[27][CC.EVB29] = D1
+						JY.Person[27][CC.EVB30] = D2
+						JY.Person[27][CC.EVB31] = D3
+						JY.Person[27][CC.EVB32] = D4
+					else
+						instruct_14()
+						instruct_13()
+					end
+					say(CC.EVB39)
+					tb(JY.Person[0]["姓名"].."战斗力大幅度提升。")
+					Cls()
+                    DrawStrBox(-1, -1, CC.EVB46, C_ORANGE, CC.DefaultFont)
+					JY.Person[0]["武功2"] = 91
+					JY.Person[0]["武功等级2"] = 999
+					JY.Wugong[91][CC.EVB42] = "六如玄蛟诀"
+					JY.Wugong[91][CC.EVB44] = 1200
+					JY.Wugong[91][CC.EVB45] = 6
+					tb(JY.Person[0]["姓名"].."战斗力大幅度提升。")
+					if DT(0,72) then
+						JY.Person[0]["武功1"] = 44
+						JY.Person[0]["武功等级1"] = 999
+						JY.Person[0]["武功3"] = 67
+						JY.Person[0]["武功等级3"] = 999
+						JY.Person[0]["左右互搏"] = 1
+						SetS(112,1,0,0,44)
+						SetS(112,4,0,0,67)
+						say("我终于掌握了胡苗两家的绝学，可以威震天下了，哈哈", 0) 
+						DrawStrBox(-1, -1,"田归农觉醒刀剑十杀奥义" , C_ORANGE, CC.DefaultFont)										
+					elseif DT(0,4) then
+						JY.Person[0]["武功1"] = 67
+						JY.Person[0]["武功等级1"] = 999
+						JY.Person[0]["用毒能力"]=500
+						JY.Person[0]["医疗能力"]=500
+						say("看我把胡家刀法和毒术合起来用，哈哈，赚大发了", 0) 
+						SetS(112,1,0,0,67)
+						DrawStrBox(-1, -1,"阎基觉醒胡家毒刀奥义" , C_ORANGE, CC.DefaultFont)										
+					elseif DT(0,48) then
+						addthing(343)
+					elseif DT(0,619) then
+						JY.Person[0]["左右互搏"] = 1
+					elseif DT(0,55) then
+						JY.Person[0]["武功4"] = 148
+						JY.Person[0]["武功等级4"] = 999
+					elseif DT(0,455) then
+						JY.Person[0]["武功3"] = 105
+						JY.Person[0]["武功等级3"] = 999	
+					else
+					end
+					AddPersonAttrib(0, "攻击力", 30)
+					AddPersonAttrib(0, "防御力", 30)
+					AddPersonAttrib(0, "轻功", 30)
+					AddPersonAttrib(0, "拳掌功夫", 10)
+					AddPersonAttrib(0, "御剑能力", 10)
+					AddPersonAttrib(0, "耍刀技巧", 10)						
+					AddPersonAttrib(0, "特殊兵器", 10)
+					AddPersonAttrib(0, "暗器技巧", 10) --武骧金星：添加暗器
+					AddPersonAttrib(0, "武学常识", 50)					
+					tb(JY.Person[0]["姓名"].."攻防轻和兵器值上升！武学常识增加！")
+					if JY.Person[0]["资质"] >= 30 and JY.Person[0]["资质"] <= 79 then
+						Cls()
+						say("中者，天下之正道，庸者，天下之定理。你资质中庸，却正好契合了不偏不倚的道理。我便再送你一样东西。", 260, 0, CC.EVB26)
+						addHZ(87)
+					end
+					SetS(10, 0, 12, 0, 1) 
+					SetD(43, 4, 2, 0)
+					setJX(zj()) --华山观武判定，一次觉醒
+					addHZ(152)
+					addHZ(153)
+					addHZ(154)
+					addHZ(155)
+				elseif ts > 6 and juexing() > 0 then--畅想洗六如二阶
+					
+				else
+					say(CC.EVB51, 260, 0, CC.EVB26)
+				end
+			end
+			--自创主
+			if zjtype() == 4 then
+				if ts > 6 and juexing() == 0 then --如果7本书且没观武 且畅想人物
+					say(CC.EVB27, 260, 0, CC.EVB26)
+					if DrawStrBoxYesNo(-1, -1, CC.EVB28, C_ORANGE, CC.DefaultFont) then --观武
+						local X1, X2, X3, X4, Z1, Z2, Z3, Z4, D1, D2, D3, D4 = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
+						X1 = JY.Person[50][CC.EVB29] --观武清空四神物品
+						X2 = JY.Person[50][CC.EVB30]
+						X3 = JY.Person[50][CC.EVB31]
+						X4 = JY.Person[50][CC.EVB32]
+						JY.Person[50][CC.EVB29] = -1
+						JY.Person[50][CC.EVB30] = -1
+						JY.Person[50][CC.EVB31] = -1
+						JY.Person[50][CC.EVB32] = -1
+						Z1 = JY.Person[5][CC.EVB29]
+						Z2 = JY.Person[5][CC.EVB30]
+						Z3 = JY.Person[5][CC.EVB31]
+						Z4 = JY.Person[5][CC.EVB32]
+						JY.Person[5][CC.EVB29] = -1
+						JY.Person[5][CC.EVB30] = -1
+						JY.Person[5][CC.EVB31] = -1
+						JY.Person[5][CC.EVB32] = -1
+						D1 = JY.Person[27][CC.EVB29]
+						D2 = JY.Person[27][CC.EVB30]
+						D3 = JY.Person[27][CC.EVB31]
+						D4 = JY.Person[27][CC.EVB32]
+						JY.Person[27][CC.EVB29] = -1
+						JY.Person[27][CC.EVB30] = -1
+						JY.Person[27][CC.EVB31] = -1
+						JY.Person[27][CC.EVB32] = -1
+						say(CC.EVB33, 260, 0, CC.EVB26)
+						WarMain(229)
+						say(CC.EVB34, 260, 0, CC.EVB26)
+						WarMain(230)
+						say(CC.EVB35, 260, 0, CC.EVB26)
+						WarMain(231)
+						say(CC.EVB36, 260, 0, CC.EVB26)
+						WarMain(232)
+						say(CC.EVB37, 260, 0, CC.EVB26)
+						WarMain(233)
+						say(CC.EVB38, 260, 0, CC.EVB26)
+						WarMain(234)
+						JY.Person[50][CC.EVB29] = X1
+						JY.Person[50][CC.EVB30] = X2
+						JY.Person[50][CC.EVB31] = X3
+						JY.Person[50][CC.EVB32] = X4
+						JY.Person[5][CC.EVB29] = Z1
+						JY.Person[5][CC.EVB30] = Z2
+						JY.Person[5][CC.EVB31] = Z3
+						JY.Person[5][CC.EVB32] = Z4
+						JY.Person[27][CC.EVB29] = D1
+						JY.Person[27][CC.EVB30] = D2
+						JY.Person[27][CC.EVB31] = D3
+						JY.Person[27][CC.EVB32] = D4
+					else
+						instruct_14()
+						instruct_13()
+					end
+					say(CC.EVB39)
+					tb(JY.Person[0]["姓名"].."战斗力大幅度提升。")
+					Cls()
+                    DrawStrBox(-1, -1, CC.EVB46, C_ORANGE, CC.DefaultFont)
+					JY.Person[0]["武功2"] = 91
+					JY.Person[0]["武功等级2"] = 999
+					JY.Wugong[91][CC.EVB42] = CC.EVB43
+					JY.Wugong[91][CC.EVB44] = 1300
+					JY.Wugong[91][CC.EVB45] = 6
+					if JY.Person[0]["资质"] >= 30 and JY.Person[0]["资质"] <= 79 then
+						Cls()
+						say("中者，天下之正道，庸者，天下之定理。你资质中庸，却正好契合了不偏不倚的道理。我便再送你一样东西。", 260, 0, CC.EVB26)
+						addHZ(87)
+					end
+						SetS(10, 0, 12, 0, 1) 
+						SetD(43, 4, 2, 0)
+					setJX(zj()) --华山观武判定，一次觉醒
+						addHZ(152)
+						addHZ(153)
+						addHZ(154)
+						addHZ(155)
 				else
 					say(CC.EVB51, 260, 0, CC.EVB26)
 				end
@@ -84548,33 +84674,36 @@ function UseThing_Type2(id)
         say(CC.EVB145)
         say(CC.EVB146)
         yes = 2; 
-	elseif (putong() == 2 or T8LXY(0)) and personid == 0 and JY.Person[personid]["性别"] == 0 and id == 78 then
+	elseif (putong() == 2 or T8LXY(0)) and personid == 0 and JY.Person[personid]["性别"] ~= 2 and id == 78 then
 		Talk("我看这剑法的精妙之处并不在于是否自宫。看我如何以剑入道克服这个问题！", 0);
 		yes = 2;
-	elseif putong() == 2 and personid == 0 and JY.Person[personid]["性别"] == 0 and id == 93 and PersonKF(0, 48) then
+	elseif putong() == 2 and personid == 0 and JY.Person[personid]["性别"] ~= 2 and id == 93 and PersonKF(0, 48) then
 		Talk("这葵花神功与辟邪剑法实在有很多相似之处。既然我已经克服了后者，修炼葵花神功应该会事半功倍吧。", 0);
 		yes = 2;
-	elseif putong() == 2 and personid == 0 and JY.Person[personid]["性别"] == 0 and id == 357 and PersonKF(0, 48) then
+	elseif putong() == 2 and personid == 0 and JY.Person[personid]["性别"] ~= 2 and id == 357 and PersonKF(0, 48) then
 		Talk("暗香疏影与辟邪剑法本为同源。既然我已经克服了后者，修炼暗香疏影应该是手到擒来。", 0);
 		yes = 2;		
 	elseif (teshu() == 15 or NF(0)) and personid == 0 and JY.Person[personid]["性别"] == 0 and (id == 78 or id == 93 or id == 337 or id == 357) then
 		Talk("我聂家冰心诀正能克制这葵花缺陷！", 0);
 		yes = 2;	
-	elseif putong() == 13 and personid == 0 and JY.Person[personid]["性别"] == 0 and id == 337 then
+	elseif putong() == 13 and personid == 0 and JY.Person[personid]["性别"] ~= 2 and id == 337 then
 		Talk("人说暗器练至极境飞花摘叶俱可伤人，这绣花针虽小，却隐藏了深奥的武学呢。", 0);
 		yes = 2;
-	elseif putong() == 13 and personid == 0 and JY.Person[personid]["性别"] == 0 and id == 93 and PersonKF(0, 177) then
+	elseif putong() == 13 and personid == 0 and JY.Person[personid]["性别"] ~= 2 and id == 93 and PersonKF(0, 177) then
 		Talk("这葵花神功与葵花神针一脉相连。既然我已经克服了后者，修炼葵花神功应该会事半功倍吧。", 0);
 		yes = 2;
-	elseif putong() == 13 and personid == 0 and JY.Person[personid]["性别"] == 0 and id == 357 and PersonKF(0, 177) then
+	elseif putong() == 13 and personid == 0 and JY.Person[personid]["性别"] ~= 2 and id == 357 and PersonKF(0, 177) then
 		Talk("这暗香疏影与葵花神针本为同源。既然我已经克服了后者，修炼暗香疏影应该是手到擒来。", 0);
 		yes = 2;	
 	elseif GetS(111, 0, 0, 0) == 105  and personid == 0 and (id == 78 or id == 93 or id == 337 or id ==357) then 	
 		Talk("我有葵花真解，无需自宫，而且精妙之处不在于自宫，而在于速度。", 0);
 		yes = 2;
 	elseif personid == 0 and cxzj() == 27 and (id == 78 or id == 93 or id == 337 or id == 357) then 	
-		Talk("我有葵花真解，无需自宫，而且精妙之处不在于自宫，而在于速度。", 0);
-		yes = 2;	
+		Talk("哈，葵花一脉的武学在我手中，没有秘密与阻碍！", 0);
+		yes = 2;
+	elseif personid == 36 and PersonKF(36,48) and JX(36) and (id == 78 or id == 93 or id == 337 or id == 357) then
+		Talk("啊...与妖力相比，葵花的狂暴内力还真不算什么。", 36);
+		yes = 2;
 	elseif GetS(113, 0, 0, 0) == 177 and personid == 0 and (id == 337) then
 	    Talk("葵花神针不在于自宫，而是速度", 0)	
 	elseif T4WXS(personid) or T5BCF(personid) or T6XQS(personid) then
