@@ -5982,7 +5982,3 @@ OEVENTLUA[511] = function()
 		end	
 	end	
 end
-
-OEVENTLUA[8653] = function()
-	
-end
