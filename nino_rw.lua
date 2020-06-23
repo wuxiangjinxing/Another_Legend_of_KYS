@@ -1339,6 +1339,33 @@ function newgame()
 			JY.Person[0]["技能" .. i] = JY.Person[r]["技能" .. i]
 		end	
 		Cls()
+		local T = {}
+		for a = 1, 1000 do
+			local b = "" .. a
+			T[b] = a
+		end
+		DrawStrBoxWaitKey(CC.EVB124, C_WHITE, 30)
+		JY.Person[0]["资质"] = -1
+		while JY.Person[0]["资质"] == -1 do
+			local r = GetPinyin1(32, CC.ScreenH - CC.Fontbig * 6)
+			if T[r] ~= nil and T[r] > -1 and T[r] < 101 then
+				JY.Person[0]["资质"] = T[r]
+			else
+				DrawStrBoxWaitKey(CC.EVB125, C_WHITE, 30)
+			end
+		end	
+		Cls()
+		DrawStrBoxWaitKey("请输入角色的体质 范围1-10", C_WHITE, 30)
+		JY.Person[0]["生命增长"] = -1
+		while JY.Person[0]["生命增长"] == -1 do
+			local r = GetPinyin1(32, CC.ScreenH - CC.Fontbig * 6)
+			if T[r] ~= nil and T[r] > 0 and T[r] < 11 then
+				JY.Person[0]["生命增长"] = T[r]
+			else
+				DrawStrBoxWaitKey("输入错误 范围1-10 请重新输入", C_WHITE, 30)
+			end
+		end
+		Cls()
 		local nl = JYMsgBox(CC.EVB122, CC.EVB123, CC.EVB126, 3, 280)
 		if nl == 1 then
 		  JY.Person[0]["内力性质"] = 0
@@ -1377,8 +1404,8 @@ function newgame()
 			local T = {}
 			for a = 1, 1000 do
 				local b = "" .. a
-					T[b] = a
-				end
+				T[b] = a
+			end
 			DrawStrBoxWaitKey("请选择性别", C_WHITE, 30)
 			local mm = {
 				{"  须眉  ", nil, 1},

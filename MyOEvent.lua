@@ -224,6 +224,38 @@ function Fight()
 				QZXS("技能点加1600点")
 			end
 			if r == 12 then --四神封绝阵
+				setJX(5,-2)
+				setJX(50,-2)
+				setJX(114,-2)
+				setJX(27,-2)
+				JY.Person[50]["攻击力"] = JY.Person[50]["攻击力"] - 300
+				JY.Person[50]["轻功"] = JY.Person[50]["轻功"] - 300
+				JY.Person[50]["防御力"] = JY.Person[50]["防御力"] - 300
+				JY.Person[50]["生命最大值"] = JY.Person[50]["生命最大值"] - 5000
+				JY.Person[50]["生命"] = JY.Person[50]["生命"] - 5000
+				JY.Person[50]["内力最大值"] = 10000
+				JY.Person[50]["内力"] = 10000
+				JY.Person[114]["攻击力"] = JY.Person[114]["攻击力"] - 300
+				JY.Person[114]["轻功"] = JY.Person[114]["轻功"] - 300
+				JY.Person[114]["防御力"] = JY.Person[114]["防御力"] - 300
+				JY.Person[114]["生命最大值"] = JY.Person[114]["生命最大值"] - 5000
+				JY.Person[114]["生命"] = JY.Person[114]["生命"] - 5000
+				JY.Person[114]["内力最大值"] = 10000
+				JY.Person[114]["内力"] = 10000
+				JY.Person[27]["攻击力"] = JY.Person[27]["攻击力"] - 300
+				JY.Person[27]["轻功"] = JY.Person[27]["轻功"] - 300
+				JY.Person[27]["防御力"] = JY.Person[27]["防御力"] - 300
+				JY.Person[27]["生命最大值"] = JY.Person[27]["生命最大值"] - 5000
+				JY.Person[27]["生命"] = JY.Person[27]["生命"] - 5000
+				JY.Person[27]["内力最大值"] = 10000
+				JY.Person[27]["内力"] = 10000
+				JY.Person[5]["攻击力"] = JY.Person[5]["攻击力"] - 300
+				JY.Person[5]["轻功"] = JY.Person[5]["轻功"] - 300
+				JY.Person[5]["防御力"] = JY.Person[5]["防御力"] - 300
+				JY.Person[5]["生命最大值"] = JY.Person[5]["生命最大值"] - 5000
+				JY.Person[5]["生命"] = JY.Person[5]["生命"] - 5000
+				JY.Person[5]["内力最大值"] = 10000
+				JY.Person[5]["内力"] = 10000
 				if PersonKF(0,196) and PersonKF(0,105) and GetS(114,0,0,0) == 0 then
 					say("唷，表现不错嘛！",27)
 					say("速度也就比我慢了半筹而已！",27)
@@ -295,7 +327,7 @@ function Fight()
                 end
 				end 
 				if GetS(111,0,0,0) == 0 then 
-                if yesno("要领悟八荒六合功经？") then
+                if yesno("要领悟八荒六合功？") then
                    SetS(111,0,0,0,101)
 				   addthing(79)
                 end
@@ -330,6 +362,43 @@ function Fight()
 			end
 			
 		else
+			if r == 12 then
+				if JY.Wugong[91]["名称"] == "赤血真龙诀" then
+					JY.Wugong[91]["名称"] = "六如隼龙诀"
+				end
+				setJX(5,-2)
+				setJX(50,-2)
+				setJX(114,-2)
+				setJX(27,-2)
+				JY.Person[50]["攻击力"] = JY.Person[50]["攻击力"] - 300
+				JY.Person[50]["轻功"] = JY.Person[50]["轻功"] - 300
+				JY.Person[50]["防御力"] = JY.Person[50]["防御力"] - 300
+				JY.Person[50]["生命最大值"] = JY.Person[50]["生命最大值"] - 5000
+				JY.Person[50]["生命"] = JY.Person[50]["生命"] - 5000
+				JY.Person[50]["内力最大值"] = 10000
+				JY.Person[50]["内力"] = 10000
+				JY.Person[114]["攻击力"] = JY.Person[114]["攻击力"] - 300
+				JY.Person[114]["轻功"] = JY.Person[114]["轻功"] - 300
+				JY.Person[114]["防御力"] = JY.Person[114]["防御力"] - 300
+				JY.Person[114]["生命最大值"] = JY.Person[114]["生命最大值"] - 5000
+				JY.Person[114]["生命"] = JY.Person[114]["生命"] - 5000
+				JY.Person[114]["内力最大值"] = 10000
+				JY.Person[114]["内力"] = 10000
+				JY.Person[27]["攻击力"] = JY.Person[27]["攻击力"] - 300
+				JY.Person[27]["轻功"] = JY.Person[27]["轻功"] - 300
+				JY.Person[27]["防御力"] = JY.Person[27]["防御力"] - 300
+				JY.Person[27]["生命最大值"] = JY.Person[27]["生命最大值"] - 5000
+				JY.Person[27]["生命"] = JY.Person[27]["生命"] - 5000
+				JY.Person[27]["内力最大值"] = 10000
+				JY.Person[27]["内力"] = 10000
+				JY.Person[5]["攻击力"] = JY.Person[5]["攻击力"] - 300
+				JY.Person[5]["轻功"] = JY.Person[5]["轻功"] - 300
+				JY.Person[5]["防御力"] = JY.Person[5]["防御力"] - 300
+				JY.Person[5]["生命最大值"] = JY.Person[5]["生命最大值"] - 5000
+				JY.Person[5]["生命"] = JY.Person[5]["生命"] - 5000
+				JY.Person[5]["内力最大值"] = 10000
+				JY.Person[5]["内力"] = 10000
+			end	
 			SetS(86, 2, r, 5, 2);
 			say("很可惜，先提高你的能力再来吧", 232, 1, "百事通");	
 		end
