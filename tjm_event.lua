@@ -2194,7 +2194,7 @@ SetS(99,1,0,0,0)
 end
 
 OEVENTLUA[5059] = function() --衡阳
-	if GetS(111,2,0,0) == nil then
+	if JY.Person[578]["无用14"] ~= 1 then
 		dark()
 		null(-2,15)
 		light()
@@ -2574,9 +2574,10 @@ say("好，我便教你。",380,0,"任飞燕")
 dark()
 instruct_35(77,2,62,999)
 SetS(99,0,1,0,2)
+AddPersonAttrib(0, "耍刀技巧", 50)
 if zj() == 0 and putong() == 3 then 
 instruct_35(0,2,62,999)
-AddPersonAttrib(0, "耍刀技巧", 40)
+AddPersonAttrib(0, "耍刀技巧", 50)
 end
 instruct_17(-2,1,20,26,3134*2)
 light()
