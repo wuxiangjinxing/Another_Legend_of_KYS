@@ -1153,6 +1153,7 @@ end
 				say("多谢师父。",0)
 				say("但如今五大派高手被擒、下落不明，徒儿却还需下山打探",0)
 				say("好吧，徒儿务必小心。",5)
+				addevent(106, 0, 0, 5033, 3)
 				do return; end
 			end
 			instruct_37(1)
@@ -1324,6 +1325,7 @@ end
 				say("多谢张真人。",0)
 				say("但如今五大派高手被擒、下落不明，我却还需下山打探",0)
 				say("好吧，小友务必小心。",5)
+				addevent(106, 0, 0, 5033, 3)
 				do return; end
 			end
 			instruct_37(1)
@@ -2181,6 +2183,7 @@ OEVENTLUA[5048] = function() --树林
 say("！！！！")
 say("........",553)
 say("原来藏在这，快把天书还给我！")
+setJX(553)
 	if WarMain(128) == false then
 		instruct_15(0);   
 		instruct_0();  

@@ -961,7 +961,7 @@ function duiyou(pp)
 end
 
 function xiaobin(pp)
-	if pp == 419 or pp == 440 or pp == 430 or pp == 456 or pp == 457 or pp == 578 or pp == 580 or pp == 583 or pp == 584 or pp == 607 or pp == 455 or pp == 597 or pp == 929 or pp == 598 or pp == 599 or pp == 600 or pp == 601 or pp == 602 or pp == 603 or pp == 617 or pp == 604 or pp == 605 or pp == 665 or pp == 666 or pp == 667 or pp == 930 or pp == 931 or pp == 932 then --武骧金星：添加无酒不欢
+	if pp == 419 or pp == 440 or pp == 430 or pp == 456 or pp == 457 or pp == 578 or pp == 580 or pp == 584 or pp == 607 or pp == 455 or pp == 597 or pp == 929 or pp == 598 or pp == 599 or pp == 600 or pp == 601 or pp == 602 or pp == 603 or pp == 617 or pp == 604 or pp == 605 or pp == 665 or pp == 666 or pp == 667 or pp == 930 or pp == 931 or pp == 932 then --武骧金星：添加无酒不欢
 		return false
 	elseif pp >= 607 and pp <= 613 then
 		return false
@@ -1080,7 +1080,7 @@ function wglw(pid, f) --内功领悟
 		   return true
 		end 	
 		
-        if DT(pid,583) and PersonGT(pid,f) and (f ~= 592 and f ~= 203) then 
+        if DT(pid,546) and PersonGT(pid,f) and (f ~= 592 and f ~= 203) then 
 		   return true
 		end 		
 		
@@ -1393,7 +1393,11 @@ end
 
 function PersonGTJL(p, kf, jl) --判断加力内功是否为主功体
 	if JY.Person[p]["声望"] == kf and kf == jl then
-		return true
+		if WAR.WXJQM1[p] ~= nil and JY.Person[p]["内力"] < 750 then
+			return false
+		else
+			return true
+		end
 	end
 	if DT(p, 618) then --武骧金星：逍遥子特殊判定
 		for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
@@ -1414,7 +1418,11 @@ end
 
 function PersonGTHT(p, kf, ht) --判断护体内功是否为主功体
 	if JY.Person[p]["声望"] == kf and kf == ht then
-		return  true
+		if WAR.WXJQM1[p] ~= nil and JY.Person[p]["内力"] < 750 then
+			return false
+		else
+			return true
+		end	
 	end
 	if DT(p, 618) then --武骧金星：逍遥子特殊判定
 		for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
@@ -1437,15 +1445,22 @@ function PersonGT(p, kf) --判断主功体
     if WAR.PJTX == 1 and not DT(p,592) then --破尽天下
 	   return false
 	end
-	if WAR.TLHD == 1 and not DT(p,583) then
+	if WAR.TLHD == 1 and not DT(p,546) then
 		return false
 	end
 	if JY.Person[p]["声望"] == kf then--北冥吸功体
-	    if WAR.BMGT2 ~= p then
+		if WAR.BMGT2 ~= p then
 		   return true
 		elseif WAR.SGDF == kf and WAR.SGDF2 == p then    
 		   return false
 		end
+		if WAR.WXJQM1[p] == nil then
+			return true
+		elseif WAR.WXJQM1[p] ~= nil and JY.Person[p]["内力"] < 750 then
+			return false
+		else
+			return true
+		end	
 	end 	
 	if twogt(p) and JY.Person[p]["外号"] == tostring(kf) then
 		return true
@@ -1489,7 +1504,7 @@ function PersonTFGT(p, kf)
     if WAR.PJTX == 1 and not DT(p,592) then --破尽天下
 	   return false
 	end
-	if WAR.TLHD == 1 and not DT(p,583) then
+	if WAR.TLHD == 1 and not DT(p,546) then
 		return false
 	end
 	if PersonGT(p, kf) then
@@ -1673,7 +1688,7 @@ function baseRandom(p)
 			end
 			]]
 		end
-		if WAR.SPIRIT[p] >= 100 then --战意的几率加成
+		if WAR.SPIRIT[p] ~= nil and WAR.SPIRIT[p] >= 100 then --战意的几率加成
 			jl = jl + limitX(math.modf((WAR.SPIRIT[p] - 100) * 0.5), 0, 20)
 			if wglw2(p,198) then jl = jl + 10 end
 			if T9ZY(p) and juexing() > 0 then jl = jl + limitX(math.modf((WAR.SPIRIT[p] - 100) * 0.5), 0, 20) end
@@ -2054,6 +2069,24 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	  level = 1
 	end
 	
+	local function yinwu(pp)
+		local YNWG = {}
+		local ynwg = 0
+		for i = 0, JY.ThingNum - 1 do
+			if JY.Thing[i]["需内力性质"] == 0 then
+				ynwg = ynwg + 1
+				YNWG[ynwg] = JY.Thing[i]["练出武功"]
+			end
+		end
+		for j = 1, #YNWG do
+			if pp == YNWG[j] then
+				return true
+			else
+				return false
+			end	
+		end	
+	end
+	
     --重写内功护体
 	if JY.Person[eid]["声望"] > 0 and yongnei(JY.Person[eid]["声望"]) and DWPD() and WAR.BMGT2 ~= eid and WAR.PJTX == 0 and WAR.ZBT2<9 and WAR.GJQJ2< 15 then --如果有设置主功体
 		local bht = HTJL(eid)
@@ -2072,7 +2105,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			else
 				WAR.Person[emenyid][CC.TXWZ2] = "时代变了"
 			end
-		elseif WAR.BJ==1 and wugong == 1 then
+		elseif (WAR.BJ==1 and wugong == 1) or (DT(pid,149) and WAR.FZQH > 1) then
 			if WAR.Person[emenyid][CC.TXWZ2] ~= nil then
 				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+".. "罗汉破罡"
 			else
@@ -2157,7 +2190,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 				end
 				end
 				if WAR.DLYZ[eid]~=nil and WAR.DLYZ[eid]>0 then
-					dng=0
+					WAR.BIPUO = 1
 					WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", -500)
 					if WAR.Person[emenyid][CC.TXWZ2] ~= nil then
 						WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+" .. "多罗迦叶"
@@ -2199,7 +2232,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 				if WAR.FRYG[eid]~=nil and WAR.FRYG[eid]> 0 then --焚日阳罡
 					WAR.HOT[eid] = 50
 					AddPersonAttrib(eid, "受伤程度", 50)
-					dng = 0
+					WAR.BIPUO = 1
 					--[[if nokillspeed(eid) == true then 
 						return false 
 					end]]
@@ -2325,7 +2358,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			dng = dng + math.modf(wl * 0.5)
 		end
 		if WAR.DLYZ[eid]~=nil and WAR.DLYZ[eid]>0 then
-            dng=0
+            WAR.BIPUO = 1
 		    WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", -500)
 		    if WAR.Person[emenyid][CC.TXWZ2] ~= nil then
 				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+" .. "多罗迦叶"
@@ -2683,7 +2716,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    if wglw(eid, 151)  then
 		        ang=ang-math.modf(aa/4)
 			    if ang<0 then
-			        ang=0
+			        ang = 0
 			    end
 	        end	
 		 end
@@ -2921,9 +2954,9 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end	
 
     --森罗反击
-    if DT(eid,583) and DWPD() then
+    --[[if DT(eid,546) and DWPD() then
 		WAR.SLFJ[eid] = {pid, WAR.Person[WAR.CurID]["坐标X"], WAR.Person[WAR.CurID]["坐标Y"]}
-	end	
+	end	]]
 
     if DT(eid,592) and JLSD(10,60,eid) and DWPD() then
 		WAR.DGFJ[eid] = {pid, WAR.Person[WAR.CurID]["坐标X"], WAR.Person[WAR.CurID]["坐标Y"]}
@@ -3558,7 +3591,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			end  
 		end
 		
-		if DT(pid,583) then
+		if DT(pid,546) then
 			hurt = math.modf(hurt * 6)
 		end 		
 		
@@ -4218,7 +4251,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
 	if WAR.LMJQ == 6 then
 	    if WAR.LQZ[pid] ~= nil then
-		    dng = 0
+		    WAR.BIPUO = 1
 		    hurt = math.modf(hurt * 2)
 	        ang = ang + 2500 + math.modf((WAR.LQZ[pid] or 0) * 100)
 	    else
@@ -4228,14 +4261,14 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 
     if WAR.FQDS == 6 then
 		if WAR.LQZ[pid] ~= nil then
-			dng = 0 
+			WAR.BIPUO = 1 
 			hurt = math.modf(hurt * WAR.LQZ[pid])
 			ang = ang + 2500 + math.modf((WAR.LQZ[pid] or 0) * 100)
 		end
 	end	
 
     if WAR.DGJJ[eid]~= nil then
-	dng = 0
+	WAR.BIPUO = 1
 	end
 	
     if WAR.HYZF == 1 then
@@ -4280,7 +4313,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
     --霹雳刀气破防、内伤、流血(敌、我都会流血)
 	if (DT(pid, 585) or wglw1(pid, 141)) and JLSD(15, 65, pid) and WAR.Person[emenyid]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and yongdao(wugong) then
-		dng = 0;
+		WAR.BIPUO = 1;
         local s = 1000 + JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
         if s < 0 then
             s = 0;
@@ -4339,7 +4372,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     end
   
     if WAR.NS[pid] ~= nil then 
-        dng = 0----日月神教
+        WAR.BIPUO = 1----日月神教
     end
     --狄云
     if DT(pid , 37) and JY.Person[0]["品德"] > 70 then
@@ -4657,9 +4690,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
   
     --白驼山蛤蟆功
 	if MPPD(pid) == 8 and PersonGT(pid,95) and JLSD(10,60,pid) then
+		local mpdj = MPDJ(pid)
 		if JY.Person[eid]["中毒程度"] >= 100 then
 			if WAR.MENG[eid] == nil then
-		        WAR.MENG[eid] = 100
+		        WAR.MENG[eid] = math.modf(25*mpdj)
 	        end
 		end
 	end		
@@ -5095,7 +5129,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 
 	if WAR.XMSSZ == 2 then
 		if WAR.DLYZ[eid]~=nil and WAR.DLYZ[eid]>0 then
-            dng=0
+            WAR.BIPUO = 1
 		    WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", -500)
 		    if WAR.Person[emenyid][CC.TXWZ2] ~= nil then
 				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+" .. "多罗迦叶"
@@ -5589,7 +5623,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		
 	if ((MPPD(pid) == 17 and MPDJ(pid) >= 3) and PersonGT(pid,153) and yongquan(wugong)) or ((GX(pid) and JX(pid))) then
 		if WAR.ACT > 2 and GX(pid) and JLSD(10,60,pid) then
-			dng = 0
+			WAR.BIPUO = 1
 			WAR.EMQF2 = 1
 			if WAR.Person[emenyid][CC.TXWZ3] == nil then
 			WAR.Person[emenyid][CC.TXWZ3] = "佛光普照"
@@ -5597,7 +5631,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			WAR.Person[emenyid][CC.TXWZ3] = WAR.Person[emenyid][CC.TXWZ3] .. "+" .. "佛光普照"
 			end
 		elseif (wugong == 130 or JLSD(10,40,pid)) and WAR.ACT > 2 then
-			dng = 0
+			WAR.BIPUO = 1
 			WAR.EMQF2 = 1
 			if WAR.ACT > 4 and JLSD(10,25,pid) then
 				WAR.ACT = 10
@@ -5671,7 +5705,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end	
 
     if (wglw(pid,96) or ((pid == 400 and JY.Person[pid]["姓名"] == "慧聪") or DT(pid,38) or DT(pid,615)) and PersonGTJL(pid,96)) and JLSD(10,60,pid) and DWPD() then --罗汉伏魔领悟
-        local aa = math.modf(JY.Person[eid]["内力"]/20)
+        local aa = math.ceil(math.modf(JY.Person[pid]["内力"] / 20))
 	    WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) - aa;
 	    AddPersonAttrib(eid, "生命", -aa);
 	    WAR.HOTXS[eid]=1
@@ -5684,7 +5718,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end	
 	
     if wglw(pid,187) and PersonGTJL(pid,187) and JLSD(10,40,pid) and DWPD() then --少林九阳
-        local a = math.modf(JY.Person[pid]["内力"] / 30)
+        local a = math.ceil(math.modf(JY.Person[pid]["内力"] / 30))
 	    WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) - a;
 	    AddPersonAttrib(eid, "生命", -a);
 	    if WAR.Person[emenyid][CC.TXWZ1] == nil then
@@ -5697,7 +5731,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	if ((wglw(pid,124) and JLSD(10,60,pid)) or (DT(pid,22) and JLSD(10,60,pid))) and DWPD() then --寒冰真气领悟
         local aa = JY.Person[eid]["内力"]
 		local bb = JY.Person[eid]["内力最大值"]
-	    WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) - ((bb-aa)/20);
+	    WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) - math.ceil(math.modf((bb-aa)/20));
 	    AddPersonAttrib(eid, "生命", -((bb-aa)/20));
 	    if WAR.Person[emenyid][CC.TXWZ1] == nil then
 		    WAR.Person[emenyid][CC.TXWZ1] = "封天之寒·片霜冷长河"
@@ -5705,6 +5739,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    WAR.Person[emenyid][CC.TXWZ1] = WAR.Person[emenyid][CC.TXWZ1] .. "+" .. "封天之寒·片霜冷长河"
 	    end	
 	end	
+	
+	--if 
 	
     if JY.Person[pid]["武器"] == 54 and DWPD() == false and JLSD(10,40,pid) then  --焦尾琴
         local fhurt = 100 + Rnd(10)
@@ -6307,7 +6343,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    if WAR.XXQF[eid]~=nil and WAR.XXQF[eid]>=0 then
 		    dng=dng-WAR.XXQF[eid]*10
 		    if dng<=0 then
-		        dng=0
+		        WAR.BIPUO = 1
 		    end
         end
 	    WAR.Person[emenyid][CC.TXWZ3] = "群星捧月·星河倒泄" 
@@ -6323,7 +6359,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    if WAR.XXQF[eid]~=nil and WAR.XXQF[eid]>=0 then
 		    dng=dng-WAR.XXQF[eid]*10
 		    if dng<=0 then
-		        dng=0
+		        WAR.BIPUO = 1
 		    end
         end
 	    WAR.Person[emenyid][CC.TXWZ3] = "苍半无双.星河动摇" 
@@ -6331,11 +6367,11 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end
 	
 	if DT(pid, 55) and PersonGT(pid,107) and JX(pid) and WAR.GJQJ==13 then
-	    dng=0
+	    WAR.BIPUO = 1
 	end
 	
 	if WAR.XMHJ == 1 then
-		dng = 0
+		WAR.BIPUO = 1
 	end 		
 	
 	if MPPD(pid) == 14 and PersonGT(pid,90) and MPDJ(pid)>1 then--沼跃鱼：正气歌主运效果
@@ -6347,7 +6383,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		end
 		if JLSD(10,45,pid) and PersonGTHT(pid, 90, WAR.NGJL) then
 		    local tmp=math.modf(shang*MPDJ(pid));
-		    dng=0
+		    WAR.BIPUO = 1
 		    WAR.Person[WAR.CurID]["内力点数"] = (WAR.Person[WAR.CurID]["内力点数"] or 0) +tmp;
   	        AddPersonAttrib(pid, "内力", tmp);
 		    str=".上则为日星"
@@ -7767,14 +7803,14 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end 	
 	
     --五岳剑派：五岳剑法，增加伤害
-    if WAR.L_WYJFA1 == 1 or WAR.L_WYJFA2 == 1 or WAR.L_WYJFA3 == 1 or WAR.L_WYJFA4 == 1 or WAR.L_WYJFA5 == 1 then 	
+    if WAR.L_WYJFA1 == 1 or WAR.L_WYJFA2 == 1 or WAR.L_WYJFA3 == 1 or WAR.L_WYJFA4 == 1 or WAR.L_WYJFA5 == 1 or WAR.L_WYJFA6 == 1 then 	
 	    if PersonGTJL(pid, 89, WAR.NGJL) then
 		    hurt = math.modf(hurt * 1.15)
 	    else
 		    hurt = math.modf(hurt * 1.1)
 	    end
 	    --3增加内伤
-	    if WAR.L_WYJFA3 == 1 and DWPD() then		
+	    if (WAR.L_WYJFA3 == 1 or WAR.L_WYJFA6 == 1) and DWPD() then		
 		    AddPersonAttrib(eid, "受伤程度", 20)
 	    end
     end
@@ -8367,7 +8403,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    if WAR.XQS == 7 then
 		    hurt = math.modf(hurt * (1+0.001*sixi(pid,2)))
 		    hurt = hurt+math.modf(sixi(pid,2)/5)
-		    dng=0
+		    WAR.BIPUO = 1
 	    end
     end
 	
@@ -8375,12 +8411,12 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    if WAR.WYLW5 == 1 then
 		    hurt = math.modf(hurt * (1+0.001*sixi(pid,2)))
 		    hurt = hurt+math.modf(sixi(pid,2)/5)
-		    dng=0
+		    WAR.BIPUO = 1
 	    end
     end
   
     if WAR.FXHJ4 == 1 then
-		dng = 0
+		WAR.BIPUO = 1
     end
 
     if wugong == 177 and (DT(pid, 27) or wglw1(pid,177)) then --葵花神针剑系、暗系
@@ -8608,7 +8644,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
             WAR.Person[emenyid][CC.TXWZ3] = "霹雳刀法·天火围城" .. "·" .. WAR.Person[emenyid][CC.TXWZ3]
         end
 	    if WAR.LQZ[pid] ~= nil then
-		    dng = 0
+		    WAR.BIPUO = 1
 		    hurt = math.modf(hurt * 1.8)
 	        ang = ang + 2500 + math.modf((WAR.LQZ[pid] or 0) * 100)
 	    else
@@ -8618,7 +8654,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
   
     if (wglw(pid,182) or (DT(pid,5) and PersonGT(pid,182))) and WAR.LQZ[pid] == 100 then
         if WAR.LQZ[pid] ~= nil then
-		    dng = 0
+		    WAR.BIPUO = 1
 		    hurt = math.modf(hurt * 1.5)
 	        ang = ang + 2500 + math.modf((WAR.LQZ[pid] or 0) * 100)
 	    else
@@ -8629,7 +8665,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
     if (wglw(pid,184) and PersonGT(pid,184)) and WAR.LQZ[pid] == 100 or DT(pid,665) then
         if WAR.LQZ[pid] ~= nil then
-		    dng = 0
+		    WAR.BIPUO = 1
 		    hurt = math.modf(hurt * 1.5)
 	        ang = ang + 2500 + math.modf((WAR.LQZ[pid] or 0) * 100)
 	    else
@@ -8638,9 +8674,9 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		WAR.YJJS = 1
 	end	
 	
-    if DT(pid,583)	then
+    if DT(pid,546)	then
 		if WAR.LQZ[pid] ~= nil then
-		    dng = 0
+		    WAR.BIPUO = 1
 			hurt = math.modf(hurt * WAR.LQZ[pid])
 		    ang = ang + 2500 + math.modf((WAR.LQZ[pid] or 0) * 100)
 	    else
@@ -8678,8 +8714,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		elseif WAR.DMZF == 6 then
 			local bb=math.random(2,4)
 			local aa=math.modf(JY.Person[eid]["生命"]/bb)
-			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0)-aa;
-			AddPersonAttrib(eid, "生命", -aa)
+			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid, "生命", -aa)
 		end
     end
   
@@ -8715,8 +8750,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    if JLSD(10,40,pid) then
 			local bb = math.random(3,5)
 			local aa = math.modf(JY.Person[eid]["生命"] / bb)
-			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) - aa;
-			AddPersonAttrib(eid, "生命", - aa)
+			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid, "生命", - aa)
+			
 		end	
 	    if WAR.Person[emenyid][CC.TXWZ3] == nil then
 		    WAR.Person[emenyid][CC.TXWZ3] = "龙爪手"..str
@@ -8725,7 +8760,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    end	
     end	
 
-    if DT(pid,583) and JLSD(10,45,pid) then
+    if DT(pid,546) and JLSD(10,45,pid) then
 		local d = math.modf((JY.Person[pid]["内力"] - JY.Person[eid]["内力"]) / 10)
 		local n = math.random(1,2)
 		local str = ""
@@ -9174,10 +9209,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	if (MPPD(pid) == 6 and wugong == 66) or (MZ(pid) == 3 and yongte(wugong)) then
 		WAR.WSDL[pid] = (WAR.WSDL[pid] or 0) + math.random(3)
 		hurt = hurt * math.modf(2-(JY.Person[pid]["内力"] / JY.Person[pid]["内力最大值"]))
-		if WAR.Person[emenyid][CC.TXWZ3] ~= nil then
-			WAR.Person[emenyid][CC.TXWZ3] = WAR.Person[emenyid][CC.TXWZ3] .. "+龙象巨力·勁透法身"
+		if WAR.Person[emenyid][CC.TXWZ1] ~= nil then
+			WAR.Person[emenyid][CC.TXWZ1] = WAR.Person[emenyid][CC.TXWZ1] .. "+龙象巨力·勁透法身"
 		else
-			WAR.Person[emenyid][CC.TXWZ3] ="龙象巨力·勁透法身"
+			WAR.Person[emenyid][CC.TXWZ1] ="龙象巨力·勁透法身"
 		end
 		if WAR.WSDL[pid] ~= nil and WAR.WSDL[pid] > 0 then
 			hurt = hurt * math.modf(1 + (WAR.WSDL[pid] / 10))
@@ -9188,27 +9223,30 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 				if JLSD(10,60,pid) then
 					WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid,"生命",-(aa*6))
 					WAR.WSDL[pid] = 0
-					if WAR.Person[emenyid][CC.TXWZ3] ~= nil then
-						WAR.Person[emenyid][CC.TXWZ3] = WAR.Person[emenyid][CC.TXWZ3] .. "+龙象巨力·无上威德"
+					if WAR.Person[emenyid][CC.TXWZ2] ~= nil then
+						WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+龙象巨力·无上威德"
 					else
-						WAR.Person[emenyid][CC.TXWZ3] ="龙象巨力·无上威德"
+						WAR.Person[emenyid][CC.TXWZ2] ="龙象巨力·无上威德"
 					end
 				end
 			end	
 		end	
 	end
   
-    if wugong==128 and PersonGTJL(pid, 124, WAR.NGJL) and MPPD(pid) == 14 and MPDJ(pid) > 1 and
-	    WAR.Person[emenyid]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
-	    if WAR.ICE[eid]~=nil and WAR.ICE[eid]>0 then
-	        hurt=math.modf(hurt*(1+WAR.ICE[eid]*0.03))
-	        if WAR.Person[emenyid][CC.TXWZ2] == nil then
-		        WAR.Person[emenyid][CC.TXWZ2] = "意寒真诀.寒冰指"
-	        else
-		        WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+" .. "意寒真诀.寒冰指"
-	        end	
-	        WAR.Person[emenyid][CC.TXDH] = 67
-         end
+    if WAR.YHZJ1 > 0 and PersonGTJL(pid, 124, WAR.NGJL) and MPPD(pid) == 14 and MPDJ(pid) > 1 and DWPD() then
+		addeffect(WAR.HBZQ3,eid,1)
+		if WAR.ICE[eid]~=nil and WAR.ICE[eid]>0 then
+			hurt=math.modf(hurt*((WAR.YHZJ1+1)+WAR.ICE[eid]*0.05))
+			if WAR.Person[emenyid][CC.TXWZ2] == nil then
+				WAR.Person[emenyid][CC.TXWZ2] = "意寒真诀.寒冰指"
+			else
+				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+" .. "意寒真诀.寒冰指"
+			end	
+			WAR.Person[emenyid][CC.TXDH] = 67
+		end
+		if JX(pid) and wugong == 128 and JY.Person[eid]["内力性质"] == 1 then
+			hurt = math.modf(hurt*(math.random(4)))
+		end	
     end
   
     if PersonGTHT(eid, 124, WAR.NGHT) and MPPD(eid) == 14 and MPDJ(eid) > 1 then
@@ -9223,6 +9261,11 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
         end
     end
 	
+	if WAR.HBZQ5[pid] ~= nil and WAR.ICE[eid] ~= nil then
+		WAR.Person[WAR.CurID]["内力点数"] = (WAR.Person[WAR.CurID]["内力点数"] or 0) + AddPersonAttrib(pid,"内力",math.modf(WAR.ICE[eid]*20))
+		WAR.Person[WAR.CurID]["体力点数"] = (WAR.Person[WAR.CurID]["体力点数"] or 0) + AddPersonAttrib(pid,"内力",math.modf(WAR.ICE[eid]/5))
+		
+	end	
 	if wugong == 83 and wglw1(pid,83) and JLSD(10,80,eid)then 
 		WAR.SZWH[eid]= WAR.SZWH[eid] or 0 + 50
 		if WAR.Person[emenyid][CC.TXWZ1] == nil then
@@ -9473,7 +9516,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		if WAR.MINBG == 3 and WAR.ANBG1[eid] == 3 and WAR.ANBG1[eid] ~= nil then
 			hurt = hurt * 4
 			WAR.BJ = 1
-			dng = 0
+			WAR.BIPUO = 1
 			WAR.SZWH[eid] = 20
 			if WAR.Person[emenyid][CC.TXWZ3] == nil then
 				WAR.Person[emenyid][CC.TXWZ3] = "明暗震巽·风怒雷动"
@@ -9641,7 +9684,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
 	--黄沙万里鞭特殊加成-金龙鞭
 	if wugong == 78 and WAR.QLKS == 1 then 
-		dng = 0
+		WAR.BIPUO = 1
 		WAR.BLX = 1
 		WAR.Person[emenyid][CC.TXDH] = 114
 	end
@@ -10322,9 +10365,9 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			if math.random(10) > 8 and WAR.LSZD1[eid] == nil then
 				WAR.LSZD1[eid] = 10
 				if WAR.Person[emenyid][CC.TXWZ2] == nil then
-					WAR.Person[emenyid][CC.TXWZ2] = "双蛇剧毒·基因毒"
+					WAR.Person[emenyid][CC.TXWZ2] = "双蛇剧毒·猎命毒"
 				else
-					WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+" .."双蛇剧毒·基因毒"
+					WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2] .. "+" .."双蛇剧毒·猎命毒"
 				end
 			else
 				if math.random(10) > 5 and WAR.LSZD2[eid] == nil then
@@ -10433,7 +10476,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		
 	if wugong == 120 and WAR.LSZD1[eid] ~= nil then
 		if JLSD(10,70,pid) then
-			dng = 0
+			WAR.BIPUO = 1
 		end
 		if JY.Person[eid]["中毒程度"] >= 100 and JLSD(10,40,pid) then
 			WAR.KHCM[eid] = 1
@@ -10559,9 +10602,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		--AddPersonAttrib(pid,"内力",-aa)
 		WAR.Person[WAR.CurID]["内力点数"] = (WAR.Person[WAR.CurID]["内力点数"]or 0) + AddPersonAttrib(pid,"内力",-(aa*3))
 	end
-	if WAR.LXZS[pid] ~= nil then
+	if WAR.LXZS[pid] ~= nil or (WAR.WXJQJ1[pid] ~= nil and (WAR.ACT == 1 or JLSD(10,40,pid)))then
 		WAR.LXZT[pid] = (WAR.LXZT[pid]or 0) + 10
-		local aa = WAR.LXZT[pid]or 0
+		WAR.LXXS[pid] = 1
+		local aa = math.modf(WAR.LXZT[pid]*math.random(2))
 		--AddPersonAttrib(pid,"生命",-aa)
 		WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"]or 0) + AddPersonAttrib(pid,"生命",-aa)
 		--AddPersonAttrib(pid,"内力",-aa)
@@ -11862,7 +11906,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		local cc = limitX(math.random(aa, bb), 1, 24)
 		ang = ang - math.modf(cc * 100)
         if ang<=0	then
-	        ang=0
+	        ang = 0
         end	   
 		WAR.TIANGANG = cc
 	end	
@@ -12316,7 +12360,11 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    local bb = math.modf(sixi(pid, 2) / 10)
 	    local cc = limitX(math.random(aa, bb), 1, 24)
 	    hurt = hurt + math.modf(cc * 10)
-	    if JLSD(10,30+MPDJ(pid)*5,pid) then
+	    local mpdj = MPDJ(pid)
+		if WAR.ZXJQ[pid] ~= nil and WAR.ZXJQ[pid] > 5 then
+			mpdj = mpdj + 2
+		end	
+		if JLSD(10,30+mpdj*5,pid) then
 	        WAR.SJTH[eid]=WAR.SJTH[eid] or 0+1
 	        str=".透魂剑锋"
 	    end
@@ -12388,7 +12436,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
 	if WAR.ZFLY == 1 then
 		if (wglw1(pid,77) or ((DT(pid,605) or (DT(pid,627)))and JX(pid))) and JLSD(10,15+(WAR.CHZ[eid]or 0),eid) then
-			dng = 0
+			WAR.BIPUO = 1
 			WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid,"内力",-300)
 		end	
 		hurt = hurt + math.modf(sixi(pid, 3) * 0.5)
@@ -12402,7 +12450,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
 	if WAR.ZFLY == 2 then
 		if (wglw1(pid,77) or ((DT(pid,605) or (DT(pid,627)))and JX(pid))) and JLSD(10,15+(WAR.CHZ[eid]or 0),eid) then
-			dng = 0
+			WAR.BIPUO = 1
 			WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid,"内力",-300)
 		end
 		hurt = hurt + math.modf(sixi(pid, 2) * 0.5)
@@ -13000,21 +13048,13 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
 	if wglw(pid,89) or (PersonKF(pid,89) and DT(pid,19)) then --紫霞剑系
 	    if WAR.ZXJQ[pid] ~= nil and WAR.ZXJQ[pid] > 0 then 
-	        WAR.ZXJQ[pid] = WAR.ZXJQ[pid] - 1
-	    if WAR.ZXJQ[pid] <= 0 then 
-	        WAR.ZXJQ[pid] = nil
-	    end
-	    hurt = hurt + 150
-	    ang = ang + 1000
+			hurt = hurt + 150
+			ang = ang + 1000
 	    end
 	end
 	
     if NF(pid) then --创刀
 	    if WAR.CDDQ[pid] ~= nil and WAR.CDDQ[pid] > 0 then 
-	        WAR.CDDQ[pid] = WAR.CDDQ[pid] - 1
-	    if WAR.CDDQ[pid] <= 0 then 
-	        WAR.CDDQ[pid] = nil
-	    end
 	    hurt = hurt + 200
 	    ang = ang + 500
 	    end
@@ -13022,10 +13062,6 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
     if BJY(pid) then --霍家剑气
 	    if WAR.HJJQ[pid] ~= nil and WAR.HJJQ[pid] > 0 then 
-	        WAR.HJJQ[pid] = WAR.HJJQ[pid] - 1
-	    if WAR.HJJQ[pid] <= 0 then 
-	        WAR.HJJQ[pid] = nil
-	    end
 	    hurt = hurt + 200
 	    ang = ang + 1000
 	    end
@@ -13368,7 +13404,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    ang = math.modf(ang * (1-(neili/12000)))
 		    if JLSD(20,20+math.modf(neili/20),eid) then
 		        hurt=20
-		        ang=0
+		        ang = 0
 	            WAR.Person[emenyid][CC.TXWZ1] = "忘情天书·土掩·玄武磐石"
 	            WAR.Person[emenyid][CC.TXDH] = 39
 		    end
@@ -13744,7 +13780,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
        hurt = math.modf(hurt*(1-fhxy*0.1))
     end
 
-    if DT(eid,583) then
+    if DT(eid,546) then
 		hurt = math.modf(hurt * 0.2)
 	end	
 
@@ -14627,7 +14663,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
   	    diy_ang = 0;
     end
     if diy_dng == nil then
-  	    diy_dng = 0;
+  	    diy_WAR.BIPUO = 1;
     end
     hurt = math.modf(limitX(diy_hurt, 0, 9999));
     ang = math.modf(limitX(diy_ang, 0, 9999));
@@ -14853,6 +14889,11 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	        WAR.Person[emenyid][CC.TXWZ2] = "逆道乾坤·周天之力+"..WAR.Person[emenyid][CC.TXWZ2]	
 	    end	
 	end	
+	if WAR.WXJQS1[pid] ~= nil then--五岳 水剑大招
+		local aa = math.modf((WAR.ICE[pid] or 0)/10)
+		hurt = math.modf(hurt/aa)
+	    ang = math.modf(ang/aa)
+	end	
  
     if DT(eid, 129) and WAR.WCY3>0 and DWPD() then--沼跃鱼：重阳真打
 	    hurt = math.modf(hurt/2)
@@ -14868,8 +14909,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
    
     if (wglw(eid, 107) and PersonGTHT(eid,107,WAR.NGHT) and DWPD() and JY.Person[eid]["内力"]>= math.modf(0.75*JY.Person[eid]["内力最大值"]) ) or DT(eid,599)then--沼跃鱼：重阳真打
 	    ang = 0
-	    dng = 1
-	    WAR.GTSHAQI=0
+		WAR.BUPUO = 1
+	    --WAR.GTSHAQI=0
 	    if WAR.ZBT2>0 then
 	        WAR.GTSHAQI=-300
 	    end
@@ -14889,7 +14930,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
    
     if wglw1(eid, 33) and WAR.NGHT>0 and DWPD() and JY.Person[eid]["内力"]>= math.modf(0.8*JY.Person[eid]["内力最大值"]) then--沼跃鱼：重阳真打
 	    ang = 0
-	    dng = 1
+	    WAR.BUPUO = 1
 	    WAR.GTSHAQI=0
 	    local fhurt=hurt
 	    hurt=math.modf(hurt*0.75)
@@ -14941,7 +14982,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    end	
     end        	
 
-    if DT(eid,583) and JLSD(10,45,eid) then
+    if DT(eid,546) and JLSD(10,45,eid) then
 		hurt = 30
 		local a = math.modf(sixi(eid,2) / 10)
 		dng = dng + math.modf(a * 10)
@@ -14955,7 +14996,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 
     if DT(eid, 129) and JX(eid) and PersonGTHT(eid,100,WAR.NGHT) and DWPD() then--沼跃鱼：重阳真打
 	    ang = 0
-	    dng = 1
+	    WAR.BUPUO = 1
 	    WAR.GTSHAQI=0
 	    WAR.ACT=10
 	    local nn=math.modf(sixi(eid,2)*0.75)
@@ -14986,159 +15027,6 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    end	
 	        WAR.Person[emenyid][CC.TXDH] = 140
 	end 
-   
-    if DT(eid,58) and JX(eid) and DWPD() then --杨过攻其必救
-	    local sp = math.modf(sixi(eid,2)/10)
-	    local sp2 = 1-sp/100
-        local str="无锋离剑式"	
-	    hurt = math.modf(hurt * sp2)
-	    if WAR.LQZ[eid] ~= nil then
-		    sp= sp + math.modf(WAR.LQZ[eid] * 0.05)
-	    end
-	    dng = dng+math.modf(sixi(eid,2)*10)
-	    if JLSD(10, 40+sp, eid) and WAR.SQFJ ~= 1 then
-	        for i = 0, WAR.PersonNum - 1 do
-                if DT(WAR.Person[i]["人物编号"],58) and JY.Person[WAR.Person[i]["人物编号"]]["生命"] > 0 then
-                    str=".钝击锉剑式"
-		            local tmppid = WAR.CurID
-		            WAR.CurID = i
-		            DIYdisplay("独孤奥义.攻其必救")
-                    WAR.SQFJ = 1
-                    WarDrawMap(0)
-                    CurIDTXDH(i, 2197, 2208)
-                    CurIDTXDH(i, 2209, 2219)     
-                    --玄铁反击
-		            local n = 1
-		            for w = 1, HHH_GAME_SETTING["WG_COUNT_MAX_LIMIT"] do
-			            if DT(WAR.Person[i]["人物编号"],58) and JY.Person[WAR.Person[i]["人物编号"]]["武功" .. w] == 45 then
-				            n = w
-				        end
-			        end	
-                    War_Fight_Sub(i, n, WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"])
-		            WAR.BZ[tmppid]=1
-		            WAR.KMSHJQ[tmppid]=WAR.KMSHJQ[tmppid] or 0 +1
-		            WAR.SQFJ = 0
-		            WAR.CurID = tmppid
-		            hurt=0
-		            WAR.ACT=10
-		            WAR.ZYHB=0
-		            lib.Delay(200)	
-                end
-            end    
-		else
-	    end	
-	    if WAR.Person[emenyid][CC.TXWZ2] == nil then
-		    WAR.Person[emenyid][CC.TXWZ2] = "玄铁九剑奥义."..str	
-	    else
-		    WAR.Person[emenyid][CC.TXWZ2] = "玄铁九剑奥义."..str.."+"..WAR.Person[emenyid][CC.TXWZ2]	
-	    end	
-	        WAR.Person[emenyid][CC.TXDH] = 145
-	end
-  
-    if eid == 0 and zjtype()==4 and JX(eid) and DWPD() and JY.Wugong[JY.Person[eid]["武功" .. 1]]["攻击力" .. 10] > 0 then --风天流时空逆
-	    local sp = math.modf(JY.Person[eid]["资质"] / 4)
-	    local sp2 = 1-sp/50
-        local str=".次元阻隔"
-		hurt = math.modf(hurt * sp2)
-		if WAR.LQZ[eid] ~= nil then
-		    sp= sp + math.modf(WAR.LQZ[eid] * 0.05)
-	    end
-	        dng = dng+JY.Person[eid]["内力"]
-	    if JLSD(10, 40+sp, eid) and WAR.SQFJ == 0 then
-	        for i = 0, WAR.PersonNum - 1 do
-                if WAR.Person[i]["人物编号"] == 0 and zjtype()==4 and JX(WAR.Person[i]["人物编号"]) and JY.Person[WAR.Person[i]["人物编号"]]["生命"] > 0 then
-                    str=".逆次元"
-		            local tmppid = WAR.CurID
-		            WAR.CurID = i
-		            DIYdisplay("扭转时空.寰宇无限")
-                    WAR.SQFJ = 1
-                    WarDrawMap(0)
-                    CurIDTXDH(i, 2197, 2208)
-                    CurIDTXDH(i, 2209, 2219)     
-                    --反击
-		            local n = 1
-                    War_Fight_Sub(i, n, WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"])
-		            WAR.BZ[tmppid]=1
-		            WAR.KMSHJQ[tmppid]=WAR.KMSHJQ[tmppid] or 0 +1
-		            WAR.SQFJ = 0
-		            WAR.CurID = tmppid
-		            hurt=0
-		            WAR.ACT=10
-		            WAR.ZYHB=0
-		            lib.Delay(200)	
-                end
-            end    
-		else
-	    end	
-	    if WAR.Person[emenyid][CC.TXWZ2] == nil then
-		    WAR.Person[emenyid][CC.TXWZ2] = "宇晶流奥义."..str	
-	    else
-		    WAR.Person[emenyid][CC.TXWZ2] = "宇晶流奥义."..str.."+"..WAR.Person[emenyid][CC.TXWZ2]	
-	    end	
-	       WAR.Person[emenyid][CC.TXDH] = 145
-	end
-   
-    if DT(eid,517) and JLSD(10, 45, eid) and WAR.SQFJ ~= 1 and DWPD() then----
-        WAR.GBWZ1=-1
-	    WAR.ACT=10
-	    WAR.ZYHB=0
-	    if WAR.Person[emenyid][CC.TXWZ2] == nil then
-		    WAR.Person[emenyid][CC.TXWZ2] = "秘剑.燕返"	
-	    else
-		    WAR.Person[emenyid][CC.TXWZ2] = "秘剑.燕返".."+"..WAR.Person[emenyid][CC.TXWZ2]	
-	    end	
-	        WAR.Person[emenyid][CC.TXDH] = 136    
-    end
-
-    --料敌先机
-    if (wglw1(eid,47) or DT(eid,592)) and JY.Person[eid]["御剑能力"] >= 500 and WAR.SQF ~= 1 and JLSD(10,40,eid) and DWPD() then
-		WAR.JJWS = -1
-		WAR.ACT = 10
-		WAR.ZYHB = 0
-		local ab = math.modf(sixi(eid,2) / 10)
-		hurt = math.modf(hurt * ab)
-		if WAR.LQZ[eid] ~= nil then
-		    ab = ab + math.modf(WAR.LQZ[eid] * 0.5)
-	    end
-		dng = dng + math.modf(sixi(eid,2) * 10)
-		local jl = JY.Person[eid]["轻功"] + JY.Person[pid]["轻功"]
-	    if jl < 0 then
-	        jl = 0
-	    end
-	    if jl > 300 then
-	        jl = 300
-	    end
-        local jl2 = 15 + math.modf(jl/20)
-        if JLSD(0,60 + jl2,eid) then 
-	        hurt = 0
-		end	
-		DIYdisplay("九剑无双")
-	end	
-
-	if wglw1(eid,16)  and WAR.SQFJ ~= 1 and DWPD() and JY.Person[0]["拳掌功夫"] >= 300 and JLSD(10,50,eid) then--
-		WAR.TQFJ = -1
-		WAR.ACT = 10
-		WAR.ZYHB = 0
-		local ab = math.modf(sixi(eid,1) / 10)
-		hurt = math.modf(hurt / ab)
-		if WAR.LQZ[eid] ~= nil then
-		    ab = ab + math.modf(WAR.LQZ[eid] * 0.5)
-	    end
-		dng = dng + math.modf(sixi(eid,1) * 10)
-		local jl = JY.Person[eid]["攻击力"] + JY.Person[pid]["攻击力"]
-	    if jl < 0 then
-	        jl = 0
-	    end
-	    if jl > 300 then
-	        jl = 300
-	    end
-        local jl2 = 15 + math.modf(jl/20)
-        if JLSD(0,60 + jl2,eid) then 
-	        hurt = 0
-		end	
-		DIYdisplay("四两拨开阴阳势")
-		DIYdisplay("借彼几分还几分")
-	end
 
 	if (wglw1(eid,40) or (DT(eid,91) and JX(eid)) or DT(eid,54) or DT(eid,630)) and WAR.SQFJ ~= 1 and DWPD() then
 		local aa = JY.Person[eid]["中毒程度"] or 0
@@ -15166,55 +15054,6 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	        WAR.Person[emenyid][CC.TXDH] = 136   
     end
 
-    if T9ZY(eid) and juexing() >= 2 and DWPD() then --赵云蛇盘
-        WAR.ZYSP=WAR.ZYSP+1
-        if JLSD(10,30+WAR.ZYSP*15,eid) then
-	        local sp = math.modf(sixi(eid,4)/30)
-	        local sp2 = 1-sp/100
-            local str="梨花遍身"	
-	        hurt = math.modf(hurt * sp2)
-	        if WAR.LQZ[eid] ~= nil then
-		        sp= sp + math.modf(WAR.LQZ[eid] * 0.1)+WAR.ZYSP*15
-	        end
-	            dng = dng+math.modf(sixi(eid,4)*10)
-	        if JLSD(10, 30+sp, eid) then
-			    WAR.ACT = 10
-			    WAR.ZYHB = 0
-			    WAR.FLHS5 = 1
-			    str="豪龙胆"
-			    WAR.ZYSP=WAR.ZYSP+1
-	        elseif JLSD(10, 30+sp, eid) and WAR.SQFJ ~= 1 then
-	            for i = 0, WAR.PersonNum - 1 do
-                    if WAR.Person[i]["人物编号"] == 0 and T9ZY(WAR.Person[i]["人物编号"]) and JY.Person[WAR.Person[i]["人物编号"]]["生命"] > 0 then
-                        str="逆龙鳞"
-		                local tmp = WAR.CurID
-                        WAR.CurID = i
-                        WAR.SQFJ = 1
-                        WarDrawMap(0)
-                        CurIDTXDH(i, 2197, 2208)
-                        CurIDTXDH(i, 2209, 2219)     
-                        --错步剑反击
-		                local n = 1
-		                for w = 1, HHH_GAME_SETTING["WG_COUNT_MAX_LIMIT"] do
-			                if T9ZY(WAR.Person[i]["人物编号"]) and JY.Person[0]["武功" .. w] == 112 then
-				                n = w
-				            end
-			            end	
-                        War_Fight_Sub(i, n, WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"])
-		                WAR.SQFJ = 0
-		                WAR.CurID = tmp
-                    end
-                end    
-	    else
-	       end	
-	    if WAR.Person[emenyid][CC.TXWZ2] == nil then
-		    WAR.Person[emenyid][CC.TXWZ2] = "蛇盘."..str	
-	    else
-		   WAR.Person[emenyid][CC.TXWZ2] = "蛇盘."..str.."+"..WAR.Person[emenyid][CC.TXWZ2]	
-	    end	
-	       WAR.Person[emenyid][CC.TXDH] = 145
-	    end
-    end
 
     --降龙混劲
 	if WAR.XLGJ == 3 or WAR.XLGJ == 5 then
@@ -15739,7 +15578,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	if wugong == 86 and (DT(pid, 615) or wglw1(pid,86)) and WAR.LQZ[pid] == 99 then	
 	    WAR.BZ[eid] = 2	
 		if WAR.LQZ[pid] ~= nil then
-		   dng = 0
+		   WAR.BIPUO = 1
 		   hurt = math.modf(hurt * 2)
 	       ang = ang + 2500 + math.modf((WAR.LQZ[pid] or 0) * 100)
 	    else
@@ -15772,7 +15611,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     if wugong == 86 and DT(pid, 457) and WAR.LQZ[pid] == 99 then	--凡总自带
 	    WAR.BZ[eid] = 2	
 		if WAR.LQZ[pid] ~= nil then
-		   dng = 0
+		   WAR.BIPUO = 1
 		   hurt = math.modf(hurt * 2)
 	       ang = ang + 2500 + math.modf((WAR.LQZ[pid] or 0) * 100)
 	    else
@@ -15843,7 +15682,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end 
 	
 	if wugong == 8 and ((DT(pid, 618) or DT(pid, 116)) or wglw1(pid,8)) and JLSD(10, 60, pid) then
-	    dng = 0
+	    WAR.BIPUO = 1
 	    if math.random(10)<5 then
 	        WAR.BZ[eid]=WAR.BZ[eid] or 0 +1
 	    end
@@ -15964,7 +15803,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end			
 		
     if wglw(pid,185) or (PersonGT(pid,185) and DT(pid,5)) or DT(pid,666) and (JLSD(40,70,pid) or WAR.LQZ[pid] == 100) then	
-		   dng = 0
+		   WAR.BIPUO = 1
 		   hurt = math.modf(hurt * 3)
 	       ang = ang + 3000 + math.modf((WAR.LQZ[pid] or 0) * 100)
 		if WAR.Person[WAR.CurID][CC.TXWZ1] ~= nil then
@@ -16141,7 +15980,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     if wglw(eid,89) or (DT(eid,19) and PersonKF(eid,89)) then --紫霞剑系
         if WAR.ZXJQ[eid] ~= nil and WAR.ZXJQ[eid] > 0 then
             dng = dng + WAR.ZXJQ[eid]*300
-	   end
+			if MPPD(eid) == 14 and WAR.ZXJQ[eid] > 10 then
+				addeffect(WAR.ZXJQ1,pid,math.random(3))
+			end	
+		end
     end
   
     if NF(eid) then --创刀
@@ -16171,7 +16013,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     if (PersonGTHT(eid, 105, WAR.HGHT) and (DT(eid, 455))) or (PersonGTHT(eid, 105, WAR.HGHT) and wglw(eid, 105) and JLSD(20, 70, eid)) or DT(eid,617) then  --葵花领悟后消耗内力免杀气、降低伤害
         WAR.Person[emenyid][CC.TXWZ3] = "葵花涅盘·延祸苍生"
         WAR.Person[emenyid][CC.TXDH] = 144
-        dng = 1
+        WAR.BUPUO = 1
         if hurt > 150 and JY.Person[eid]["内力"] >= 500 then
             WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) - 500
 	        AddPersonAttrib(eid, "内力", -500)
@@ -16188,7 +16030,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	     else
 			WAR.Person[emenyid][CC.TXWZ3] = WAR.Person[emenyid][CC.TXWZ3].."+他强由他强·清风拂山岗"
 	    end	
-        dng = 1
+        WAR.BUPUO = 1
         if hurt > 150 and JY.Person[eid]["内力"]>=500 then
             WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) - 500
 	        AddPersonAttrib(eid, "内力", -500)
@@ -16199,6 +16041,37 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    end
 	end
 
+	if (wglw(eid,124) or DT(eid,22)) and WAR.HBZQ4[eid] ~= nil then
+		local aa = math.modf((WAR.ICE[pid] or 0)*20)
+		WAR.BUPUO = 1
+		hurt = math.modf((hurt-aa)*0.6)
+		if JLSD(10,40,eid) then
+			WAR.YHZJ[pid] = 1
+		end	
+		addeffect(WAR.HBZQ4,eid,-1)
+		if WAR.HBZQ4[eid] < 1 then
+			WAR.HBZQ4[eid] = nil
+		end	
+		if WAR.Person[emenyid][CC.TXWZ3] == nil then
+			WAR.Person[emenyid][CC.TXWZ3] = "霜魂傀儡·护"
+	    else
+			WAR.Person[emenyid][CC.TXWZ3] = WAR.Person[emenyid][CC.TXWZ3].."+霜魂傀儡·护"
+	    end
+	end	
+
+	if (wglw(pid,124) or DT(pid,22)) and WAR.HBZQ4[pid] ~= nil and WAR.LQZ[pid] ~= nil and WAR.LQZ[pid] >= 100 then
+		local aa = math.modf((WAR.ICE[eid] or 10)*10)
+		DIYdisplay("霜魂傀儡·为虎作伥")
+		WAR.BIPUO = 1
+		WAR.NBH[eid] = 1
+		hurt = math.modf((hurt+aa)*WAR.HBZQ4[pid])
+		WAR.HBZQ4[pid] = nil
+		if WAR.Person[emenyid][CC.TXWZ3] == nil then
+			WAR.Person[emenyid][CC.TXWZ3] = "霜魂傀儡·殺"
+	    else
+			WAR.Person[emenyid][CC.TXWZ3] = WAR.Person[emenyid][CC.TXWZ3].."+霜魂傀儡·殺"
+	    end
+	end	
     if WAR.KTAY2 == 1 then
 		if hurt > 150 and JY.Person[eid]["内力"]>=500 then
             WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) - 500
@@ -16401,13 +16274,16 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		local n=0
 		for j = 0, WAR.PersonNum - 1 do
 			local tmppid = WAR.Person[j]["人物编号"]
-			if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] == WAR.Person[emenyid]["我方"] then
+			if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] == WAR.Person[emenyid]["我方"] and n < 10 then
 				n=n+1
 			end
 		end
 		local aa=1
 		if WAR.SEVENSTAR[pid]~=nil and WAR.SEVENSTAR[pid]>0 then
-		aa=WAR.SEVENSTAR[pid]
+			aa=WAR.SEVENSTAR[pid]
+		end	
+		if n > 0 then
+			aa = aa + n
 		end	
         local fhurt=math.modf((sixi(pid,2)+JY.Person[pid]["攻击力"])/50*aa)
 		for j = 0, WAR.PersonNum - 1 do
@@ -17235,6 +17111,22 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			WAR.HIDE[eid] = nil
 		end
 	end	
+
+
+	if WAR.WXJQJ1[pid] ~= nil then
+		if yongjian(wugong) or yongdao(wugong) or yongquan(wugong) then
+			if WAR.LXZT[pid] ~= nil then
+				local aa = math.modf(WAR.LXZT[pid]/100)
+				if aa > 1 then aa = 0.99 end
+				hurt = math.modf(hurt*(1-aa))
+			end	
+		else
+			if WAR.LXZT[pid] ~= nil then
+				WAR.Person[WAR.CurID]["内伤点数"] = (WAR.Person[WAR.CurID]["内伤点数"] or 0) + AddPersonAttrib(pid,"内伤",WAR.LXZT[pid])
+			end
+		end
+	end	
+			
 	
 	if T13TQS(eid) and WAR.ACT >1 and juexing()>1 and DWPD() then --沼跃鱼：滕青山被连击降低伤害
 		hurt = math.modf(hurt*(10/(WAR.ACT*WAR.SWFY)))
@@ -17590,7 +17482,11 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 
     if hasTF(eid, 155) and JLSD(0, 50, eid) then
 		hurt = 30
+		local tmppid = WAR.CurID
+		WAR.CurID = emenyid
+		WarDrawMap(0)
 		DHdisplay(1251, 1257, "不动如山")
+		WAR.CurID = tmppid
 	end	  
 
     if DT(eid, 662) and JLSD(10, 60, eid) then
@@ -17612,7 +17508,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		end
 	end	  
 
-    if DT(eid, 583) and JY.Person[pid]["内力"] >= 8000 then
+    if DT(eid, 546) and JY.Person[pid]["内力"] >= 8000 then
 		hurt = 0
 		WAR.ACT = 10
 		WAR.ZYHB = 0
@@ -17624,7 +17520,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		end
 	end	 
 
-    if DT(eid,583) then
+    if DT(eid,546) then
 		if hurt > 300 then
 		    hurt = 300
 		end 	
@@ -17664,7 +17560,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    if JY.Person[eid]["内力"] < 1000 then
 		  	    WAR.TZQJ9[eid] = nil
 		    end
-			dng = 1
+			WAR.BUPUO = 1
 	    end
     end
   
@@ -17729,7 +17625,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	if MPPD(eid) == 6 and PersonKF(eid,195) then
 		dng = dng + (WAR.TSWH[eid] or 0)
 		if WAR.TSWH[eid] ~= nil and WAR.TSWH[eid] > 3000 and JLSD(10,40,eid) then
-			dng = 1
+			WAR.BUPUO = 1
 		end
 	end	
 	
@@ -18402,7 +18298,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		
 		else
 			WAR.DUO=1
-			WAR.Person[WAR.CurID][CC.TXWZ2] = "重度灼烧.头晕目眩"
+			--WAR.Person[WAR.CurID][CC.TXWZ2] = "重度灼烧.头晕目眩"
 			WAR.Person[WAR.CurID][CC.TXDH] = 89
 		end	
     end
@@ -18961,7 +18857,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		hurt = hurt * math.modf(JY.Person[eid]["内力最大值"] * 1 + a)
 	end 	
 
-    if DT(pid,583) and WAR.LQZ[pid] == 100 then 
+    if DT(pid,546) and WAR.LQZ[pid] == 100 then 
 	    local a = math.modf(JY.Person[pid]["内力"] /10)
 	    hurt = hurt * math.modf(JY.Person[eid]["内力最大值"] * 1 * a)
 	    WAR.Person[emenyid][CC.TXWZ2] = "万道莫名"
@@ -19142,6 +19038,11 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		end
 	end		
 	
+	if wglw(pid,107) and WAR.ICE[eid] ~= nil and WAR.ICE[eid] < 50 then
+		WAR.ICE[eid] = math.modf(WAR.ICE[eid]*2)
+		WAR.ICEXS[eid] = 1
+	end
+	
 	if wugong == 140 and (wglw1(pid,140) or DT(pid,558)) then
 		WAR.ICEXS[eid] = 1
 	    WAR.ICE[eid] = limitX((WAR.ICE[eid] or 0) + (math.modf(hurt/30)), 0, 100)
@@ -19225,6 +19126,15 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    end
     end
 
+	if WAR.WXJQT1[pid] ~= nil then
+		local aa = WAR.JQSDXS[pid] or 0
+		if aa > 100 then aa = math.modf(aa * 0.8) end
+		if JLSD(0,aa,pid) then
+			WAR.DUO = 1
+			WAR.SZWH[pid] = (WAR.SZWH[pid] or 0) + 5
+		end
+	end	
+
     local t, s = miss(eid)
     if t then
 	    WAR.DUO = 1
@@ -19274,24 +19184,30 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 				local aa = math.random(50,150) 
 				if math.random(10) > 5  then 
 					if WAR.Person[i]["我方"] == false and WAR.Person[i]["死亡"] == false and i ~= WAR.CurID then
-						WAR.Person[i].Time = WAR.Person[i].Time - aa
+						WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - aa
 					end
 				else
-					WAR.Person[emenyid].Time = WAR.Person[emenyid].Time + aa
+					WAR.Person[emenyid].TimeAdd = WAR.Person[emenyid].TimeAdd + aa
 				end
 				WAR.Person[emenyid][CC.TXWZ1] = "人面兽心"
 			else
 				if math.random(10) > 5 then
 					if WAR.Person[i]["我方"] == false and WAR.Person[i]["死亡"] == false and i ~= WAR.CurID then
-					WAR.Person[i].Time = WAR.Person[i].Time - wuyuejzf
+					WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - wuyuejzf
 					end
 				else
-					WAR.Person[emenyid].Time = WAR.Person[emenyid].Time + math.modf(wuyuejzf*1.5)
+					WAR.Person[emenyid].TimeAdd = WAR.Person[emenyid].TimeAdd + math.modf(wuyuejzf*1.5)
 				end
 				WAR.Person[emenyid][CC.TXWZ1] = "气节服人"
 			end	
 		end
 	end
+  
+	if WAR.WXJQM1[pid] ~= nil and JY.Person[pid]["中毒程度"] > 0  then
+		local aa = math.random(JY.Person[pid]["中毒程度"],JY.Person[pid]["中毒程度"]+50)
+		WAR.Person[emenyid].TimeAdd = WAR.Person[emenyid].TimeAdd + aa
+	end	
+		
   
     --[[
     if DT(eid, 614) and WAR.ACT > 1 then --阿青免疫连击
@@ -19427,12 +19343,12 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			else
 				WAR.Person[emenyid][CC.TXWZ1] = "九阳真气护体"..cs.."层"
 			end
-		else
+		--[[else
 			if WAR.Person[emenyid][CC.TXWZ1] ~= nil then
 				WAR.Person[emenyid][CC.TXWZ1] = WAR.Person[emenyid][CC.TXWZ1] .. "+九阳真气护体"
 			else
 				WAR.Person[emenyid][CC.TXWZ1] = "九阳真气护体"
-			end
+			end]]
 		end
 		WAR.Person[emenyid][CC.TXDH] = 51
         WAR.JYHT[eid] = WAR.JYHT[eid] - 1
@@ -19857,21 +19773,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     end
   
 
-    if WAR.DZXF[pid] == 1 then
-        local a1 = math.modf(sixi(eid, 1) * 0.005)
-		local a2 = math.modf(sixi(eid, 2) * 0.005)
-		local a3 = math.modf(sixi(eid, 3) * 0.005)
-		local a4 = math.modf(sixi(eid, 4) * 0.005)
-		local a5 = math.modf(sixi(eid, 5) * 0.005)
-	    local a6 = math.modf(hurt + (a1 + a2 + a3 + a4 + a5))
-	    hurt = 0
-	    ang = 0
-	    WAR.GTSHAQI = 0
-		JY.Person[eid]["内力"] = JY.Person[eid]["内力"] + a6 
-        SetWarMap(WAR.Person[emenyid]["坐标X"], WAR.Person[emenyid]["坐标Y"], 4, 2);	--反弹者标识为被命中  	
-		JY.Person[pid]["生命"] = JY.Person[pid]["生命"] - a6;
-    	WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) -a6
-	end 	
+    	
 
     if MPPD(pid) == 11 then --一刀流回气
         WAR.YDZM = WAR.YDZM + hurt
@@ -19895,6 +19797,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			end	
 		end
 	end	
+	
+	
 	
 	if MPPD(pid) == 4 and wglw(pid,182) and wglw1(pid,16) and wugong == 16 and DWPD() then
 		local aa = JY.Person[eid]["受伤程度"] or 0
@@ -19973,7 +19877,234 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			hurt = hurt + math.modf(JY.Person[pid]["轻功"]/6)
 		end	]]
 	end
-	
+	if T9ZY(eid) and juexing() >= 2 and DWPD() then --赵云蛇盘
+        WAR.ZYSP=WAR.ZYSP+1
+        local str=""
+		if JLSD(10,30+WAR.ZYSP*15,eid) then
+	        local sp = math.modf(sixi(eid,4)/30)
+	        local sp2 = 1-sp/100	
+	        hurt = math.modf(hurt * sp2)
+	        str = "梨花遍身"
+			if WAR.LQZ[eid] ~= nil then
+		        sp= sp + math.modf(WAR.LQZ[eid] * 0.1)+WAR.ZYSP*15
+	        end
+	            dng = dng+math.modf(sixi(eid,4)*10)
+	        if JLSD(10, 30+sp, eid) then
+				if WAR.SQFJ ~= 1 then
+					for i = 0, WAR.PersonNum - 1 do
+						if WAR.Person[i]["人物编号"] == 0 and T9ZY(WAR.Person[i]["人物编号"]) and JY.Person[WAR.Person[i]["人物编号"]]["生命"] > 0 then
+							str = "豪龙胆·逆龙鳞"
+							local tmp = WAR.CurID
+							WAR.CurID = i
+							WAR.SQFJ = 1
+							WarDrawMap(0)
+							CurIDTXDH(i, 2197, 2208)
+							CurIDTXDH(i, 2209, 2219)     
+							--错步剑反击
+							local n = 1
+							for w = 1, HHH_GAME_SETTING["WG_COUNT_MAX_LIMIT"] do
+								if T9ZY(WAR.Person[i]["人物编号"]) and JY.Person[0]["武功" .. w] == 112 then
+									n = w
+								end
+							end	
+							War_Fight_Sub(i, n, WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"])
+							WAR.SQFJ = 0
+							WAR.CurID = tmp
+							WAR.ACT = 10
+							WAR.ZYHB = 0
+							WAR.FLHS5 = 1
+							WAR.ZYSP=WAR.ZYSP+1
+						end
+					end
+				end
+			else
+				if JLSD(20, 30+sp, eid) and WAR.SQFJ ~= 1 then
+					for i = 0, WAR.PersonNum - 1 do
+						if WAR.Person[i]["人物编号"] == 0 and T9ZY(WAR.Person[i]["人物编号"]) and JY.Person[WAR.Person[i]["人物编号"]]["生命"] > 0 then
+							str = "逆龙鳞"
+							local tmp = WAR.CurID
+							WAR.CurID = i
+							WAR.SQFJ = 1
+							WarDrawMap(0)
+							CurIDTXDH(i, 2197, 2208)
+							CurIDTXDH(i, 2209, 2219)     
+							--错步剑反击
+							local n = 1
+							for w = 1, HHH_GAME_SETTING["WG_COUNT_MAX_LIMIT"] do
+								if T9ZY(WAR.Person[i]["人物编号"]) and JY.Person[0]["武功" .. w] == 112 then
+									n = w
+								end
+							end	
+							War_Fight_Sub(i, n, WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"])
+							WAR.SQFJ = 0
+							WAR.CurID = tmp
+						end
+					end
+				end
+			end	
+		end	
+		if str ~= "" then
+			if WAR.Person[emenyid][CC.TXWZ2] == nil then
+				WAR.Person[emenyid][CC.TXWZ2] = "蛇盘·"..str	
+			else
+			   WAR.Person[emenyid][CC.TXWZ2] = "蛇盘·"..str.."+"..WAR.Person[emenyid][CC.TXWZ2]	
+			end	
+			   WAR.Person[emenyid][CC.TXDH] = 145
+		end	   
+    end
+   
+    if DT(eid,58) and JX(eid) and DWPD() then --杨过攻其必救
+	    local sp = math.modf(sixi(eid,2)/10)
+	    local sp2 = 1-sp/100
+        local str="无锋离剑式"	
+	    hurt = math.modf(hurt * sp2)
+	    if WAR.LQZ[eid] ~= nil then
+		    sp= sp + math.modf(WAR.LQZ[eid] * 0.05)
+	    end
+	    dng = dng+math.modf(sixi(eid,2)*10)
+	    if JLSD(10, 40+sp, eid) and WAR.SQFJ ~= 1 then
+	        for i = 0, WAR.PersonNum - 1 do
+                if DT(WAR.Person[i]["人物编号"],58) and JY.Person[WAR.Person[i]["人物编号"]]["生命"] > 0 then
+                    str=".钝击锉剑式"
+		            local tmppid = WAR.CurID
+		            WAR.CurID = i
+		            DIYdisplay("独孤奥义.攻其必救")
+                    WAR.SQFJ = 1
+                    WarDrawMap(0)
+                    CurIDTXDH(i, 2197, 2208)
+                    CurIDTXDH(i, 2209, 2219)     
+                    --玄铁反击
+		            local n = 1
+		            for w = 1, HHH_GAME_SETTING["WG_COUNT_MAX_LIMIT"] do
+			            if DT(WAR.Person[i]["人物编号"],58) and JY.Person[WAR.Person[i]["人物编号"]]["武功" .. w] == 45 then
+				            n = w
+				        end
+			        end	
+                    War_Fight_Sub(i, n, WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"])
+		            WAR.BZ[tmppid]=1
+		            WAR.KMSHJQ[tmppid]=WAR.KMSHJQ[tmppid] or 0 +1
+		            WAR.SQFJ = 0
+		            WAR.CurID = tmppid
+		            hurt=0
+		            WAR.ACT=10
+		            WAR.ZYHB=0
+		            lib.Delay(200)	
+                end
+            end    
+		else
+	    end	
+	    if WAR.Person[emenyid][CC.TXWZ2] == nil then
+		    WAR.Person[emenyid][CC.TXWZ2] = "玄铁九剑奥义."..str	
+	    else
+		    WAR.Person[emenyid][CC.TXWZ2] = "玄铁九剑奥义."..str.."+"..WAR.Person[emenyid][CC.TXWZ2]	
+	    end	
+	        WAR.Person[emenyid][CC.TXDH] = 145
+	end
+  
+    if eid == 0 and zjtype()==4 and JX(eid) and DWPD() and JY.Wugong[JY.Person[eid]["武功" .. 1]]["攻击力" .. 10] > 0 then --风天流时空逆
+	    local sp = math.modf(JY.Person[eid]["资质"] / 4)
+	    local sp2 = 1-sp/50
+        local str=".次元阻隔"
+		hurt = math.modf(hurt * sp2)
+		if WAR.LQZ[eid] ~= nil then
+		    sp= sp + math.modf(WAR.LQZ[eid] * 0.05)
+	    end
+	        dng = dng+JY.Person[eid]["内力"]
+	    if JLSD(10, 40+sp, eid) and WAR.SQFJ ~= 1 then
+	        for i = 0, WAR.PersonNum - 1 do
+                if WAR.Person[i]["人物编号"] == 0 and zjtype()==4 and JX(WAR.Person[i]["人物编号"]) and JY.Person[WAR.Person[i]["人物编号"]]["生命"] > 0 then
+                    str=".逆次元"
+		            local tmppid = WAR.CurID
+		            WAR.CurID = i
+		            DIYdisplay("扭转时空.寰宇无限")
+                    WAR.SQFJ = 1
+                    WarDrawMap(0)
+                    CurIDTXDH(i, 2197, 2208)
+                    CurIDTXDH(i, 2209, 2219)     
+                    --反击
+		            local n = 1
+                    War_Fight_Sub(i, n, WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"])
+		            WAR.BZ[tmppid]=1
+		            WAR.KMSHJQ[tmppid]=WAR.KMSHJQ[tmppid] or 0 +1
+		            WAR.SQFJ = 0
+		            WAR.CurID = tmppid
+		            hurt=0
+		            WAR.ACT=10
+		            WAR.ZYHB=0
+		            lib.Delay(200)	
+                end
+            end    
+		else
+	    end	
+	    if WAR.Person[emenyid][CC.TXWZ2] == nil then
+		    WAR.Person[emenyid][CC.TXWZ2] = "宇晶流奥义."..str	
+	    else
+		    WAR.Person[emenyid][CC.TXWZ2] = "宇晶流奥义."..str.."+"..WAR.Person[emenyid][CC.TXWZ2]	
+	    end	
+	       WAR.Person[emenyid][CC.TXDH] = 145
+	end
+   
+    if DT(eid,517) and JLSD(10, 45, eid) and WAR.SQFJ ~= 1 and DWPD() then----
+        WAR.GBWZ1=-1
+	    WAR.ACT=10
+	    WAR.ZYHB=0
+	    if WAR.Person[emenyid][CC.TXWZ2] == nil then
+		    WAR.Person[emenyid][CC.TXWZ2] = "秘剑.燕返"	
+	    else
+		    WAR.Person[emenyid][CC.TXWZ2] = "秘剑.燕返".."+"..WAR.Person[emenyid][CC.TXWZ2]	
+	    end	
+	        WAR.Person[emenyid][CC.TXDH] = 136    
+    end
+
+    --料敌先机
+    if (wglw1(eid,47) or DT(eid,592)) and JY.Person[eid]["御剑能力"] >= 500 and WAR.SQF ~= 1 and JLSD(10,40,eid) and DWPD() then
+		WAR.JJWS = -1
+		WAR.ACT = 10
+		WAR.ZYHB = 0
+		local ab = math.modf(sixi(eid,2) / 10)
+		hurt = math.modf(hurt * ab)
+		if WAR.LQZ[eid] ~= nil then
+		    ab = ab + math.modf(WAR.LQZ[eid] * 0.5)
+	    end
+		dng = dng + math.modf(sixi(eid,2) * 10)
+		local jl = JY.Person[eid]["轻功"] + JY.Person[pid]["轻功"]
+	    if jl < 0 then
+	        jl = 0
+	    end
+	    if jl > 300 then
+	        jl = 300
+	    end
+        local jl2 = 15 + math.modf(jl/20)
+        if JLSD(0,60 + jl2,eid) then 
+	        hurt = 0
+		end	
+		DIYdisplay("九剑无双")
+	end	
+
+	if wglw1(eid,16)  and WAR.SQFJ ~= 1 and DWPD() and JY.Person[0]["拳掌功夫"] >= 300 and JLSD(10,50,eid) then--
+		WAR.TQFJ = -1
+		WAR.ACT = 10
+		WAR.ZYHB = 0
+		local ab = math.modf(sixi(eid,1) / 10)
+		hurt = math.modf(hurt / ab)
+		if WAR.LQZ[eid] ~= nil then
+		    ab = ab + math.modf(WAR.LQZ[eid] * 0.5)
+	    end
+		dng = dng + math.modf(sixi(eid,1) * 10)
+		local jl = JY.Person[eid]["攻击力"] + JY.Person[pid]["攻击力"]
+	    if jl < 0 then
+	        jl = 0
+	    end
+	    if jl > 300 then
+	        jl = 300
+	    end
+        local jl2 = 15 + math.modf(jl/20)
+        if JLSD(0,60 + jl2,eid) then 
+	        hurt = 0
+		end	
+		DIYdisplay("四两拨开阴阳势")
+		DIYdisplay("借彼几分还几分")
+	end
 	if wglw1(pid,48) and wugong == 48 then
 		if hurt < 300 then
 			hurt = hurt + math.random(sixi(pid,2))
@@ -20002,6 +20133,21 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		end
 	end	
 	
+	if WAR.DZXF[pid] == 1 then
+        local a1 = math.modf(sixi(eid, 1) * 0.005)
+		local a2 = math.modf(sixi(eid, 2) * 0.005)
+		local a3 = math.modf(sixi(eid, 3) * 0.005)
+		local a4 = math.modf(sixi(eid, 4) * 0.005)
+		local a5 = math.modf(sixi(eid, 5) * 0.005)
+	    local a6 = math.modf(hurt + (a1 + a2 + a3 + a4 + a5))
+	    hurt = 0
+	    ang = 0
+	    WAR.GTSHAQI = 0
+		JY.Person[eid]["内力"] = JY.Person[eid]["内力"] + a6 
+        SetWarMap(WAR.Person[emenyid]["坐标X"], WAR.Person[emenyid]["坐标Y"], 4, 2);	--反弹者标识为被命中  	
+		JY.Person[pid]["生命"] = JY.Person[pid]["生命"] - a6;
+    	WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) -a6
+	end 
 	
 	if MPPD(pid) == 11 then --一刀流格切1-25-
 	    local dj = MPDJ(pid)
@@ -20053,6 +20199,13 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	
 	hurt = math.min(hurt, JY.Person[eid]["生命"] or 0)	
 	
+	if wugong == 128 and ((wglw(pid,124) and JLSD(10,60,pid)) or (DT(pid,22) and JLSD(10,60,pid))) and MPPD(pid) == 14 and DWPD() then
+		if JY.Person[eid]["内力"] > 0 then
+			WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", -math.modf(hurt*0.1))
+		else
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -math.modf(hurt*0.1))
+		end
+	end	
     if jtyl(eid) then
 		hurt = 0
 		JY.Person[eid]["生命"] = JY.Person[eid]["生命"] - hurt
@@ -20061,9 +20214,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    --WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid,"生命",-hurt)
 		JY.Person[eid]["生命"] = JY.Person[eid]["生命"] - hurt
     elseif (wglw(pid,107) or DT(pid,599)) and WAR.JYZQ[pid] ~= nil then --17-2-10
-	    hurt = hurt + math.modf(JY.Person[eid]["生命最大值"]*0.04)
+	    hurt = hurt + math.modf(JY.Person[eid]["生命最大值"]*0.05)
 	    --WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid,"生命",-hurt)
 		JY.Person[eid]["生命"] = JY.Person[eid]["生命"] - hurt
+		WAR.JYZQJZS[eid] = 1
 	elseif (getHZ(eid, 9) or hasTF(eid, 27)) and JLSD(10, 20, eid) then --长生符
 		JY.Person[eid]["生命"] = JY.Person[eid]["生命"] + hurt
 		--WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid,"生命",hurt)
@@ -20218,106 +20372,158 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     --神照重生
     if (not hasTF(pid, 83)) and WAR.LMJQ ~= 4 and JY.Person[eid]["生命"] <= 0 and T5BCF(eid) == false then
 		if PersonKF(eid, 94) and WAR.tmp[2000 + eid] == nil then
-			WAR.Person[emenyid][CC.TXDH] = math.fmod(94, 10) + 85
-			WAR.Person[emenyid][CC.TXWZ1] = JY.Wugong[94]["名称"] .. CC.WARS111
-			--local lv = math.modf(JY.Person[eid]["武功等级" .. i] / 100) + 1
-			--if lv > 10 then lv = 10 end
-			if DT(eid, 37) or PersonGT(eid, 94) then --神照主功体全恢复
-				JY.Person[eid]["生命"] = JY.Person[eid]["生命最大值"]
-			else
-				JY.Person[eid]["生命"] = math.modf(JY.Person[eid]["生命最大值"] / 2)
-			end
-			if PersonGT(eid, 94) then 
-				JY.Person[eid]["内力"] = JY.Person[eid]["内力最大值"]
-				JY.Person[eid]["体力"] = 100
-				WAR.Person[emenyid].Time = 990	
-				WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid,"中毒程度" ,-JY.Person[eid]["中毒程度"])
-				JY.Person[eid]["受伤程度"] = 0	
-				WAR.FXDS[eid] = nil
-				WAR.LXZT[eid] = nil
-				WAR.CHZ[eid] = nil
-			else
-				JY.Person[eid]["内力"] = math.modf((JY.Person[eid]["内力"] + JY.Person[eid]["内力最大值"]) / 2)
-				JY.Person[eid]["体力"] = math.modf((JY.Person[eid]["体力"] + 100) / 2)
-				WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid,"中毒程度" ,-JY.Person[eid]["中毒程度"])
-				JY.Person[eid]["受伤程度"] = 0	
-				WAR.FXDS[eid] = nil
-				WAR.LXZT[eid] = nil
-				WAR.CHZ[eid] = nil
-				WAR.Person[emenyid].Time = WAR.Person[emenyid].Time + 500
-			end
-			if DT(eid , 37) then
-			  WAR.Person[emenyid].Time = 990
-			  WAR.DYSZ = 1
-			end
-			if WAR.Person[emenyid].Time > 990 then
-			  WAR.Person[emenyid].Time = 990
-			end
-		
-			zhanyi(eid, -5) ---复活减战意
-		
-			if PersonGT(eid, 94) then --神照主功体10%重置，否则5%
-				if math.random(10) ~= 5 then		
-				  WAR.tmp[2000 + eid] = 1
-				  --if T9ZY(eid) then
-					--WAR.tmp[2000 + 0] = 1
-					--WAR.tmp[2000 + 582] = 1
-				  --end
+			if WAR.WXJQH1[eid] ~= nil and JLSD(10,60,pid)then
+				WAR.Person[WAR.CurID][CC.TXDH] = 19
+				WAR.Person[WAR.CurID][CC.TXWZ1] = CC.WARS112
+				JY.Person[pid]["生命"] = JY.Person[pid]["生命最大值"]
+				JY.Person[pid]["内力"] = JY.Person[pid]["内力最大值"]
+				WAR.Person[WAR.CurID]["中毒点数"] = (WAR.Person[WAR.CurID]["中毒点数"] or 0) + AddPersonAttrib(pid,"中毒程度" ,-JY.Person[pid]["中毒程度"])
+				JY.Person[pid]["受伤程度"] = 0
+				JY.Person[pid]["体力"] = 100
+				--WAR.Person[emenyid].Time = 980
+				WAR.LQZ[pid]=WAR.LQZ[pid] or 0 + 100
+				if WAR.LQZ[pid]>=100 then
+					WAR.LQZ[pid]=100
 				end
-			else
-				if math.random(20) ~= 10 then		
-				  WAR.tmp[2000 + eid] = 1
-				  --if T9ZY(eid) then
-					--WAR.tmp[2000 + 0] = 1
-					--WAR.tmp[2000 + 582] = 1
-				  --end			  
+				WAR.FXDS[pid] = nil
+				WAR.LXZT[pid] = nil
+				WAR.CHZ[pid] = nil
+			else	
+				WAR.Person[emenyid][CC.TXDH] = math.fmod(94, 10) + 85
+				WAR.Person[emenyid][CC.TXWZ1] = JY.Wugong[94]["名称"] .. CC.WARS111
+				if DT(eid, 37) or PersonGT(eid, 94) then --神照主功体全恢复
+					JY.Person[eid]["生命"] = JY.Person[eid]["生命最大值"]
+				else
+					JY.Person[eid]["生命"] = math.modf(JY.Person[eid]["生命最大值"] / 2)
 				end
-			end
+				if PersonGT(eid, 94) then 
+					JY.Person[eid]["内力"] = JY.Person[eid]["内力最大值"]
+					JY.Person[eid]["体力"] = 100
+					WAR.Person[emenyid].Time = 990	
+					WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid,"中毒程度" ,-JY.Person[eid]["中毒程度"])
+					JY.Person[eid]["受伤程度"] = 0	
+					WAR.FXDS[eid] = nil
+					WAR.LXZT[eid] = nil
+					WAR.CHZ[eid] = nil
+				else
+					JY.Person[eid]["内力"] = math.modf((JY.Person[eid]["内力"] + JY.Person[eid]["内力最大值"]) / 2)
+					JY.Person[eid]["体力"] = math.modf((JY.Person[eid]["体力"] + 100) / 2)
+					WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid,"中毒程度" ,-JY.Person[eid]["中毒程度"])
+					JY.Person[eid]["受伤程度"] = 0	
+					WAR.FXDS[eid] = nil
+					WAR.LXZT[eid] = nil
+					WAR.CHZ[eid] = nil
+					WAR.Person[emenyid].Time = WAR.Person[emenyid].Time + 500
+				end
+				if DT(eid , 37) then
+				  WAR.Person[emenyid].Time = 990
+				  WAR.DYSZ = 1
+				end
+				if WAR.Person[emenyid].Time > 990 then
+				  WAR.Person[emenyid].Time = 990
+				end
+			
+				zhanyi(eid, -5) ---复活减战意
+			
+				if PersonGT(eid, 94) then --神照主功体10%重置，否则5%
+					if math.random(10) ~= 5 then		
+					  WAR.tmp[2000 + eid] = 1
+					  --if T9ZY(eid) then
+						--WAR.tmp[2000 + 0] = 1
+						--WAR.tmp[2000 + 582] = 1
+					  --end
+					end
+				else
+					if math.random(20) ~= 10 then		
+					  WAR.tmp[2000 + eid] = 1
+					  --if T9ZY(eid) then
+						--WAR.tmp[2000 + 0] = 1
+						--WAR.tmp[2000 + 582] = 1
+					  --end			  
+					end
+				end
+			end	
 		end
 	end
 
     --王重阳，复活,沼跃鱼：论剑模式开启
     if (not hasTF(pid, 83)) and WAR.LMJQ ~= 4 and JY.Person[eid]["生命"] <= 0 and DT(eid, 129) and WAR.WCY < 1 then
-        WAR.Person[emenyid][CC.TXDH] = 19
-        WAR.Person[emenyid][CC.TXWZ1] = CC.WARS112
-        WAR.WCY = WAR.WCY + 1
-        JY.Person[eid]["生命"] = JY.Person[eid]["生命最大值"]
-        JY.Person[eid]["内力"] = JY.Person[eid]["内力最大值"]
-        WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid,"中毒程度" ,-JY.Person[eid]["中毒程度"])
-        JY.Person[eid]["受伤程度"] = 0
-        JY.Person[eid]["体力"] = 100
-        WAR.Person[emenyid].Time = 980
-	    zhanyi(eid, -5) ---复活减战意
-	    WAR.LQZ[eid]=WAR.LQZ[eid] or 0 + 100
-	    if WAR.LQZ[eid]>=100 then
-	        WAR.LQZ[eid]=100
-	    end
-	    WAR.FXDS[eid] = nil
-	    WAR.LXZT[eid] = nil
-	    WAR.CHZ[eid] = nil
-	    WAR.WCY3 = 7
+        if WAR.WXJQH1[eid] ~= nil and JLSD(10,60,pid)then
+			WAR.Person[WAR.CurID][CC.TXDH] = 19
+			WAR.Person[WAR.CurID][CC.TXWZ1] = CC.WARS112
+			JY.Person[pid]["生命"] = JY.Person[pid]["生命最大值"]
+			JY.Person[pid]["内力"] = JY.Person[pid]["内力最大值"]
+			WAR.Person[WAR.CurID]["中毒点数"] = (WAR.Person[WAR.CurID]["中毒点数"] or 0) + AddPersonAttrib(pid,"中毒程度" ,-JY.Person[pid]["中毒程度"])
+			JY.Person[pid]["受伤程度"] = 0
+			JY.Person[pid]["体力"] = 100
+			--WAR.Person[emenyid].Time = 980
+			WAR.LQZ[pid]=WAR.LQZ[pid] or 0 + 100
+			if WAR.LQZ[pid]>=100 then
+				WAR.LQZ[pid]=100
+			end
+			WAR.FXDS[pid] = nil
+			WAR.LXZT[pid] = nil
+			WAR.CHZ[pid] = nil
+		else
+			WAR.Person[emenyid][CC.TXDH] = 19
+			WAR.Person[emenyid][CC.TXWZ1] = CC.WARS112
+			WAR.WCY = WAR.WCY + 1
+			JY.Person[eid]["生命"] = JY.Person[eid]["生命最大值"]
+			JY.Person[eid]["内力"] = JY.Person[eid]["内力最大值"]
+			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid,"中毒程度" ,-JY.Person[eid]["中毒程度"])
+			JY.Person[eid]["受伤程度"] = 0
+			JY.Person[eid]["体力"] = 100
+			WAR.Person[emenyid].Time = 980
+			zhanyi(eid, -5) ---复活减战意
+			WAR.LQZ[eid]=WAR.LQZ[eid] or 0 + 100
+			if WAR.LQZ[eid]>=100 then
+				WAR.LQZ[eid]=100
+			end
+			WAR.FXDS[eid] = nil
+			WAR.LXZT[eid] = nil
+			WAR.CHZ[eid] = nil
+			WAR.WCY3 = 7
+		end	
     end
   
     --一灯，复活，沼跃鱼：六脉转龙
     if (not hasTF(pid, 83)) and WAR.LMJQ ~= 4 and JY.Person[eid]["生命"] <= 0 and DT(eid , 65) and WAR.WCY1 < 1 then
-        WAR.Person[emenyid][CC.TXDH] = 108
-        WAR.Person[emenyid][CC.TXWZ2] = "先天一灯.气指如剑"
-        WAR.WCY1 = WAR.WCY1 + 1
-        JY.Person[eid]["生命"] = JY.Person[eid]["生命最大值"]
-        JY.Person[eid]["内力"] = JY.Person[eid]["内力最大值"]
-        WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid,"中毒程度" ,-JY.Person[eid]["中毒程度"])
-        JY.Person[eid]["受伤程度"] = 0
-        JY.Person[eid]["体力"] = 100
-        WAR.Person[emenyid].Time = 980
-	    zhanyi(eid, -5) ---复活减战意
-	    WAR.LQZ[eid]=WAR.LQZ[eid] or 0 + 100
-	    if WAR.LQZ[eid]>=100 then
-	        WAR.LQZ[eid]=100
-	    end
-	    WAR.FXDS[eid] = nil
-	    WAR.LXZT[eid] = nil
-	    WAR.CHZ[eid] = nil
-	    WAR.WCY4 = 6
+        if WAR.WXJQH1[eid] ~= nil and JLSD(10,60,pid)then
+			WAR.Person[WAR.CurID][CC.TXDH] = 19
+			WAR.Person[WAR.CurID][CC.TXWZ1] = CC.WARS112
+			JY.Person[pid]["生命"] = JY.Person[pid]["生命最大值"]
+			JY.Person[pid]["内力"] = JY.Person[pid]["内力最大值"]
+			WAR.Person[WAR.CurID]["中毒点数"] = (WAR.Person[WAR.CurID]["中毒点数"] or 0) + AddPersonAttrib(pid,"中毒程度" ,-JY.Person[pid]["中毒程度"])
+			JY.Person[pid]["受伤程度"] = 0
+			JY.Person[pid]["体力"] = 100
+			--WAR.Person[emenyid].Time = 980
+			WAR.LQZ[pid]=WAR.LQZ[pid] or 0 + 100
+			if WAR.LQZ[pid]>=100 then
+				WAR.LQZ[pid]=100
+			end
+			WAR.FXDS[pid] = nil
+			WAR.LXZT[pid] = nil
+			WAR.CHZ[pid] = nil
+		else	
+			WAR.Person[emenyid][CC.TXDH] = 108
+			WAR.Person[emenyid][CC.TXWZ2] = "先天一灯.气指如剑"
+			WAR.WCY1 = WAR.WCY1 + 1
+			JY.Person[eid]["生命"] = JY.Person[eid]["生命最大值"]
+			JY.Person[eid]["内力"] = JY.Person[eid]["内力最大值"]
+			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid,"中毒程度" ,-JY.Person[eid]["中毒程度"])
+			JY.Person[eid]["受伤程度"] = 0
+			JY.Person[eid]["体力"] = 100
+			WAR.Person[emenyid].Time = 980
+			zhanyi(eid, -5) ---复活减战意
+			WAR.LQZ[eid]=WAR.LQZ[eid] or 0 + 100
+			if WAR.LQZ[eid]>=100 then
+				WAR.LQZ[eid]=100
+			end
+			WAR.FXDS[eid] = nil
+			WAR.LXZT[eid] = nil
+			WAR.CHZ[eid] = nil
+			WAR.WCY4 = 6
+		end	
     end
   
     --豸苗：先天领悟
@@ -20332,7 +20538,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
         JY.Person[eid]["体力"] = 100
         WAR.Person[emenyid].Time = 999
 	    WAR.Person[emenyid].TimeAdd = 999
-	    dng = 1
+	    WAR.BUPUO = 1
 	    WAR.ACT = 10
     end
   
@@ -20347,7 +20553,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
         JY.Person[eid]["体力"] = 100
         WAR.Person[emenyid].Time = 999
 	    WAR.Person[emenyid].TimeAdd = 999
-	    dng = 1
+	    WAR.BUPUO = 1
 	    WAR.ACT = 10
 	    WAR.RZSZ[eid] = 0
     end
@@ -20493,7 +20699,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     end
 
     --小日本
-    if (not hasTF(pid, 83)) and WAR.LMJQ ~= 4 and DT(eid, 553) and JY.Person[eid]["生命"] <= 0 then
+    if (not hasTF(pid, 83)) and WAR.LMJQ ~= 4 and DT(eid, 553) and JY.Person[eid]["生命"] <= 0 and JX(eid) then
        WAR.YZB = 1
     end
   
@@ -20539,7 +20745,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+"..CC.WARS114	
 	    end
         WAR.Person[emenyid][CC.TXDH] = 39
-        dng = 1
+        WAR.BUPUO = 1
     end  
   
     if wglw(eid,108) or DT(eid, 615) or DT(eid, 114) or DT(eid,585) then
@@ -20549,7 +20755,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+".."易筋真谛"
 	    end
             WAR.Person[emenyid][CC.TXDH] = 39
-            dng = 1
+            WAR.BUPUO = 1
     end  
 	
     if DT(eid,457) then
@@ -20559,63 +20765,63 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+".."易筋真谛"
 	    end
             WAR.Person[emenyid][CC.TXDH] = 39
-        dng = 1
+        WAR.BUPUO = 1
     end  	
 	
 	--武无敌免杀气 
     if DT(eid, 600) then
-        dng = 1
+        WAR.BUPUO = 1
     end
   
     --聂风3觉免杀气
     if NF(eid) and juexing() > 2 then 
-	    dng = 1
+	    WAR.BUPUO = 1
 	end
 
     if wglw(eid,94) or (DT(eid,632) and PersonKF(eid,94)) then
-		dng = 1
+		WAR.BUPUO = 1
 	end	
 
     --伤害小于20 免内伤，免杀气 
     if hurt < 20 then
-        dng = 1
+        WAR.BUPUO = 1
     end
   
     --狄云复活第一回合，免内伤，免杀气 
     if DT(eid , 37) and WAR.DYSZ == 1 then
-        dng = 1
+        WAR.BUPUO = 1
         WAR.DYSZ = 0
     end
   
     --不动如山 免内伤，免杀气 
     if eid == 0 and 0 < WAR.FLHS4 then
-        dng = 1
+        WAR.BUPUO = 1
     end
   
     --段思平免杀气
     if DT(eid, 602) then
-	    dng = 1
+	    WAR.BUPUO = 1
     end 
 
     --木灵子免杀气
 	if DT(eid, 603) then
-	    dng = 1
+	    WAR.BUPUO = 1
     end 
 
     --小二免杀气
     if DT(eid, 585) then
-	    dng = 1
+	    WAR.BUPUO = 1
     end 
 
 	--踏雪无痕领悟
 	if wglw2(eid,195) and PersonKF(eid,195) then
 		if JY.Person[pid]["轻功"] <= JY.Person[eid]["轻功"] and JLSD(10,80,eid) then
-			dng = 1
+			WAR.BUPUO = 1
 		end
 	end	
 	
 	if wglw1(eid,18) and WAR.TZQJ7[eid] ~= nil then
-		dng = 1
+		WAR.BUPUO = 1
 	end	
 
     --豸苗：盖世无双
@@ -20626,7 +20832,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+丐世无双"
 	    end
             WAR.Person[emenyid][CC.TXDH] = 68
-        dng = 1
+        WAR.BUPUO = 1
     end  
     
     --无求易诀
@@ -20637,7 +20843,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+无求易转"
 	    end
             WAR.Person[emenyid][CC.TXDH] = 70
-        dng = 1
+        WAR.BUPUO = 1
     end  	 	
 	
     if (wglw(eid,188) or (DT(eid,48) and PersonGT(eid,188)))	and JLSD(10,60,eid) then
@@ -20646,23 +20852,23 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    else
 		    WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+欲三摩地"
 	    end
-        dng = 1
+        WAR.BUPUO = 1
     end  		
 	
-    if DT(eid,583) then
-        dng = 1
+    if DT(eid,546) then
+        WAR.BUPUO = 1
     end  		
 	
     if WAR.SJRS == 1 then
-		dng = 1
+		WAR.BUPUO = 1
 	end		
 	
     if DT(eid,617) then
-		dng = 1
+		WAR.BUPUO = 1
 	end 		
 	
     if WAR.WLKH == 1 then
-		dng = 1
+		WAR.BUPUO = 1
 	end 		
 	
     --太极奥义，免免内伤，免杀气 
@@ -20717,7 +20923,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	        WAR.LSQL1 = 1
 	        str = "太极奥义·万物无极"
 	    else   
-	        dng = 1
+	        WAR.BUPUO = 1
 	    end
 	    if PersonKFJ(eid,16) or PersonKFJ(eid,7) then
 			TQ = 1
@@ -20751,7 +20957,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			((DT(eid, 171) or DT(eid, 172) or DT(eid, 5) or (DT(eid, 80) and JX(eid)) and JLSD(10, 30, eid))) then
 			--WAR.CYZY[eid] = (WAR.CYZY[eid] or 0) + math.random(2)--纯阳之意
 			local aa = math.modf(JY.Person[eid]["受伤程度"]/2)
-			if JY.Person[eid]["受伤程度"] ~= nil and JY.Person[eid]["受伤程度"] > 0 then
+			if JY.Person[eid]["受伤程度"] ~= nil and JY.Person[eid]["受伤程度"] > 0 and JY.Person[eid]["生命"] > 0 then
 				WAR.Person[WAR.CurID]["内伤点数"] = (WAR.Person[WAR.CurID]["内伤点数"] or 0) + AddPersonAttrib(eid,"受伤程度",-aa)
 				WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(eid,"生命",aa*2)
 				if WAR.LQZ[eid] ~= nil and WAR.LQZ[eid] >= 100 then
@@ -20967,7 +21173,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
         WAR.Person[WAR.CurID][CC.TXDH] = 85
 	end
 
-    if DT(pid,583) then
+    if DT(pid,546) then
 		local chihuan = hurt / 60
 		if halfch(eid) then
 			chihuan =chihuan / 2
@@ -21084,299 +21290,33 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
         end
 	end		
 	
-	if ((wglw(pid,105) and PersonGT(pid, 105)) or (PersonGT(pid, 105) and (DT(pid, 455)))) or DT(pid,617) then  --葵花领悟后必破防
-        dng = 0
-    end
-
-    if wglw(pid,188) or (DT(pid,48) and PersonGT(pid,188)) then --神足经
-		dng = 0
-    end 
-
-    if hasTF(pid, 154) then --侵略如火
-		dng = 0
-	end 	
-
-    if JY.Person[pid]["武器"] == 36 then --玄铁剑
-		dng = 0 
-	end 	
-
-    if JY.Person[pid]["武器"] == 303 and JLSD(10,40,pid) then  --紫薇软剑
-		dng = 0
-	end 	
-
-    if DT(pid, 592) or wglw1(pid, 45) then --领悟重剑破防 	
-	   dng = 0
-	end	
-
-    if DT(pid, 615) or wglw1(pid,86) then --伏魔杖法领悟破防
-		dng = 0
-	end
-
-    if wugong == 11 and (DT(pid,599) or wglw1(pid,11)) then --摧坚神爪破防
-		dng = 0
-	end	
-
-    if wugong == 175 or wglw(pid,175) then --霹雳火雷破防
-		dng = 0
-	end	
-
-    if wugong == 148 and (DT(pid, 55) or wglw1(pid,148)) then --白羽箭法破防
-		dng = 0
-	end 	
-
-    if WAR.HYZF > 0 then --幻阴指破防
-		dng = 0
-	end 	
-
-    if wugong == 23 and ((DT(pid, 8) or DT(pid, 167) or DT(pid, 168)) or wglw1(pid,23) or DT(pid, 603)) then --领悟七伤拳破防
-		dng = 0
-	end 	
-
-    --刀系大招 直接破防
-    if WAR.ASKD == 1 then
-        dng = 0
-    end
-  
-    if WAR.DUOMINGJIAN == 14 then
-        dng = 0
-    end
-  
-    if WAR.CJSZ == 1 then
-        dng = 0
-    end
-  
-    if WAR.CYYJ == 1 then
-        dng = 0
-    end
-  
-    if WAR.JSTG2 == 1 then
-        dng = math.modf(dng/4)
-    end
-  
-    if WAR.ASKD1 == 1 then
-        dng = 0
-    end
-  
-    if WAR.LYBF == 3 then
-        dng = 0
-    end	
-  
-    if WAR.XSJS == 1 then
-		dng = 0
-	end 	
-
-   --沼跃鱼：战意组件 直接破防
-    if WAR.ZCDZ ==1 and hasDZ(pid,3) then
-        dng = 0
-    end 
-  
-    --沼跃鱼：胡斐战意技 直接破防
-    if WAR.HDYD >0 then
-        dng = 0
-    end
-  
-    if WAR.XTDJ >0 then
-        dng = 0
-    end
-  
-    if WAR.LSQL == 1 then 
-        dng = 0
-    end
-	
-    --沼跃鱼：李逍遥剑神破防
-    if WAR.LXYYJ==4 then
-        dng = 0
-    end
-  
-    --降龙领悟破防
-    if WAR.XLGJ > 0 then
-	    dng = 0
-    end	 
-
-    --六脉领悟破防
-    if WAR.LMJQ > 0 then
-	    dng = 0
-    end 
-
-    if MPPD(pid) == 11 and wugong == 131 and WAR.SJL == 3 then --豸苗：森九岚破防
-        dng = 0
-    end
-  
-    if WAR.NS[pid] ~= nil then 
-        dng = 1----日月神教
-    end
-  
-    if DT(pid,617) then
-		dng = 1
-	end 	
-
-    if WAR.WXQQ[pid] == 1 then 
-        dng = 1
-    end
-	
-    if XYL(pid) and (WAR.XYLCZ == 3 or WAR.XYLCZ1 == 2) then --豸苗：谢云流万剑直接破防
-        dng = 0
-    end
-	
-    if wugong == 42 and ((DT(pid, 601) or DT(pid, 59)) or wglw1(pid,42)) then  --玉女剑法破防
-		dng = 0
-	end 		
-	
-    --豸苗：太玄经
-    if (PersonKF(pid, 102) or  (T5BCF(pid) and juexing()>0)) and (WAR.TXTX == 2 or WAR.TXTX == 6) then 
-        dng = 0
-    end	
-  
-    if DT(pid, 114) and WAR.HQWX == 1 then --豸苗：扫地僧附加伤害 --17-2-9
-	    dng = 0
-    end
-	
-    if T7DFWM(pid) and WAR.DZXY == 1 and yongdao(wugong) and juexing()>1 then --沼跃鱼：东方未明刀系反击特效
-	    dng=0
-	end  
-  
-    if T5BCF(pid) and WAR.BCFZL == 1 then --破煞破防
-	    dng = 0
-    end
-  
-    if NF(pid) and juexing() > 2 then --聂风必破防
-	    dng = 0
-	end
-
-    if BJY(pid) and juexing() > 1 then --步惊云必破防
-	    dng = 0
-	end
-
-    if DT(pid, 600) then
-	    dng = 0
-    end
-
-    if WAR.SHITOUJY==3 then --王小石天地逆转·乾坤震爆直接破防
-	    dng = 0
-    end
-  
-    if WAR.DJSX==1 then --田归农刀剑十杀
-	    dng = 0
-    end
-  
-    if WAR.ZJWF == 1 then--举重若轻
-	    dng = 0
-    end
- 
-    if WAR.DGJY1 == 1 then --独孤剑意
-		dng = 0
-	end		
-	
-	if WAR.TSYXL == 3 then
-		dng = 0
-	end	
-	
-    if WAR.MMBT == 1 then --莫名悲痛
-		dng = 0
-	end		
-	
-	if wglw2(pid,194) and WAR.AYMZ == 1 then
-		dng = 0
-	end	
-	
-	if (wglw1(pid,40) or (DT(pid,91)and JX(pid)) or DT(pid,54) or DT(pid,630)) and WAR.JSJZ3 == 1 then
-		dng = 0
-		WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid,"受伤程度",15)
-	end
-	
-	if wugong == 140 and (wglw1(pid,140) or DT(pid,558)) and WAR.YHZJ[eid]~=nil and WAR.YHZJ[eid]>0 then
-		dng = dng /100
-		if WAR.LQZ[pid] == 100 then
-		dng = 0
-		end
-	end	
-	
-	if WAR.HSYFD == 1 then
-		dng = 0
-	end
-	
-    if T13TQS(pid) and WAR.TQS3 == 3 then --沼跃鱼：滕青山啸天苍狼特效
-	    dng=0
-	    local n = 1000 + JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
-  	    if n < 0 then
-  		    n = 0;
-  	    end
-	    ang=ang+n
-  	    WAR.CHXS[eid] = 1
-		WAR.CHZ[eid] = WAR.CHZ[eid] or 0 + limitX(math.modf(ang/100),0,100);
-    end  
-  
-    if wssz(pid) and WAR.TQS3 == 3 then --沼跃鱼：滕青山啸天苍狼特效
-	    dng=0
-	    local n = 1000 + JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
-  	    if n < 0 then
-  		    n = 0;
-  	    end
-	    ang=ang+n
-  	    WAR.CHZ[eid] = WAR.CHZ[eid] or 0 + limitX(math.modf(ang/100),0,100);
-    end 
-  
-    if T9ZY(pid) and WAR.ZYQT==2 then --沼跃鱼：赵云枪出如龙
-	    dng=0
-	    local n = JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
-  	    if n < 0 then
-  		    n = 0;
-  	    end
-	    n=n+sixi(pid,4)*10
-	    ang=ang+n
-	    WAR.CHXS[eid]=1
-  	    WAR.CHZ[eid] = WAR.CHZ[eid] or 0 + limitX(math.modf(ang/100),0,100);
-	end
-
-    local ttt, sss = pofang(pid)
-    if dng > 0 and ttt then
-	    dng = 0
-	    if WAR.Person[WAR.CurID][CC.TXWZ1] == nil then
-		    WAR.Person[WAR.CurID][CC.TXWZ1] = sss
-	    else
-		    WAR.Person[WAR.CurID][CC.TXWZ1] = WAR.Person[WAR.CurID][CC.TXWZ1].."+"..sss
-	    end
-    end
-  
-    --蓝烟清：狮吼功，直接破防杀集气，并对敌人造成迟缓
-     --[[ if wugong == 92 then
-  	dng = 0;
-  	local n = 1000 + JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
-  	ang = n;
-  	if ang < 0 then
-  		ang = 0;
-  	end
-  	
-  	WAR.CHZ[eid] = 10 + math.modf(ang/100);
-    end]]
-  
-    local lixiaoyao = 0
+	local lixiaoyao = 0
 	--李逍遥真元护体
     if T8LXY(eid) and DWPD() then
 	    local panding = 0
 	    if WAR.LQZ[pid] ~= nil and WAR.LQZ[pid] >= 100 then
 		    panding = 1
 	    end
-  	if JLSD(10, 10 + math.modf(15 + (5 * wgnumber(0, 5))), eid) or panding == 1 then --15%，每多一个内功+5%
-	    if hurt ~= 0 then
-			if WAR.Person[emenyid][CC.TXWZ2] == nil then
-				WAR.Person[emenyid][CC.TXWZ2] = "真元护体"
-			else
-				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+真元护体"
+		if JLSD(10, 10 + math.modf(15 + (5 * wgnumber(0, 5))), eid) or panding == 1 then --15%，每多一个内功+5%
+			if hurt ~= 0 then
+				if WAR.Person[emenyid][CC.TXWZ2] == nil then
+					WAR.Person[emenyid][CC.TXWZ2] = "真元护体"
+				else
+					WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+真元护体"
+				end
+				WAR.Person[emenyid][CC.TXDH] = 78
 			end
-			WAR.Person[emenyid][CC.TXDH] = 78
-		end
-		lixiaoyao = 1
-	elseif ZYBF(eid) then--沼跃鱼：李逍遥元灵归心术
-	    WAR.L_HQNZL[eid]=10
+			lixiaoyao = 1
+		elseif ZYBF(eid) then--沼跃鱼：李逍遥元灵归心术
+			WAR.L_HQNZL[eid]=10
 			if WAR.Person[emenyid][CC.TXWZ2] == nil then
 				WAR.Person[emenyid][CC.TXWZ2] = "元灵归心术"
 			else
 				WAR.Person[emenyid][CC.TXWZ2] = WAR.Person[emenyid][CC.TXWZ2].."+元灵归心术"
 			end
 			WAR.Person[emenyid][CC.TXDH] = 78
-	        else
-	    end
+		else
+		end
     end 
 
     --1-10-寒冰真气
@@ -21505,13 +21445,277 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		end
 		WAR.GTSHAQI = WAR.GTSHAQI + 1000
 		WAR.GTPID2 = pid 	
-	end 	
- 
+	end 
+	
+	if ((wglw(pid,105) and PersonGT(pid, 105)) or (PersonGT(pid, 105) and (DT(pid, 455)))) or DT(pid,617) then  --葵花领悟后必破防
+        WAR.BIPUO = 1
+    end
 
+    if wglw(pid,188) or (DT(pid,48) and PersonGT(pid,188)) then --神足经
+		WAR.BIPUO = 1
+    end 
+
+    if hasTF(pid, 154) then --侵略如火
+		WAR.BIPUO = 1
+	end 	
+
+    if JY.Person[pid]["武器"] == 36 then --玄铁剑
+		WAR.BIPUO = 1 
+	end 	
+
+    if JY.Person[pid]["武器"] == 303 and JLSD(10,40,pid) then  --紫薇软剑
+		WAR.BIPUO = 1
+	end 	
+
+    if DT(pid, 592) or wglw1(pid, 45) then --领悟重剑破防 	
+	   WAR.BIPUO = 1
+	end	
+
+    if DT(pid, 615) or wglw1(pid,86) then --伏魔杖法领悟破防
+		WAR.BIPUO = 1
+	end
+
+    if wugong == 11 and (DT(pid,599) or wglw1(pid,11)) then --摧坚神爪破防
+		WAR.BIPUO = 1
+	end	
+
+    if wugong == 175 or wglw(pid,175) then --霹雳火雷破防
+		WAR.BIPUO = 1
+	end	
+
+    if wugong == 148 and (DT(pid, 55) or wglw1(pid,148)) then --白羽箭法破防
+		WAR.BIPUO = 1
+	end 	
+
+    if WAR.HYZF > 0 then --幻阴指破防
+		WAR.BIPUO = 1
+	end 	
+
+    if wugong == 23 and ((DT(pid, 8) or DT(pid, 167) or DT(pid, 168)) or wglw1(pid,23) or DT(pid, 603)) then --领悟七伤拳破防
+		WAR.BIPUO = 1
+	end 	
+
+    --刀系大招 直接破防
+    if WAR.ASKD == 1 then
+        WAR.BIPUO = 1
+    end
+  
+    if WAR.DUOMINGJIAN == 14 then
+        WAR.BIPUO = 1
+    end
+  
+    if WAR.CJSZ == 1 then
+        WAR.BIPUO = 1
+    end
+  
+    if WAR.CYYJ == 1 then
+        WAR.BIPUO = 1
+    end
+  
+    if WAR.JSTG2 == 1 then
+        dng = math.modf(dng/4)
+    end
+  
+    if WAR.ASKD1 == 1 then
+        WAR.BIPUO = 1
+    end
+  
+    if WAR.LYBF == 3 then
+        WAR.BIPUO = 1
+    end	
+  
+    if WAR.XSJS == 1 then
+		WAR.BIPUO = 1
+	end 	
+
+   --沼跃鱼：战意组件 直接破防
+    if WAR.ZCDZ ==1 and hasDZ(pid,3) then
+        WAR.BIPUO = 1
+    end 
+  
+    --沼跃鱼：胡斐战意技 直接破防
+    if WAR.HDYD >0 then
+        WAR.BIPUO = 1
+    end
+  
+    if WAR.XTDJ >0 then
+        WAR.BIPUO = 1
+    end
+  
+    if WAR.LSQL == 1 then 
+        WAR.BIPUO = 1
+    end
+	
+    --沼跃鱼：李逍遥剑神破防
+    if WAR.LXYYJ==4 then
+        WAR.BIPUO = 1
+    end
+  
+    --降龙领悟破防
+    if WAR.XLGJ > 0 then
+	    WAR.BIPUO = 1
+    end	 
+
+    --六脉领悟破防
+    if WAR.LMJQ > 0 then
+	    WAR.BIPUO = 1
+    end 
+
+    if MPPD(pid) == 11 and wugong == 131 and WAR.SJL == 3 then --豸苗：森九岚破防
+        WAR.BIPUO = 1
+    end
+  
+    if WAR.NS[pid] ~= nil then 
+        WAR.BUPUO = 1----日月神教
+    end
+  
+    if DT(pid,617) then
+		WAR.BUPUO = 1
+	end 	
+
+    if WAR.WXQQ[pid] == 1 then 
+        WAR.BUPUO = 1
+    end
+	
+    if XYL(pid) and (WAR.XYLCZ == 3 or WAR.XYLCZ1 == 2) then --豸苗：谢云流万剑直接破防
+        WAR.BIPUO = 1
+    end
+	
+    if wugong == 42 and ((DT(pid, 601) or DT(pid, 59)) or wglw1(pid,42)) then  --玉女剑法破防
+		WAR.BIPUO = 1
+	end 		
+	
+    --豸苗：太玄经
+    if (PersonKF(pid, 102) or  (T5BCF(pid) and juexing()>0)) and (WAR.TXTX == 2 or WAR.TXTX == 6) then 
+        WAR.BIPUO = 1
+    end	
+  
+    if DT(pid, 114) and WAR.HQWX == 1 then --豸苗：扫地僧附加伤害 --17-2-9
+	    WAR.BIPUO = 1
+    end
+	
+    if T7DFWM(pid) and WAR.DZXY == 1 and yongdao(wugong) and juexing()>1 then --沼跃鱼：东方未明刀系反击特效
+	    WAR.BIPUO = 1
+	end  
+  
+    if T5BCF(pid) and WAR.BCFZL == 1 then --破煞破防
+	    WAR.BIPUO = 1
+    end
+  
+    if NF(pid) and juexing() > 2 then --聂风必破防
+	    WAR.BIPUO = 1
+	end
+
+    if BJY(pid) and juexing() > 1 then --步惊云必破防
+	    WAR.BIPUO = 1
+	end
+
+    if DT(pid, 600) then
+	    WAR.BIPUO = 1
+    end
+
+    if WAR.SHITOUJY==3 then --王小石天地逆转·乾坤震爆直接破防
+	    WAR.BIPUO = 1
+    end
+  
+    if WAR.DJSX==1 then --田归农刀剑十杀
+	    WAR.BIPUO = 1
+    end
+  
+    if WAR.ZJWF == 1 then--举重若轻
+	    WAR.BIPUO = 1
+    end
+ 
+    if WAR.DGJY1 == 1 then --独孤剑意
+		WAR.BIPUO = 1
+	end		
+	
+	if WAR.TSYXL == 3 then
+		WAR.BIPUO = 1
+	end	
+	
+    if WAR.MMBT == 1 then --莫名悲痛
+		WAR.BIPUO = 1
+	end		
+	
+	if wglw2(pid,194) and WAR.AYMZ == 1 then
+		WAR.BIPUO = 1
+	end	
+	
+	if (wglw1(pid,40) or (DT(pid,91)and JX(pid)) or DT(pid,54) or DT(pid,630)) and WAR.JSJZ3 == 1 then
+		WAR.BIPUO = 1
+		WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid,"受伤程度",15)
+	end
+	
+	if wugong == 140 and (wglw1(pid,140) or DT(pid,558)) and WAR.YHZJ[eid]~=nil and WAR.YHZJ[eid]>0 then
+		dng = dng /100
+		if WAR.LQZ[pid] == 100 then
+		WAR.BIPUO = 1
+		end
+	end	
+	
+	if WAR.HSYFD == 1 then
+		WAR.BIPUO = 1
+	end
+	
+    if T13TQS(pid) and WAR.TQS3 == 3 then --沼跃鱼：滕青山啸天苍狼特效
+	    WAR.BIPUO = 1
+	    local n = 1000 + JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
+  	    if n < 0 then
+  		    n = 0;
+  	    end
+	    ang=ang+n
+  	    WAR.CHXS[eid] = 1
+		WAR.CHZ[eid] = WAR.CHZ[eid] or 0 + limitX(math.modf(ang/100),0,100);
+    end  
+  
+    if wssz(pid) and WAR.TQS3 == 3 then --沼跃鱼：滕青山啸天苍狼特效
+	    WAR.BIPUO = 1
+	    local n = 1000 + JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
+  	    if n < 0 then
+  		    n = 0;
+  	    end
+	    ang=ang+n
+  	    WAR.CHZ[eid] = WAR.CHZ[eid] or 0 + limitX(math.modf(ang/100),0,100);
+    end 
+  
+    if T9ZY(pid) and WAR.ZYQT==2 then --沼跃鱼：赵云枪出如龙
+	    WAR.BIPUO = 1
+	    local n = JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
+  	    if n < 0 then
+  		    n = 0;
+  	    end
+	    n=n+sixi(pid,4)*10
+	    ang=ang+n
+	    WAR.CHXS[eid]=1
+  	    WAR.CHZ[eid] = WAR.CHZ[eid] or 0 + limitX(math.modf(ang/100),0,100);
+	end
+
+    local ttt, sss = pofang(pid)
+    if dng > 0 and ttt then
+	    WAR.BIPUO = 1
+	    if WAR.Person[WAR.CurID][CC.TXWZ1] == nil then
+		    WAR.Person[WAR.CurID][CC.TXWZ1] = sss
+	    else
+		    WAR.Person[WAR.CurID][CC.TXWZ1] = WAR.Person[WAR.CurID][CC.TXWZ1].."+"..sss
+	    end
+    end
+  
+    --蓝烟清：狮吼功，直接破防杀集气，并对敌人造成迟缓
+     --[[ if wugong == 92 then
+  	WAR.BIPUO = 1;
+  	local n = 1000 + JY.Person[pid]["内力"] - JY.Person[eid]["内力"];
+  	ang = n;
+  	if ang < 0 then
+  		ang = 0;
+  	end
+  	
+  	WAR.CHZ[eid] = 10 + math.modf(ang/100);
+    end]]
+  	
     --破防后内伤计算
     --龙象般若功加力30%内伤 取消了
-    if (dng == 0) and hurt > 0 and 
-	WAR.Person[WAR.CurID]["我方"] ~= WAR.Person[emenyid]["我方"] and (T8LXY(eid) == false or lixiaoyao == 0) then 	
+    if (dng == 0) and hurt > 0 and WAR.Person[WAR.CurID]["我方"] ~= WAR.Person[emenyid]["我方"] and (T8LXY(eid) == false or lixiaoyao == 0) then 	
 	local n = 0;		--内伤点数值
     if inteam(eid) then		--队友内伤计算
 		n = myrnd((hurt) / 10);
@@ -21621,7 +21825,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		if JY.Person[eid]["受伤程度"] ~= nil and JY.Person[eid]["受伤程度"] > 0 then
 			a = a + math.modf(JY.Person[eid]["受伤程度"]*math.random(2,4))
 		end	
-		dng = 1;
+		WAR.BUPUO = 1;
 		WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid, "生命", a);
 		WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", a);
 		WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) +AddPersonAttrib(eid, "受伤程度", -b);
@@ -21657,7 +21861,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		local str = "·转危为安"
 		local a = math.modf(hurt * MPDJ(eid));
 		local b = math.modf(hurt * MPDJ(eid)/20);
-		dng = 1;
+		WAR.BUPUO = 1;
 		WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + a;
 		WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + a;
 		AddPersonAttrib(eid, "生命", a);
@@ -21690,15 +21894,20 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end 	
 
 	if DT(eid, 114) then
-		dng = 1
+		WAR.BUPUO = 1
 		ang = 0
 	end
   
-  	if DT(eid, 64) and JX(eid) then
+  	if DT(eid, 64) and JX(eid) and math.random(10) > 5 then
 	    if WAR.ZBT1>0 then
-	        dng = 0
+	        WAR.BIPUO = 1
 		    ang = ang + 500 * WAR.ZBT1
 		    WAR.ZBT1 = 0
+			if WAR.Person[emenyid][CC.TXWZ3] ~= nil then
+				WAR.Person[emenyid][CC.TXWZ3] = WAR.Person[emenyid][CC.TXWZ3] .. "+" .. "拳意蓄力中断"
+			else
+				WAR.Person[emenyid][CC.TXWZ3] = "拳意蓄力中断"
+			end
 	    end
 	end
   
@@ -21707,7 +21916,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		if JLSD(20,45,eid) and PersonGTHT(eid, 103, WAR.NGHT) then
 		    local tmp=math.modf(hurt*MPDJ(eid));
 		    local tmp1=math.modf(hurt*MPDJ(eid)/20);
-		    dng=1;
+		    WAR.BUPUO = 1;
 		    WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", tmp);
 		    WAR.Person[WAR.CurID]["内伤点数"] = (WAR.Person[WAR.CurID]["内伤点数"] or 0) + AddPersonAttrib(pid, "受伤程度", tmp1);
 			WAR.L_HQNZL[eid]=50+tmp1
@@ -21716,7 +21925,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    if ang>= MPDJ(eid)*300 then
 		        ang=ang-MPDJ(eid)*300;
 		    else
-		        ang=0
+		        ang = 0
 		    end
 		end
 		if WAR.Person[emenyid][CC.TXWZ3] ~= nil then
@@ -21743,7 +21952,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		        tmp2 = WAR.LQZ[pid]
 		    end	
 		       WAR.Person[WAR.CurID]["内伤点数"] = (WAR.Person[WAR.CurID]["内伤点数"] or 0) + AddPersonAttrib(pid, "受伤程度", tmp2);
-		       dng=1;
+		       WAR.BUPUO = 1;
 		       WAR.Person[emenyid]["体力点数"] = (WAR.Person[emenyid]["体力点数"] or 0) + AddPersonAttrib(eid, "体力", tmp1);
 		    if WAR.LQZ[pid] ~= nil and WAR.LQZ[pid] > 0 then 
                 if WAR.LQZ[pid]>=50 then
@@ -21760,7 +21969,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		            tmp2 = WAR.LQZ[pid]
 		        end	
 		        WAR.Person[WAR.CurID]["内伤点数"] = (WAR.Person[WAR.CurID]["内伤点数"] or 0) + AddPersonAttrib(pid, "受伤程度", tmp2);
-		        dng=1;
+		        WAR.BUPUO = 1;
 		        WAR.Person[emenyid]["体力点数"] = (WAR.Person[emenyid]["体力点数"] or 0) + AddPersonAttrib(eid, "体力", tmp1);
 		        WAR.MENG[pid]= (WAR.MENG[pid] or 0) + tmp2
 		        str=".烽火戏诸侯"
@@ -21781,9 +21990,28 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	            WAR.Person[emenyid][CC.TXDH] = 131
     end
   
+	local puoqifang = 0
+	if WAR.BUPUO == 1 then
+		if WAR.BIPUO == 1 and math.random(10) > 3 then
+			puoqifang = 1
+		else
+			puoqifang = 0
+		end
+	else
+		if WAR.BIPUO == 1 or dng == 0 or WAR.GTSHAQI > 0 then
+			puoqifang = 1
+		end
+	end	
+	if WAR.BIPUO > 0 then
+		WAR.BIPUO = 0
+	end	
+	if WAR.BUPUO > 0 then
+		WAR.BUPUO = 0
+	end	
+  
 	--功体追杀集气或武器追杀集气 
     --破防杀集气计算
-    if (dng == 0 or WAR.GTSHAQI > 0)and hurt > 0 and WAR.Person[WAR.CurID]["我方"] ~= WAR.Person[emenyid]["我方"] then
+    if puoqifang == 1 and hurt > 0 and WAR.Person[WAR.CurID]["我方"] ~= WAR.Person[emenyid]["我方"] then
         local killsq = 0
         if JY.Thing[202][WZ7] == 1 then				--1难度
 		    killsq = 9
@@ -21793,12 +22021,13 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    killsq = 7
     end
     
-    local killjq = 0
+	local killjq = 0
     if inteam(eid) then  
     	killjq = math.modf(ang / killsq)
     else
     	killjq = math.modf(ang / 8)
     end
+		
 	
     --天赋功体加杀气
     if JY.Person[pid]["声望"] ~= 0 then
@@ -22263,6 +22492,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		local aa=math.modf(JY.Person[eid]["生命最大值"]*0.1)
 		AddPersonAttrib(eid,"生命",aa)
 	end
+	
+	
 	if nokillspeed(eid) then
 		local aa = 80
 		if DT(eid,114) then aa = aa + 10 end
@@ -22277,6 +22508,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		end
 	else
 		WAR.Person[emenyid].TimeAdd = WAR.Person[emenyid].TimeAdd - killjq
+		--WAR.Person[emenyid]["体力点数"] = (WAR.Person[emenyid]["体力点数"] or 0) - killjq
 	end	
 	WAR.Person[emenyid].TimeAdd = limitX(WAR.Person[emenyid].TimeAdd, -999, 999)
 	
@@ -22935,6 +23167,19 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
   	    end
     end  
 	
+	if WAR.WXJQM1[eid] ~= nil and JY.Person[eid]["生命"] <= 0 then
+		if WAR.UNDEAD[eid] == nil then
+  		    WAR.UNDEAD[eid] = 50
+			--[[ WAR.Person[emenyid][CC.TXDH] = 119
+		    if WAR.Person[emenyid][CC.TXWZ3] == nil then  
+  		        WAR.Person[emenyid][CC.TXWZ3] = "醉生梦死"	
+            else 
+		        WAR.Person[emenyid][CC.TXWZ3] = WAR.Person[emenyid][CC.TXWZ3].."+醉生梦死"	
+            end		]]
+  		    JY.Person[eid]["生命"] = 1
+  	    end
+	end	
+	
 	if WAR.BLHQ1 == 1 and JY.Person[eid]["生命"] <= 0 and wglw1(pid,67) and JLSD(10,40,eid) then --
 		WAR.BLHQ[eid] = 50
 		JY.Person[eid]["生命"] = 1
@@ -23049,7 +23294,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 				if not WAR.Person[j]["死亡"] and WAR.Person[j]["我方"] ~= WAR.Person[emenyid]["我方"] 
 					and WAR.Person[j]["人物编号"] ~= eid then
 					local tmppid = WAR.Person[j]["人物编号"]
-					AddPersonAttrib(tmppid, "中毒程度", -1*(MPDJ(eid)-1))
+					WAR.Person[j]["中毒点数"] = (WAR.Person[j]["中毒点数"] or 0) + AddPersonAttrib(tmppid, "中毒程度", -1*(MPDJ(eid)-1))
+					WAR.XNXS[tmppid] = 1
 				end
 			end	
 		status=107
@@ -23085,18 +23331,28 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		WAR.Person[emenyid][CC.TXWZ3] = "生亦何欢.死亦何苦"
 	end
 	
-	--[[if WAR.BLHQ1 == 2 then
+	--寒冰真气领悟+冰宗效果
+	if WAR.HBZQ1[eid] ~= nil and JY.Person[eid]["生命"] <= 0 and MPPD(pid) == 14 then
+		if wglw(pid,124) or DT(pid,22) then
+			addeffect(WAR.HBZQ4,pid,1)
+			if WAR.HBZQ4[pid] ~= nil and WAR.HBZQ4[pid] > 7 then
+				WAR.HBZQ4[pid] = 7
+			end	
+		end	
 		for j = 0, WAR.PersonNum - 1 do
-			if not WAR.Person[j]["死亡"] and WAR.Person[j]["我方"] ~= WAR.Person[emenyid]["我方"] and WAR.Person[j]["人物编号"] ~= eid then
+			if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] == WAR.Person[emenyid]["我方"] 
+				and WAR.Person[j]["人物编号"] ~= eid then
 				local tmppid = WAR.Person[j]["人物编号"]
-				local aa=50
-				local bb=300
-				AddPersonAttrib(tmppid, "生命", -aa*(4))
-				AddPersonAttrib(tmppid, "内力", -bb*(4))
+				addeffect(WAR.NBH,tmppid,1)
+				addeffect(WAR.YQWR2,tmppid,10)
 			end
 		end
-		WAR.BLHQ1 = 0
-	end]]
+		if WAR.Person[emenyid][TXWZ3] == nil then
+			WAR.Person[emenyid][TXWZ3] = "寒冰·摄魂之冥"
+		else
+			WAR.Person[emenyid][TXWZ3] = WAR.Person[emenyid][TXWZ3] .. "+" .."寒冰·摄魂之冥"
+		end	
+	end	
 	
 	if JY.Person[eid]["生命"] <= 0 and WAR.RECOVERY[eid] == nil then 
 		for j = 0, WAR.PersonNum - 1 do
@@ -23553,7 +23809,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end	
 	
 	--桃花三宝，五岳剑法，特系大招，琴棋书画必封穴	
-	if WAR.GCTJ == 1 or WAR.GCTJ1 == 1 or WAR.QQSH == 2 or WAR.L_WYJFA == 1 or WAR.L_WYJFA1 == 1 or WAR.THSB == 2 or (MPPD(pid)==10 and WAR.THSB2 ~= 0) then 	
+	if WAR.GCTJ == 1 or WAR.GCTJ1 == 1 or WAR.QQSH == 2 or WAR.L_WYJFA == 1 or WAR.L_WYJFA1 == 1 or WAR.L_WYJFA6 == 1 or WAR.THSB == 2 or (MPPD(pid)==10 and WAR.THSB2 ~= 0) then 	
 		WAR.BFX = 1
 	end
 	
@@ -23817,7 +24073,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	end
 	
 	--倚天，屠龙特效，鸠摩智特效，特系大招，五岳剑法必流血
-	if WAR.L_YTJ1 == 1 or WAR.L_TLD == 1 or WAR.GCTJ == 1 or WAR.GCTJ1 == 1 or WAR.L_WYJFA == 2 or WAR.L_WYJFA2 == 1 or WAR.LYBF>0 then 
+	if WAR.L_YTJ1 == 1 or WAR.L_TLD == 1 or WAR.GCTJ == 1 or WAR.GCTJ1 == 1 or WAR.L_WYJFA == 2 or WAR.L_WYJFA2 == 1 or WAR.L_WYJFA6 == 1 or WAR.LYBF>0 then 
 		WAR.BLX = 1
 	end
 	
@@ -24066,7 +24322,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			WAR.CHXS[eid] = 1
 		end 					
 			
-		if WAR.L_LXXL == 1 or WAR.THSB == 1 or WAR.L_WYJFA == 4 or WAR.L_WYJFA4 == 1 or (MPPD(pid)==10 and WAR.THSB1 ~= 0) or JLSD(10, 10 + jl, pid) or WAR.LXBL > 0  then
+		if WAR.L_LXXL == 1 or WAR.THSB == 1 or WAR.L_WYJFA == 4 or WAR.L_WYJFA4 == 1 or WAR.L_WYJFA6 == 1 or (MPPD(pid)==10 and WAR.THSB1 ~= 0) or JLSD(10, 10 + jl, pid) or WAR.LXBL > 0  then
 			local chihuan = hurt / 60
 			if halfch(eid) then
 				chihuan =chihuan / 2
@@ -24149,8 +24405,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			ZSWG[Z] = JY.Thing[i]["练出武功"]
 		end
 	end
-	local BFWG2 = {3,5,9,11,19,21,35,89,95,101,107,121,124}
-	local ZSWG2 = {13,26,39,44,45,61,65,66,99,103,106}  
+	local BFWG2 = {3,5,9,11,19,21,35,89,95,101,107,121,124,140,170,176,144}
+	local ZSWG2 = {13,26,39,44,45,61,65,66,99,103,106,120,133,151,152,175,176}  
 	local bfjl = 0
 	local zsjl = 0
 	local ice = 0
@@ -24226,7 +24482,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		if wugong == 62 and (DT(pid,189) or wglw1(pid,62)) then  --夫妻刀法
 			jl = 100
 		end 
-		if DT(pid,583) then
+		if DT(pid,546) then
 			jl = 100 
 		end 	
 		--华山拳系
@@ -24327,7 +24583,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		if wugong == 62 and (DT(pid,189) or wglw1(pid,62)) then  --夫妻刀法
 			jl = 100
 		end 
-		if DT(pid,583) then
+		if DT(pid,546) then
 			jl = 100
 		end 	
 		if JY.Person[pid]["武器"] == 38 then	--君子淑女
@@ -24515,7 +24771,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 				hot = hot + 2
 			end
 		    if wglw(pid,106) or (DT(pid,9) and PersonGT(pid,106)) then --17-2-8
-		    jl = hot*2
+				hot = hot*2
 		    end
 			if DT(pid,65) and WAR.YD>0 then
 			    hot = hot + 5*(8-WAR.YD)
@@ -24581,6 +24837,11 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    WAR.HOT[eid] = 50
 	    end
 	end
+	
+	if wglw(pid,106) and WAR.HOT[eid] ~= nil and WAR.HOT[eid] < 50 then
+		WAR.HOT[eid] = math.modf(WAR.HOT[eid]*2)
+		WAR.HOTXS[eid] = 1
+	end	
 	
     if DT(pid, 602) then
 	    WAR.HOTXS[eid] = 1
@@ -25035,7 +25296,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			JY.Person[pid]["受伤程度"] = 0
 		end
 		if eid == 0 and putong() == 3 and juexing() > 0 then
+			local s= WAR.CurID 
+		    WAR.CurID = emenyid
 			DHdisplay(1694, 1705, "狂刀一怒·血杀千里")
+		    WAR.CurID = s
 		end
 		if wglw1(eid,58) and WAR.XLEB ==0 then
 		    local s= WAR.CurID 
@@ -25267,8 +25531,8 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     end
   
     --少林不动明王，金刚不坏神功加力时大金刚掌造成内伤
-    if (wugong == 22 and PersonGTJL(pid, 151, WAR.NGJL) and MPPD(pid) == 5 and MPDJ(pid) > 1) or (DT(pid,615) and JLSD(20,50,pid)) and
-	    WAR.Person[emenyid]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
+    if ((wugong == 22 and PersonGTJL(pid, 151, WAR.NGJL) and MPPD(pid) == 5 and MPDJ(pid) > 1) or (DT(pid,615) and JLSD(20,50,pid)) or (DT(pid,149) and WAR.FZQH > 2)) 
+		and WAR.Person[emenyid]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
 	    local d = math.modf((JY.Person[pid]["内力"] - JY.Person[eid]["内力"]) / 300)
         if d < 0 then
             d = 0
@@ -27072,6 +27336,7 @@ function WarSetGlobal()
   WAR.WDTJTJ = 0
   WAR.WDTJTQ = 0
   WAR.DWRY = 0
+  WAR.ZDTX = {}
   WAR.PersonNum = 0
   WAR.AutoFight = 0
   WAR.CurID = -1
@@ -27269,6 +27534,9 @@ function WarSetGlobal()
   WAR.HBZQ ={}--寒冰真气
   WAR.HBZQ1 ={}--寒冰真气
   WAR.HBZQ2 ={}--寒冰真气
+  WAR.HBZQ3 ={}--冻结损血
+  WAR.HBZQ4 ={}--寒冰真气领悟的霜魂护体
+  WAR.HBZQ5 = {}--寒冰真气转化寒冰变成的利己效果
   WAR.FHXY ={}--风花雪月
   WAR.QJZB = {}--12-29-千军止步
   WAR.NS ={}--日月神教逆杀
@@ -27348,6 +27616,9 @@ function WarSetGlobal()
   WAR.KMWD3={}
   WAR.ZBT1=0
   WAR.ZBT2=0
+  WAR.YHZJ1 = 0
+  WAR.BIPUO = 0
+  WAR.BUPUO = 0
   WAR.SJTH={}
   WAR.YHZJ={}
   WAR.HDGX={}
@@ -27728,10 +27999,30 @@ function WarSetGlobal()
     WAR.ZXJQ = {} --紫霞剑系
 	WAR.CDDQ = {} --创刀刀气
 	WAR.HJJQ = {} --霍家剑气
+	WAR.ZXJQ1 = {}
+	WAR.ZXJQ2 = {}
+	WAR.WYWXJ1 = {}
+	WAR.WYWXJ2 = {}
+	WAR.WYWXJ3 = {}
+	WAR.WYWXJ4 = {}
+	WAR.WYWXJ5 = {}
     WAR.HIDE = {} --17-2-8
     WAR.JYHT = {} --17-2-8
     WAR.YHDF = {} --17-2-10
     WAR.JYZQ = {} --17-2-10
+	WAR.JYZQJZS = {}--九阴真气加真伤
+	WAR.WXJQ = {}
+	WAR.WXJQK = 0
+	WAR.WXJQJ = {}--五行剑气金
+	WAR.WXJQM = {}--五行剑气木
+	WAR.WXJQS = {}--五行剑气水
+	WAR.WXJQH = {}--五行剑气火
+	WAR.WXJQT = {}--五行剑气土
+	WAR.WXJQJ1 = {}--五行剑气金
+	WAR.WXJQM1 = {}--五行剑气木
+	WAR.WXJQS1 = {}--五行剑气水
+	WAR.WXJQH1 = {}--五行剑气火
+	WAR.WXJQT1 = {}--五行剑气土
     WAR.YHDF1 = 0
     WAR.JYHT1 = 0
     WAR.JYHT2 = 0
@@ -27854,6 +28145,7 @@ function WarSetGlobal()
     WAR.L_WYJFA3 = 0;
     WAR.L_WYJFA4 = 0;
     WAR.L_WYJFA5 = 0;
+	WAR.L_WYJFA6 = 0;
     WAR.L_NSDF = {};		--南山刀法，有机率使被攻击的单位下回合受到的杀集气和伤害加倍
     WAR.L_NSDFCC = 0;		--南山刀法是否触发特效
     WAR.NSNS = {}  
@@ -27883,6 +28175,7 @@ function WarSetGlobal()
     WAR.ZQDL = {}
     WAR.BWAX = {}
     WAR.TMT = {}
+	WAR.FZQH = 0--方证强化
   
   
 	--门派指令
@@ -27959,9 +28252,12 @@ function War_Show_Count(id, str)
     local ed = WAR.Person[id]["中毒点数"];
     local dd = WAR.Person[id]["解毒点数"];
     local ns = WAR.Person[id]["内伤点数"];
+	local kx = WAR.Person[id]["真伤点数"];
   
     local show = {x, y, nil, nil, nil, nil, nil, nil, nil, nil, nil};		--x, y, 生命, 内力, 体力, 封穴, 流血, 中毒, 解毒, 内伤
-	
+	if kx ~= nil then
+		hp = (hp or 0) + kx
+	end	
 	if hp ~= nil and hp ~= 0 then		--显示生命
 		if hp > 0 then
     	    show[3] = "命+"..hp;
@@ -27997,7 +28293,7 @@ function War_Show_Count(id, str)
 	
 	if ns ~= nil and ns ~= 0 then		--显示内伤
 		if ns > 0 then
-    	    show[10] = ns;
+    	    show[10] = "内伤+"..ns;
         else
     	    --show[10] = "内伤↓ ";
         end
@@ -28091,6 +28387,7 @@ function War_Show_Count(id, str)
     WAR.Person[id]["中毒点数"] = nil;
     WAR.Person[id]["解毒点数"] = nil;
     WAR.Person[id]["内伤点数"] = nil;
+	WAR.Person[id]["真伤点数"] = nil;
   
     lib.FreeSur(surid)
 end
@@ -28328,6 +28625,7 @@ function WarShowHead(id)
 			{{WAR.BZ, 4387,"封印"}},
 			{{WAR.L_NOT_MOVE, 4386,"缠足"}},
 			{{WAR.SZWH, 4390,"晕眩"..string.format("%s", WAR.SZWH[pid]or 0).."时序"}},
+			{{WAR.HBZQ1, 4393,"冻结"..string.format("%s", WAR.HBZQ1[pid]or 0).."时序"}},
 			{{WAR.SH, 4391,"锁喉"..string.format("%s", WAR.SH[pid]or 0).."时序"}, {WAR.YJZD, 4391,"太极"..string.format("%s", WAR.YJZD[pid]or 0).."时序"}, {WAR.JG, 4391,"金刚"..string.format("%s", WAR.JG[pid]or 0).."时序"}},
 			{{WAR.GUDUVICTIE, 4397,"蛊毒"..string.format("%s", WAR.GUDUVICTIE[pid]or 0).."回合"},{WAR.KMSHJQ, 4397,"空明负集气"}},
 			{{WAR.NPC, 4389,"魅惑"..string.format("%s", WAR.NPC[pid]or 0).."时序"}, {WAR.CONFUSE, 4385,"混乱"..string.format("%s", WAR.CONFUSE[pid]or 0).."时序"}},
@@ -28338,6 +28636,14 @@ function WarShowHead(id)
 			{{WAR.YHZJ, 4393,"寒毒"},{WAR.NBH, 4393,"幽冥"..string.format("%s", WAR.NBH[pid]or 0).."回合"}},
 			{{WAR.BG, 4396,"八卦"..string.format("%s", WAR.BG[pid]or 0).."层"}},
 			{{WAR.WJ, 4396,"无极"..string.format("%s", WAR.WJ[pid]or 0).."层"}},
+			{{WAR.ZXJQ, 4376,"紫霞"..string.format("%s", WAR.ZXJQ[pid]or 0).."层"}},
+			{{WAR.HBZQ4, 4393,"霜魂"..string.format("%s", WAR.HBZQ4[pid]or 0).."个"}},
+			{{WAR.HBZQ5, 4393,"霜息"..string.format("%s", WAR.HBZQ5[pid]or 0).."时序"}},
+			{{WAR.WXJQH, 4392,"火剑气"..string.format("%s", WAR.WXJQH[pid]or 0).."道"}},
+			{{WAR.WXJQS, 4398,"水剑气"..string.format("%s", WAR.WXJQS[pid]or 0).."道"}},
+			{{WAR.WXJQM, 4388,"木剑气"..string.format("%s", WAR.WXJQM[pid]or 0).."道"}},
+			{{WAR.WXJQT, 4393,"土剑气"..string.format("%s", WAR.WXJQT[pid]or 0).."道"}},
+			{{WAR.WXJQJ, 4391,"金剑气"..string.format("%s", WAR.WXJQJ[pid]or 0).."道"}},
 		--{{WAR.YHZJ, 4393,"陷阱：寒毒侵脉"},{WAR.NBH, 4393,"幽冥"..string.format("%s", WAR.NBH[pid]or 0).."时序"}},	
 	}
 	
@@ -28480,6 +28786,7 @@ function WarShowHead(id)
 			{{WAR.BZ, 4387,"封印"}},
 			{{WAR.L_NOT_MOVE, 4386,"缠足"}},
 			{{WAR.SZWH, 4390,"晕眩"..string.format("%s", WAR.SZWH[pid]or 0).."时序"}},
+			{{WAR.HBZQ1, 4393,"冻结"..string.format("%s", WAR.HBZQ1[pid]or 0).."时序"}},
 			{{WAR.SH, 4391,"锁喉"..string.format("%s", WAR.SH[pid]or 0).."时序"}, {WAR.YJZD, 4391,"太极"..string.format("%s", WAR.YJZD[pid]or 0).."时序"}, {WAR.JG, 4391,"金刚"..string.format("%s", WAR.JG[pid]or 0).."时序"}},
 			{{WAR.GUDUVICTIE, 4397,"蛊毒"..string.format("%s", WAR.GUDUVICTIE[pid]or 0).."回合"},{WAR.KMSHJQ, 4397,"空明负集气"}},
 			{{WAR.NPC, 4389,"魅惑"..string.format("%s", WAR.NPC[pid]or 0).."时序"}, {WAR.CONFUSE, 4385,"混乱"..string.format("%s", WAR.CONFUSE[pid]or 0).."时序"}},
@@ -28490,6 +28797,14 @@ function WarShowHead(id)
 			{{WAR.YHZJ, 4393,"寒毒"},{WAR.NBH, 4393,"幽冥"..string.format("%s", WAR.NBH[pid]or 0).."回合"}},
 			{{WAR.BG, 4396,"八卦"..string.format("%s", WAR.BG[pid]or 0).."层"}},
 			{{WAR.WJ, 4396,"无极"..string.format("%s", WAR.WJ[pid]or 0).."层"}},
+			{{WAR.ZXJQ, 4376,"紫霞"..string.format("%s", WAR.ZXJQ[pid]or 0).."层"}},
+			{{WAR.HBZQ4, 4393,"霜魂"..string.format("%s", WAR.HBZQ4[pid]or 0).."个"}},
+			{{WAR.HBZQ5, 4393,"霜息"..string.format("%s", WAR.HBZQ5[pid]or 0).."时序"}},
+			{{WAR.WXJQH1, 4392,"朱雀剑杀"}},
+			{{WAR.WXJQS1, 4398,"玄武剑杀"}},
+			{{WAR.WXJQM1, 4388,"青龙剑杀"}},
+			{{WAR.WXJQT1, 4393,"麒麟剑杀"}},
+			{{WAR.WXJQJ1, 4391,"白虎剑杀"}},
 		--{{WAR.YHZJ, 4393,"陷阱：寒毒侵脉"},{WAR.NBH, 4393,"幽冥"..string.format("%s", WAR.NBH[pid]or 0).."时序"}},	
 		}
 		
@@ -29809,7 +30124,23 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	    end
 	  end
 	end
-	
+	if JY.Person[pid]["中毒程度"] > 0 then--中毒特效
+		if DT(pid,60) or DT(pid,620) then
+		elseif DT(pid,61) and JX(pid) then
+		elseif jtyl(pid) then
+		elseif DT(pid,46) then
+		elseif pid == 0 and putong() == 8 then
+		elseif wglw(pid,87) or wglw(pid,95) then
+		elseif MPPD(pid) == 1 then
+		elseif MPPD(pid) == 8 then
+		else
+			WAR.ZDTX[pid] = 1
+		end
+	end	
+	if JY.Person[pid]["中毒程度"] > 0 and WAR.ZDTX[pid] ~= nil and WAR.ACT == 1 then
+		local aa = math.modf(JY.Person[pid]["中毒程度"]/2)
+		WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(pid,"生命",-aa)
+	end
 	--蓝烟清：修炼紫霞神功，增加剑系武功的伤害和攻击范围
     if PersonGT(pid, 89) then --紫霞主功体，增加剑系伤害范围
   	   if yongjian(wugong) then
@@ -30133,7 +30464,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 				break;
 			end
 			if WAR.Person[WAR.CurID]["我方"] ~= WAR.Person[i]["我方"] and i ~= WAR.CurID and WAR.Person[i]["死亡"] == false
-			and DT(WAR.Person[i]["人物编号"],583) and JLSD(10,60,WAR.Person[i]["人物编号"]) then--对招17-1-2
+			and DT(WAR.Person[i]["人物编号"],546) and JLSD(10,60,WAR.Person[i]["人物编号"]) then--对招17-1-2
 				ZHEN_ID = i
 				WAR.DUIZHAO = 14
 				break;
@@ -31077,6 +31408,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	WAR.FQDDF = 0
 	WAR.JSLZ = 0 --九死龙爪手
 	WAR.JSLZ3 = 0
+	WAR.YHZJ1 = 0
 	
 	WAR.YJZD2[pid] = nil
 	if WAR.YJZDPD[pid] == 1 then
@@ -31227,6 +31559,9 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	WAR.L_WYJFA3 = 0;
 	WAR.L_WYJFA4 = 0;
 	WAR.L_WYJFA5 = 0;
+	WAR.L_WYJFA6 = 0;
+	WAR.FZQH = 0 --方证强化
+	
     
     WarDrawAtt(x, y, atkfanwei, 3)
     if ZHEN_ID >= 0 then
@@ -31264,7 +31599,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		WAR.JTQF[WAR.Person[tmp_id]["人物编号"]] = 1	
 	  elseif WAR.DUIZHAO == 13 and wglw(WAR.Person[ZHEN_ID]["人物编号"],43) then 
 		WAR.DZXF[WAR.Person[tmp_id]["人物编号"]] = 1
-	  elseif WAR.DUIZHAO == 14 and DT(WAR.Person[ZHEN_ID]["人物编号"],583) then --17-1-25-
+	  elseif WAR.DUIZHAO == 14 and DT(WAR.Person[ZHEN_ID]["人物编号"],546) then --17-1-25-
 		WAR.TLHD = 1
 		WAR.QF[WAR.Person[ZHEN_ID]["人物编号"]] = 3
 	  elseif WAR.DUIZHAO == 15 and KHTJF(WAR.Person[ZHEN_ID]["人物编号"]) then --17-1-25-
@@ -31309,7 +31644,36 @@ function War_Fight_Sub(id, wugongnum, x, y)
         end
       end
     end
-   
+	
+	if PersonGTJL(pid, 124, WAR.NGJL) and MPPD(pid) == 14 and MPDJ(pid) > 1 then
+	    local YNWG = {}
+		local ynwg = 0
+		local aa = 0
+		local bb = 1
+		for i = 0, JY.ThingNum - 1 do
+			if JY.Thing[i]["需内力性质"] == 0 then
+				ynwg = ynwg + 1
+				YNWG[ynwg] = JY.Thing[i]["练出武功"]
+			end
+		end
+		if wglw(pid,124) or DT(pid,22) then	
+			for i = 1 , #YNWG do 
+				if PersonKF(pid,i) then
+					bb = bb + 1
+				end	
+			end
+		end	
+		if bb > 5 then bb = 5 end
+		if wugong == 128 then
+			WAR.YHZJ1 = bb
+		else
+			for j = 1, #YNWG do
+				if wugong == YNWG[j] and yongquan(wugong) then
+					WAR.YHZJ1 = 1
+				end
+			end
+		end		
+    end
    
     --判断攻击次数大于1
     if WAR.ACT > 1 then   
@@ -31912,7 +32276,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
     end
 	
 	if T5BCF(pid) then
-	    local aa = math.modf(tiansh() * 2)
+	    local aa = math.modf(tianshu() * 2)
 		local str = ""
 		if JLSD(0,35+aa,pid) then
 			if juexing() > 2 then
@@ -32171,19 +32535,16 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		end 
 	end	
 	
-	if wugong == 30 and wglw1(pid,30) then
-       WAR.WYLW1 = math.random(4)
-        local str = ""		
+	if (wugong == 30 and wglw1(pid,30)) or (WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 30) then
+		WAR.WYLW1 = math.random(4)
+		if WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 30 then
+			addeffect(WAR.WXJQS,pid,1)
+		end	
+		local str = ""		
 		if  WAR.WYLW1 == 1 then
 			str = "北堂壬水·惊涛拍岸"
 		elseif WAR.WYLW1 == 2 then
-		    str = "北堂壬水·千里冰封"
-		elseif WAR.WYLW1 == 3 then
-		    str = "北堂癸水·润物无声"
-		elseif WAR.WYLW1 == 4 then
-		    str = "北堂癸水·阴寒侵袭"
-		end
-        if WAR.WYLW1 == 2 then
+			str = "北堂壬水·千里冰封"
 			for j = 0, WAR.PersonNum - 1 do
 				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then				
 					local tmppid = WAR.Person[j]["人物编号"]
@@ -32192,17 +32553,24 @@ function War_Fight_Sub(id, wugongnum, x, y)
 					WAR.Person[j]["内力点数"] = (WAR.Person[j]["内力点数"] or 0) + AddPersonAttrib(tmppid, "内力", -bb)
 					WAR.XNXS[tmppid] = 1
 				end
-			end		
-		end	   		
-        if WAR.Person[id][CC.TXWZ2] ~= nil then
-	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."·"..str
+			end	
+		elseif WAR.WYLW1 == 3 then
+			str = "北堂癸水·润物无声"
+		elseif WAR.WYLW1 == 4 then
+			str = "北堂癸水·阴寒侵袭"
+		end   		
+		if WAR.Person[id][CC.TXWZ2] ~= nil then
+			 WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."+"..str
 		else
-		     WAR.Person[id][CC.TXWZ2] = str
-		end 
+			 WAR.Person[id][CC.TXWZ2] = str
+		end 	
 	end	
 		
-	if  wugong == 31 and wglw1(pid,31) then
+	if (wugong == 31 and wglw1(pid,31)) or (WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 31) then
 		WAR.WYLW2 = math.random(4)
+		if WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 31 then
+			addeffect(WAR.WXJQM,pid,1)
+		end
 		local str = ""
 		if  WAR.WYLW2 == 1 then
 			str = "东方甲木·巨木锤击"
@@ -32213,35 +32581,30 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		    str = "东方乙木·滕蔓纠缠"
 		elseif WAR.WYLW2 == 4 then
 		    str = "东方乙木·青霉蔓延"
-		end
-        if WAR.WYLW2 == 4 then
 			for j = 0, WAR.PersonNum - 1 do
 				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then				
 					local tmppid = WAR.Person[j]["人物编号"]
+					WAR.Person[j]["中毒点数"] = (WAR.Person[j]["中毒点数"] or 0) + AddPersonAttrib(tmppid,"中毒程度",50)
 					WAR.POISON[tmppid] = math.modf(JY.Person[pid]["实战"] / 10) 
+					WAR.XNXS[tmppid] = 1
 				end
-			end		
+			end
 		end	   		
         if WAR.Person[id][CC.TXWZ2] ~= nil then
-	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."·"..str
+	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."+"..str
 		else
 		     WAR.Person[id][CC.TXWZ2] = str
-		end 
+		end		
 	end	
 	
-		if wugong == 32 and wglw1(pid,32) then
+	if (wugong == 32 and wglw1(pid,32)) or (WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 32) then
 		local str = ""
         WAR.WYLW3 = math.random(4)	
-		if  WAR.WYLW3 == 1 then
-			str = "南宫丙火·烈火焚城"
-		elseif WAR.WYLW3 == 2 then
-		    str = "南宫丙火·松明抚斩"
-		elseif WAR.WYLW3 == 3 then
-		    str = "南宫丙火·火毒攻心"
-		elseif WAR.WYLW3 == 4 then
-		    str = "南宫丙火·怒火中烧"
+		if WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 32 then
+			addeffect(WAR.WXJQH,pid,1)
 		end
-        if WAR.WYLW3 == 1 then
+		if WAR.WYLW3 == 1 then
+			str = "南宫丙火·烈火焚城"
 			for j = 0, WAR.PersonNum - 1 do
 				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then				
 					local tmppid = WAR.Person[j]["人物编号"]
@@ -32250,19 +32613,28 @@ function War_Fight_Sub(id, wugongnum, x, y)
 					WAR.Person[j]["真伤点数"] = (WAR.Person[j]["真伤点数"] or 0) + AddPersonAttrib(tmppid, "生命", -bb)
 					WAR.XNXS[tmppid] = 1
 				end
-			end		
-		end	   		
+			end
+		elseif WAR.WYLW3 == 2 then
+		    str = "南宫丙火·松明抚斩"
+		elseif WAR.WYLW3 == 3 then
+		    str = "南宫丁火·火毒攻心"
+		elseif WAR.WYLW3 == 4 then
+		    str = "南宫丁火·怒火中烧"
+		end   		
         if WAR.Person[id][CC.TXWZ2] ~= nil then
-	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."·"..str
+	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."+"..str
 		else
 		     WAR.Person[id][CC.TXWZ2] = str
-		end 
+		end		
 	end	
 	
-	if  wugong == 33 and wglw1(pid,33) then
+	if  (wugong == 33 and wglw1(pid,33)) or (WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 33) then
 		local str = ""
         WAR.WYLW4 = math.random(4)
-        CleanWarMap(4, 0)
+        if WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 33 then
+			addeffect(WAR.WXJQT,pid,1)
+		end
+		CleanWarMap(4, 0)
         for i = 0, WAR.PersonNum - 1 do
             if WAR.Person[i]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and WAR.Person[i]["死亡"] == false then
                 SetWarMap(WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"], 4, 1)
@@ -32273,53 +32645,48 @@ function War_Fight_Sub(id, wugongnum, x, y)
 			WAR.FLHS1=1
 		elseif WAR.WYLW4 == 2 then
 		    str = "中央戊土·乱石穿空"
-		elseif WAR.WYLW4 == 3 then
-		    str = "中央已土·沙瀑大葬"
-		elseif WAR.WYLW4 == 4 then
-		    str = "中央已土·流沙囚牢"
-		end
-		if WAR.WYLW4 == 2 then
 			for j = 0, WAR.PersonNum - 1 do
 				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then				
 					local tmppid = WAR.Person[j]["人物编号"]
 					WAR.Person[j]["内伤点数"] = (WAR.Person[j]["内伤点数"] or 0) + AddPersonAttrib(tmppid, "受伤程度", 10)
 					WAR.XNXS[tmppid] = 1
 				end
-			end		
-		end	
-     
-	if WAR.WYLW4 == 3 then
-        local ns=math.random(3,4)*10
-	    local str=""
-	    local ns2=0
-	    for j = 0, WAR.PersonNum - 1 do
-            if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
-                local tmppid = WAR.Person[j]["人物编号"]
-		        WAR.CHXS[tmppid] = 1
-		        WAR.CHZ[tmppid] = limitX((WAR.CHZ[tmppid] or 0) + ns, 0, 100)
-				WAR.XNXS[tmppid] = 1
-            end
-        end
-	end	
-	
-        if WAR.WYLW4 == 4 then
+			end	
+		elseif WAR.WYLW4 == 3 then
+		    str = "中央已土·沙瀑大葬"
+			local ns=math.random(3,4)*10
+			--local str=""
+			local ns2=0
+			for j = 0, WAR.PersonNum - 1 do
+				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
+					local tmppid = WAR.Person[j]["人物编号"]
+					WAR.CHXS[tmppid] = 1
+					WAR.CHZ[tmppid] = limitX((WAR.CHZ[tmppid] or 0) + ns, 0, 100)
+					WAR.XNXS[tmppid] = 1
+				end
+			end
+		elseif WAR.WYLW4 == 4 then
+		    str = "中央已土·流沙囚牢"
 			for j = 0, WAR.PersonNum - 1 do
 				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then				
 					local tmppid = WAR.Person[j]["人物编号"]
 					WAR.L_NOT_MOVE[tmppid]=WAR.L_NOT_MOVE[tmppid] or 0 + 1
 				end
-			end		
-		end	   		
+			end
+		end   		
         if WAR.Person[id][CC.TXWZ2] ~= nil then
-	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."·"..str
+	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."+"..str
 		else
 		     WAR.Person[id][CC.TXWZ2] = str
 		end 
 	end	
 	
-	if  wugong == 34 and wglw1(pid,34) then
+	if (wugong == 34 and wglw1(pid,34)) or (WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 34) then
 		local str = ""
         WAR.WYLW5 = math.random(4)
+		if WAR.WXJQ[pid] ~= nil and WAR.WXJQ[pid] == 34 then
+			addeffect(WAR.WXJQJ,pid,1)
+		end
 		if  WAR.WYLW5 == 1 then
 			str = "西门庚金·金石可镂"
 		elseif WAR.WYLW5 == 2 then
@@ -32328,23 +32695,318 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		    str = "西门辛金·经脉寸断"
 		elseif WAR.WYLW5 == 4 then
 		    str = "西门辛金·金光夺目"
-		end
-		
-  		if WAR.WYLW5 == 4 then
 			for j = 0, WAR.PersonNum - 1 do
 				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then				
 					local tmppid = WAR.Person[j]["人物编号"]
 					WAR.KHCM[tmppid]=2 
 				end
-			end		
-		end	  
+			end
+		end
         if WAR.Person[id][CC.TXWZ2] ~= nil then
-	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."·"..str
+	         WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."+".. str
 		else
 		     WAR.Person[id][CC.TXWZ2] = str
-		end 
-	end	
+		end
+	end
 	
+	--五岳剑法大招
+	if MPPD(pid) == 14 and PersonGT(pid,89) and MPDJ(pid) > 1 and yongjian(wugong) and WAR.WXJQ[pid] == nil then
+		local str1 = ""
+		--水剑大招
+		if WAR.WXJQS[pid] ~= nil and WAR.WXJQS[pid] >= 5 then
+			
+			fightnum = 4
+			WAR.WXJQK = 1
+			if WAR.ACT == 1	then
+				DHdisplay(1059,1073,"五岳神剑·北·玄武现世")
+				for j = 0, WAR.PersonNum-1 do 
+					if WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and WAR.Person[j]["死亡"] == false then
+						local sjid = WAR.Person[j]["人物编号"]
+						WAR.XNXS[sjid] = 1
+						addeffect(WAR.HBZQ,sjid,10)
+						addeffect(WAR.ICE,sjid,50)
+						WAR.ICEXS[sjid] = 1
+						addeffect(WAR.WXJQS1,sjid,1)
+					end
+				end
+				WAR.WYLW1 = 1 
+				str1 = "北堂壬水·惊涛拍岸"
+			elseif WAR.ACT == 2 then 
+				WAR.WYLW1 = 2 
+				str1 = "北堂壬水·千里冰封"
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and WAR.Person[j]["死亡"] == false then			
+						local tmppid = WAR.Person[j]["人物编号"]
+						WAR.ICE[tmppid]=WAR.ICE[tmppid] or 0 + 30
+						WAR.ICEXS[tmppid] = 1
+						local bb=WAR.ICE[tmppid]*15
+						WAR.Person[j]["内力点数"] = (WAR.Person[j]["内力点数"] or 0) + AddPersonAttrib(tmppid, "内力", -bb)
+						WAR.XNXS[tmppid] = 1
+					end
+				end	
+			elseif WAR.ACT == 3 then
+				WAR.WYLW1 = 3 
+				str1 = "北堂癸水·润物无声"
+			elseif WAR.ACT == 4 then
+				WAR.WYLW1 = 4 
+				str1 = "北堂癸水·阴寒侵袭"
+			end
+		end	
+		--木剑大招
+		if WAR.WXJQM[pid] ~= nil and WAR.WXJQM[pid] >= 5 then
+			
+			fightnum = 4
+			WAR.WXJQK = 1
+			if WAR.ACT == 1	then
+				DHdisplay(1653,1666,"五岳神剑·东·青龙云屏")
+				for j = 0, WAR.PersonNum-1 do 
+					if WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and WAR.Person[j]["死亡"] == false then
+						local mjid = WAR.Person[j]["人物编号"]
+						addeffect(WAR.L_WNGZL,mjid,100)
+						addeffect(WAR.LSZD2,mjid,1)
+						addeffect(WAR.WXJQM1,mjid,1)
+					end
+				end
+				WAR.WYLW2 = 1 
+				str1 = "东方甲木·巨木锤击"
+			elseif WAR.ACT == 2 then
+				WAR.WYLW2 = 2 
+				str1 = "东方甲木·茂木成林"
+				WAR.FLHS2=WAR.FLHS2+math.random(3,5)
+			elseif WAR.ACT == 3 then
+				WAR.WYLW2 = 3 
+				str1 = "东方乙木·滕蔓纠缠"
+			elseif WAR.ACT == 4 then
+				WAR.WYLW2 = 4 
+				str1 = "东方乙木·青霉蔓延"
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and WAR.Person[j]["死亡"] == false then			
+						local tmppid = WAR.Person[j]["人物编号"]
+						WAR.Person[j]["中毒点数"] = (WAR.Person[j]["中毒点数"] or 0) + AddPersonAttrib(tmppid,"中毒程度",50)
+						WAR.POISON[tmppid] = math.modf(JY.Person[pid]["实战"] / 10) 
+						WAR.XNXS[tmppid] = 1
+					end
+				end
+			end
+		end
+		--火剑大招
+		if WAR.WXJQH[pid] ~= nil and WAR.WXJQH[pid] >= 5 then
+			
+			fightnum = 4
+			WAR.WXJQK = 1
+			if WAR.ACT == 1	then
+				DHdisplay(1729,1746,"五岳神剑·南·朱雀振翅")
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and WAR.Person[j]["死亡"] == false then				
+						local hjid = WAR.Person[j]["人物编号"]
+						WAR.HOT[hjid]=WAR.HOT[hjid] or 0 + 30
+						WAR.HOTXS[hjid] = 1
+						local bb=WAR.HOT[hjid]*5
+						WAR.Person[j]["真伤点数"] = (WAR.Person[j]["真伤点数"] or 0) + AddPersonAttrib(hjid, "生命", -bb)
+						addeffect(WAR.NHH,hjid,1)
+						addeffect(WAR.WXJQH1,hjid,1)
+						WAR.XNXS[hjid] = 1
+					end
+				end	
+				WAR.WYLW3 = 1 
+				str1 = "南宫丙火·烈火焚城"
+			elseif	WAR.ACT == 2 then  
+				WAR.WYLW3 = 2
+				str1 = "南宫丙火·松明抚斩"
+			elseif WAR.ACT == 3	then
+				WAR.WYLW3 = 3 
+				str1 = "南宫丁火·火毒攻心"
+			elseif WAR.ACT == 4	then
+				WAR.WYLW3 = 4 
+				str1 = "南宫丁火·怒火中烧"
+			end
+		end
+		--土剑大招
+		if WAR.WXJQT[pid] ~= nil and WAR.WXJQT[pid] >= 5 then
+			
+			fightnum = 4
+			CleanWarMap(4, 0)
+			for i = 0, WAR.PersonNum - 1 do
+				if WAR.Person[i]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and WAR.Person[i]["死亡"] == false then
+					SetWarMap(WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"], 4, 1)
+				end
+			end
+			if WAR.ACT == 1	then
+				DHdisplay(3011,3023,"五岳神剑·中·麒麟显兆")
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then				
+						local tjid = WAR.Person[j]["人物编号"]
+						WAR.CHZ[tjid]=WAR.CHZ[tjid] or 0 + 30
+						WAR.CHXS[tjid] = 1
+						local bb= math.ceil(math.modf(WAR.CHZ[tjid]/3))
+						WAR.Person[j]["体力点数"] = (WAR.Person[j]["体力点数"] or 0) + AddPersonAttrib(tjid, "体力", -bb)
+						addeffect(WAR.WXJQT1,tjid,1)
+						WAR.XNXS[tjid] = 1
+					end
+				end	
+				WAR.WYLW4 = 1 
+				str1 = "中央戊土·峰峦如聚"
+				WAR.FLHS1=1
+			elseif	WAR.ACT == 2 then  
+				WAR.WYLW4 = 2
+				str1 = "中央戊土·乱石穿空"
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then					
+						local tmppid = WAR.Person[j]["人物编号"]
+						WAR.Person[j]["内伤点数"] = (WAR.Person[j]["内伤点数"] or 0) + AddPersonAttrib(tmppid, "受伤程度", 10)
+						WAR.XNXS[tmppid] = 1
+					end
+				end	
+			elseif WAR.ACT == 3	then
+				WAR.WYLW4 = 3 
+				str1 = "中央已土·沙瀑大葬"
+				local ns=math.random(3,4)*10
+				--local str1=""
+				local ns2=0
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then	
+						local tmppid = WAR.Person[j]["人物编号"]
+						WAR.CHXS[tmppid] = 1
+						WAR.CHZ[tmppid] = limitX((WAR.CHZ[tmppid] or 0) + ns, 0, 100)
+						WAR.XNXS[tmppid] = 1
+					end
+				end
+			elseif WAR.ACT == 4	then
+				WAR.WYLW4 = 4 
+				str1 = "中央已土·流沙囚牢"
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then					
+						local tmppid = WAR.Person[j]["人物编号"]
+						WAR.L_NOT_MOVE[tmppid] = WAR.L_NOT_MOVE[tmppid] or 0 + 1
+					end
+				end
+			end
+		end			
+		--金剑大招
+		if WAR.WXJQJ[pid] ~= nil and WAR.WXJQJ[pid] >= 5 then
+			
+			fightnum = 4
+			WAR.WXJQK = 1
+			if WAR.ACT == 1	then
+				DHdisplay(2583,2595,"五岳神剑·西·白虎星降")
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then					
+						local jjid = WAR.Person[j]["人物编号"]
+						WAR.LXZT[jjid]=WAR.LXZT[jjid] or 0 + 30
+						WAR.LXXS[jjid] = 1
+						addeffect(WAR.LYXJ,jjid,1)
+						addeffect(WAR.WXJQJ1,jjid,1)
+						--WAR.XNXS[jjid] = 1
+					end
+				end	
+				WAR.WYLW5 = 1 
+				str1 = "西门庚金·金石可镂"
+			elseif	WAR.ACT == 2 then  
+				WAR.WYLW5 = 2
+				str1 = "西门庚金·电光连环"
+			elseif WAR.ACT == 3	then
+				WAR.WYLW5 = 3 
+				str1 = "西门辛金·经脉寸断"
+			elseif WAR.ACT == 4	then
+				WAR.WYLW5 = 4 
+				str1 = "西门辛金·金光夺目"
+				for j = 0, WAR.PersonNum - 1 do
+					if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then					
+						local tmppid = WAR.Person[j]["人物编号"]
+						WAR.KHCM[tmppid]=2 
+					end
+				end
+			end
+		end
+		if str1 ~= nil and str1 ~= "" then
+			if WAR.Person[id][CC.TXWZ2] ~= nil then
+				WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .."+"..str1
+			else
+				WAR.Person[id][CC.TXWZ2] = str1
+			end
+		end	
+	end
+	--五行神剑剑气效果
+	if WAR.WXJQS1[pid] ~= nil then
+		local aa = math.ceil(math.modf(JY.Person[pid]["实战"]/10))
+		if JLSD(10,50,pid) then
+			addeffect(WAR.ICE,pid,20)
+			WAR.ICEXS[pid] = 1
+		end
+		if JLSD(10,50,pid) then
+			addeffect(WAR.SPIRIT,pid,-math.random(3))
+		end	
+		for j = 0, WAR.PersonNum - 1 do
+			if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] == WAR.Person[WAR.CurID]["我方"] then					
+				local sjid = WAR.Person[j]["人物编号"]
+				local yk = 20 + math.modf(JY.Person[pid]["实战"] / 20)
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.ATKDOWN[sjid] == nil or WAR.ATKDOWN[sjid] <= 0) then
+					WAR.ATKDOWN[sjid] = limitX(yk, 0, 50)
+				end
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.DEFDOWN[sjid] == nil or WAR.DEFDOWN[sjid] <= 0) then
+					WAR.DEFDOWN[sjid] = limitX(yk, 0, 50)
+				end	
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.SPDDOWN[sjid] == nil or WAR.SPDDOWN[sjid] <= 0) then
+					WAR.SPDDOWN[sjid] = limitX(yk, 0, 50)
+				end		
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.L_WNGZL[sjid] == nil or WAR.L_WNGZL[sjid] <= 0) then
+					WAR.L_WNGZL[sjid] = limitX(yk, 0, 50)
+				end		
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.L_NOT_MOVE[sjid] == nil or WAR.L_NOT_MOVE[sjid] <= 0) then
+					WAR.L_NOT_MOVE[sjid] = 1
+				end		
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.KHCM[sjid] == nil or WAR.KHCM[sjid] <= 0) then
+					WAR.KHCM[sjid] = 2
+				end			
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.BZ[sjid] == nil or WAR.BZ[sjid] <= 0) then
+					WAR.BZ[sjid] = 1
+				end	
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.BZ[sjid] == nil or WAR.BZ[sjid] <= 0) then
+					WAR.NHH[sjid] = 1
+				end
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.BZ[sjid] == nil or WAR.BZ[sjid] <= 0) then
+					WAR.NBH[sjid] = 1
+				end
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.BZ[sjid] == nil or WAR.BZ[sjid] <= 0) then
+					WAR.LXZS[sjid] = 1
+				end	
+				if JLSD(10,aa+math.random(5,10),pid) and (WAR.BZ[sjid] == nil or WAR.BZ[sjid] <= 0) then
+					WAR.ZDNS[sjid] = limitX(yk, 0, 50)
+				end
+			end
+		end	
+	end	--水剑结束
+	--木剑开始
+	if WAR.WXJQM1[pid] ~= nil then
+		if JLSD(10,50,pid) then
+			WAR.Person[WAR.CurID]["中毒点数"] = (WAR.Person[WAR.CurID]["中毒点数"] or 0) + AddPersonAttrib(pid, "中毒程度", 20)
+		end
+	end	--木剑结束
+	--火剑开始
+	if WAR.WXJQH1[pid] ~= nil then
+		if WAR.ACT == 1 or JLSD(10,50,pid) then
+			WAR.HOTXS[pid]=1
+			WAR.HOT[pid]=50
+			WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(pid, "生命", -250)
+			if WAR.Person[id][CC.TXWZ2] ~= nil then
+				WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .. "+" .. "火毒攻心"
+			else
+				WAR.Person[id][CC.TXWZ2] = "火毒攻心"
+			end
+		end
+	end	--火剑结束
+	--土剑开始
+	if WAR.WXJQT1[pid] ~= nil then
+		if JLSD(10,40,pid) then	
+			for j = 0, WAR.PersonNum - 1 do
+				if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] == WAR.Person[WAR.CurID]["我方"] then					
+					local tjid = WAR.Person[j]["人物编号"]
+					WAR.SJTH[tjid] = 1
+				end
+			end
+		end
+	end	--土剑结束
+		
     if wugong == 63 and wglw1(pid,63) then
 		if fightnum<=2 then
 		    fightnum=fightnum+math.random(2,4)
@@ -32524,7 +33186,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		end
 	end
 
-	if (wglw(pid,95) or ((DT(pid,60) or DT(pid,620)) and PersonKF(pid,95))) then --蛤蟆九天17-2-23
+	if (wglw(pid,95) or ((DT(pid,60) or DT(pid,620)) and JX(pid)))and PersonKF(pid,95) then --蛤蟆九天17-2-23
 	    if WAR.HMJT[pid] == nil then
 	        WAR.HMJT[pid] = 0
 		elseif WAR.HMJT[pid] >= 3000 then
@@ -32716,7 +33378,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 			if WAR.HDGX[pid]~=nil and WAR.HDGX[pid]>0 then
 			   WAR.HOTXS[pid]=1
 			   WAR.HOT[pid]=50
-			   WAR.Person[WAR.CurID]["内力点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(pid, "生命", -250)
+			   WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(pid, "生命", -250)
 			   if WAR.Person[id][CC.TXWZ2] ~= nil then
 					WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2] .. "+" .. "火毒攻心"
 				else
@@ -33722,7 +34384,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		ng = ng + 1000
 	end	
 	
-    if (DT(pid,583) or DT(pid,517) or DT(pid,516)) and JLSD(10,45,pid) then 
+    if (DT(pid,546) or DT(pid,517) or DT(pid,516)) and JLSD(10,45,pid) then 
 		WAR.XYZD = math.random(1,4)
 		local XYJQ = "玄阴之道·"	
 		local WZTS = {"风","雷","火","冰"}
@@ -33742,7 +34404,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		ng = ng + 1250
 	end		
 		
-    if DT(pid,583) and JLSD(10,40,pid) then
+    if DT(pid,546) and JLSD(10,40,pid) then
 		WAR.XYFQ = 1	
 		WAR.XYLQ = 1 
 		WAR.XYHQ = 1 
@@ -34055,6 +34717,9 @@ function War_Fight_Sub(id, wugongnum, x, y)
 			addeffect(WAR.L_WNGZL,pid,20)
 			addeffect(WAR.LHZF,pid,1)
 		elseif WAR.JSLZ1[pid] >= 7 and WAR.JSLZ1[pid] <= 9 and JLSD(10,55,pid) then
+			WAR.DUO = 1
+			addeffect(WAR.L_WNGZL,pid,20)
+			addeffect(WAR.LHZF,pid,1)
 			for l = 0, WAR.PersonNum-1 do
 				local lid = WAR.Person[l]["人物编号"]
 				if WAR.Person[l]["死亡"] == false and WAR.Person[l]["我方"] == WAR.Person[WAR.CurID]["我方"] then
@@ -36168,7 +36833,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	    end	
 	end	
 	
-	if (wglw1(pid,60) or DT(pid,166)) and PersonKF(pid,60) and PersonKF(pid,37) and WAR.ACT == 1 and MPPD(pid) == 14 and PersonGT(pid,90) and JLSD(10, 42, pid) then
+	if (wglw1(pid,60) or DT(pid,166)) and PersonKF(pid,60) and PersonKF(pid,37) and WAR.ACT == 1 and MPPD(pid) == 19 and PersonGT(pid,204) and JLSD(10, 42, pid) then
         if wugong == 37 and WAR.LYDJLW1[1] == nil then
 	        WAR.LYDJLW = {x, y}
 	    elseif wugong == 60 and WAR.LYDJLW[1] == nil then
@@ -36200,6 +36865,21 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	        WAR.ZYHBS = {x, y}
 	    end
             WAR.ZYHB4 = wugong	   
+	end
+	
+	if MPPD(pid) == 14 and PersonGT(pid,89) and WAR.ZXJQ[pid] ~= nil and WAR.ACT == 1 
+		 and PersonKF(pid,30) and PersonKF(pid,31) and PersonKF(pid,32) and PersonKF(pid,33) and PersonKF(pid,34) then --and JLSD(10,400,pid)
+		if wglw1(pid,30) and wugong == 30 and WAR.WYWXJ1[1] == nil then
+			WAR.WYWXJ1 = {x,y}
+		elseif wglw1(pid,31) and wugong == 31 and WAR.WYWXJ2[1] == nil then
+			WAR.WYWXJ2 = {x,y}
+		elseif wglw1(pid,32) and wugong == 32 and WAR.WYWXJ3[1] == nil then
+			WAR.WYWXJ3 = {x,y}
+		elseif wglw1(pid,33) and wugong == 33 and WAR.WYWXJ4[1] == nil then
+			WAR.WYWXJ4 = {x,y}
+		elseif wglw1(pid,34) and wugong == 34 and WAR.WYWXJ5[1] == nil then
+			WAR.WYWXJ5 = {x,y}		
+		end
 	end
 	
 	if pid == 0 and putong() == 13 and yongan(wugong) then
@@ -36954,7 +37634,35 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		end
 	end
 	
-	if ((wugong == 24 and MPPD(pid) == 5 and PersonGTJL(pid, 108, WAR.NGJL) and MPDJ(pid)> 2) or DT(pid,615) or (DT(pid,114) and JX(pid))) and 
+	if DT(pid,149) and wugong == 24 then
+		fightnum = 3
+		if WAR.ACT > 0 then
+			if JX(pid) then
+				if WAR.BJ == 1 and fightnum < 9 then
+					fightnum = fightnum + 1
+				end	
+				WAR.FZQH = WAR.ACT
+			else
+				if WAR.ACT < 4 then
+					WAR.FZQH = WAR.ACT
+				end
+			end
+		end		
+	end	
+	
+	if DT(pid,149) and WAR.FZQH > 0 then
+		local SN=math.modf(JY.Person[pid]["内力"]/10)
+	    local SN2=MPDJ(pid)
+	    if WAR.Person[id][CC.TXWZ1] ~= nil then
+			WAR.Person[id][CC.TXWZ1] = WAR.Person[id][CC.TXWZ1] .. "+" .."天佛降世·千手如来"
+		else
+			WAR.Person[id][CC.TXWZ1] = "天佛降世·千手如来"
+		end		
+			WAR.Person[id][CC.TXDH]=6
+			WAR.SHAOLIN2=1
+		    ng = ng + SN
+			WAR.WS = 1
+	elseif ((wugong == 24 and MPPD(pid) == 5 and PersonGTJL(pid, 108, WAR.NGJL) and MPDJ(pid)> 2) or DT(pid,615) or (DT(pid,114) and JX(pid))) and 
 	    (math.random(10)<6 or (pid == 0 and putong() == 1 and JLSD(30, 50, pid)) or WAR.ZYHB1[pid] ~= nil)  then --沼跃鱼：达摩院须弥山
 	    local SN=math.modf(JY.Person[pid]["内力"]/10)
 	    local SN2=MPDJ(pid)
@@ -38076,11 +38784,13 @@ function War_Fight_Sub(id, wugongnum, x, y)
         if WAR.Person[id][CC.TXDH] == nil then
             WAR.Person[id][CC.TXDH] = 89
         end
-        if WAR.Person[id][CC.TXWZ1] ~= nil and s ~= "" then
-      	    WAR.Person[id][CC.TXWZ1] = WAR.Person[id][CC.TXWZ1] .. "+" ..s
-        else
-      	    WAR.Person[id][CC.TXWZ1] = s
-        end
+        if s ~= "" then
+			if WAR.Person[id][CC.TXWZ1] ~= nil then
+				WAR.Person[id][CC.TXWZ1] = WAR.Person[id][CC.TXWZ1] .. "+" ..s
+			else
+				WAR.Person[id][CC.TXWZ1] = s	
+			end
+		end	
     end
 	
     --谢无悠
@@ -38367,7 +39077,11 @@ function War_Fight_Sub(id, wugongnum, x, y)
 
 	if wglw(pid,89) or (PersonKF(pid,89) and DT(pid,19)) then --紫霞剑系
 	    if WAR.ZXJQ[pid] ~= nil and WAR.ZXJQ[pid] > 0 then  
-	        if WAR.Person[id][CC.TXWZ1] ~= nil then
+	        addeffect(WAR.ZXJQ,pid,-1)
+			if WAR.ZXJQ[pid] < 1 then
+				WAR.ZXJQ[pid] = nil
+			end	
+			if WAR.Person[id][CC.TXWZ1] ~= nil then
       	        WAR.Person[id][CC.TXWZ1] = WAR.Person[id][CC.TXWZ1].."+".."紫霞剑气"
             else
       	        WAR.Person[id][CC.TXWZ1] = "紫霞剑气"
@@ -38377,7 +39091,11 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	
     if NF(pid) then --创刀
 	    if WAR.CDDQ[pid] ~= nil and WAR.CDDQ[pid] > 0 then  
-	        if WAR.Person[id][CC.TXWZ2] ~= nil then
+	        WAR.CDDQ[pid] = WAR.CDDQ[pid] - 1
+			if WAR.CDDQ[pid] <= 0 then 
+				WAR.CDDQ[pid] = nil
+			end
+			if WAR.Person[id][CC.TXWZ2] ~= nil then
       	        WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2].."+".."创刀刀气"
             else
       	        WAR.Person[id][CC.TXWZ2] = "创刀刀气"
@@ -38387,13 +39105,28 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	
     if BJY(pid) then --霍家剑气
 	    if WAR.HJJQ[pid] ~= nil and WAR.HJJQ[pid] > 0 then  
-	        if WAR.Person[id][CC.TXWZ2] ~= nil then
+	        WAR.HJJQ[pid] = WAR.HJJQ[pid] - 1
+			if WAR.HJJQ[pid] <= 0 then 
+				WAR.HJJQ[pid] = nil
+			end
+			if WAR.Person[id][CC.TXWZ2] ~= nil then
       	        WAR.Person[id][CC.TXWZ2] = WAR.Person[id][CC.TXWZ2].."+".."霍家剑气"
             else
       	        WAR.Person[id][CC.TXWZ2] = "霍家剑气"
             end	   
 	    end
 	end		
+	
+	if WAR.ZXJQ2[pid] ~= nil and WAR.ZXJQ2[pid] > 0 then
+		local aa = math.modf(WAR.ZXJQ2[pid]*10)
+		WAR.Person[WAR.CurID]["内伤点数"] = (WAR.Person[WAR.CurID]["内伤点数"] or 0) + AddPersonAttrib(pid, "受伤程度", aa );
+		WAR.Person[WAR.CurID]["内力点数"] = (WAR.Person[WAR.CurID]["内力点数"] or 0) + AddPersonAttrib(pid, "内力", -math.modf(aa*10));
+		addeffect(WAR.LXZT,pid,aa)
+		WAR.LXXS[pid] = 1
+		addeffect(WAR.LXZS,pid,1)
+		WAR.ZXJQ2[pid] = nil
+	end	
+		
 	
     --张三丰 40%万法自然，集气从500开始 沼跃鱼：未触发则太极之形参数归零
     if DT(pid, 5) then
@@ -38875,14 +39608,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
         WAR.Person[pid][CC.TXWZ2] = "风神怒·风入松间雷不动"
     end
 	
-    --五岳剑派
-	if MPPD(pid) == 14 then
-	    local mpdj = MPDJ(pid) + 4
-	    if math.random(10) < (mpdj) then
-            WAR.WYJP = 1
-            WAR.Person[id][CC.TXWZ1] = "剑气冲霄"
-        end
-	end
+    
 	
 	if DT(pid,69) and JLSD(0,70,pid) then 
 	    if WAR.Person[id][CC.TXWZ2] ~= nil then
@@ -38902,7 +39628,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	    WAR.PJTX = 1 
 	end	
 	
-    if DT(pid,583) and JLSD(10,45,pid) then 
+    if DT(pid,546) and JLSD(10,45,pid) then 
 		if WAR.Person[id][CC.TXWZ1] ~= nil then
         	WAR.Person[id][CC.TXWZ1] = WAR.Person[id][CC.TXWZ1] .. "+" .."万道森罗·天罗火道"
         else
@@ -38969,7 +39695,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
         else
           	WAR.Person[id][CC.TXWZ3] = "九阴破体真气"..cs.."层"
         end
-	    WAR.JYZQ[pid] = WAR.JYZQ[pid] - 1
+		WAR.JYZQ[pid] = WAR.JYZQ[pid] - 1
 	    if WAR.JYZQ[pid] <= 0 then 
 	        WAR.JYZQ[pid] = nil 
 	    end
@@ -40008,28 +40734,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		end
 	end
 	  
-    --蓝烟清：五岳剑派
-	if MPPD(pid) == 14 and (wugong == 30 or wugong == 31 or wugong == 32 or wugong == 33 or wugong == 34) then		--必出
-		local mpdj = MPDJ(pid)
-		if math.random(10) <= (2+mpdj) then
-		    WAR.L_WYJFA1=1
-		end
-		if math.random(10) <= (2+mpdj) then
-		    WAR.L_WYJFA2=1
-		end
-		if math.random(10) <= (2+mpdj) then
-		    WAR.L_WYJFA3=1
-		end
-		if math.random(10) <= (2+mpdj) then
-		    WAR.L_WYJFA4=1
-	    end
-		if math.random(10) <= (2+mpdj) then
-		    WAR.L_WYJFA5=1
-		end
-	end
-	  
-    --蓝烟清：五岳剑法，增加杀气
-    if WAR.L_WYJFA > 0 then   	
+	if WAR.L_WYJFA > 0 then   	
     	local n = 6;
     	local tn = 1000;
 		if (wugong == 34 and DT(pid, 19)) or (wugong == 32 and DT(pid, 20)) or
@@ -40063,13 +40768,13 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		    wuyuedp="五岳剑法·中岳如卧·镇"
 	    elseif WAR.L_WYJFA==4 then
 		    wuyuedp="五岳剑法·北岳如行·徐"
-   else
-		if fightnum >= 2 then	
-			WAR.BJ = 1
 		else
-			fightnum = fightnum + 1;
-		end
-		wuyuedp="五岳剑法·西岳如立·连"
+			if fightnum >= 2 then	
+				WAR.BJ = 1
+			else
+				fightnum = fightnum + 1;
+			end
+			wuyuedp="五岳剑法·西岳如立·连"
 	    end
         if WAR.Person[id][CC.TXWZ3] ~= nil then
       	    WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp
@@ -40077,8 +40782,33 @@ function War_Fight_Sub(id, wugongnum, x, y)
       	    WAR.Person[id][CC.TXWZ3] = wuyuedp
         end
         --WAR.WS = 1
-    end
-
+    end  
+---------------	  
+    --蓝烟清：五岳剑派
+	if MPPD(pid) == 14 and (wugong == 30 or wugong == 31 or wugong == 32 or wugong == 33 or wugong == 34) then		--必出
+		local mpdj = MPDJ(pid)
+		if wglw1(pid,30) or wglw1(pid,31) or wglw1(pid,32) or wglw1(pid,33) or wglw1(pid,34) then
+			WAR.L_WYJFA6 = 1
+		else
+			if math.random(10) <= (2+mpdj) then
+				WAR.L_WYJFA1=1
+			end
+			if math.random(10) <= (2+mpdj) then
+				WAR.L_WYJFA2=1
+			end
+			if math.random(10) <= (2+mpdj) then
+				WAR.L_WYJFA3=1
+			end
+			if math.random(10) <= (2+mpdj) then
+				WAR.L_WYJFA4=1
+			end
+			if math.random(10) <= (2+mpdj) then
+				WAR.L_WYJFA5=1
+			end
+		end	
+	end
+	  
+    --蓝烟清：五岳剑法，增加杀气
 	if MPPD(pid) == 14 and (wugong == 30 or wugong == 31 or wugong == 32 or wugong == 33 or wugong == 34) and MPDJ(pid) > 1 then   	
     	local n = 6;
     	local tn = 1500;
@@ -40105,53 +40835,79 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	    local wuyuedp3=""
 	    local wuyuedp4=""
 	    local wuyuedp5=""
-	    if WAR.L_WYJFA1==1 then --五岳剑法，1-封穴 2-流血 3-内伤 4-迟缓 5-连击
-		    wuyuedp1="东岳如座·封"
-		    if WAR.Person[id][CC.TXWZ3] ~= nil then
-      	        WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp1
-            else
-      	        WAR.Person[id][CC.TXWZ3] = wuyuedp1
-            end
-	    end
-	    if WAR.L_WYJFA2==1 then
-		    wuyuedp2="南岳如飞·刺"
-		    if WAR.Person[id][CC.TXWZ3] ~= nil then
-      	        WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp2
-            else
-      	        WAR.Person[id][CC.TXWZ3] = wuyuedp2
-            end
-	    end
-	    if WAR.L_WYJFA3==1 then
-		    wuyuedp3="中岳如卧·镇"
-		    if WAR.Person[id][CC.TXWZ3] ~= nil then
-      	        WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp3
-            else
-      	        WAR.Person[id][CC.TXWZ3] = wuyuedp3
-            end
-	    end
-	    if WAR.L_WYJFA4==1 then
-		    wuyuedp4="北岳如行·徐"
-		    if WAR.Person[id][CC.TXWZ3] ~= nil then
-      	        WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp4
-            else
-      	        WAR.Person[id][CC.TXWZ3] = wuyuedp4
-            end
-	    end
-	    if WAR.L_WYJFA5==1 then
-		    if fightnum >= 2 then	
-			    WAR.BJ = 1
-		    else
-			    fightnum = 2;
-		    end
-		    wuyuedp5="西岳如立·连"
-		    if WAR.Person[id][CC.TXWZ3] ~= nil then
-      	        WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp5
-            else
-      	        WAR.Person[id][CC.TXWZ3] = wuyuedp5
-            end
-	    end
+		local wuyuedp6=""
+		if WAR.L_WYJFA6 == 1 then
+			wuyuedp6="五岳绝峰·真·剑气冲霄"
+			if fightnum >= 2 then	
+				WAR.BJ = 1
+			else
+				fightnum = 2;
+			end
+			if WAR.Person[id][CC.TXWZ1] ~= nil then
+				WAR.Person[id][CC.TXWZ1] = WAR.Person[id][CC.TXWZ1] .. "+"..wuyuedp6
+			else
+				WAR.Person[id][CC.TXWZ1] = wuyuedp6
+			end
+		else	
+			if WAR.L_WYJFA1==1 then --五岳剑法，1-封穴 2-流血 3-内伤 4-迟缓 5-连击
+				wuyuedp1="东岳如座·封"
+				if WAR.Person[id][CC.TXWZ3] ~= nil then
+					WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp1
+				else
+					WAR.Person[id][CC.TXWZ3] = wuyuedp1
+				end
+			end
+			if WAR.L_WYJFA2==1 then
+				wuyuedp2="南岳如飞·刺"
+				if WAR.Person[id][CC.TXWZ3] ~= nil then
+					WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp2
+				else
+					WAR.Person[id][CC.TXWZ3] = wuyuedp2
+				end
+			end
+			if WAR.L_WYJFA3==1 then
+				wuyuedp3="中岳如卧·镇"
+				if WAR.Person[id][CC.TXWZ3] ~= nil then
+					WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp3
+				else
+					WAR.Person[id][CC.TXWZ3] = wuyuedp3
+				end
+			end
+			if WAR.L_WYJFA4==1 then
+				wuyuedp4="北岳如行·徐"
+				if WAR.Person[id][CC.TXWZ3] ~= nil then
+					WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp4
+				else
+					WAR.Person[id][CC.TXWZ3] = wuyuedp4
+				end
+			end
+			if WAR.L_WYJFA5==1 then
+				if fightnum >= 2 then	
+					WAR.BJ = 1
+				else
+					fightnum = 2;
+				end
+				wuyuedp5="西岳如立·连"
+				if WAR.Person[id][CC.TXWZ3] ~= nil then
+					WAR.Person[id][CC.TXWZ3] = WAR.Person[id][CC.TXWZ3] .. "+"..wuyuedp5
+				else
+					WAR.Person[id][CC.TXWZ3] = wuyuedp5
+				end
+			end
+		end	
             --WAR.WS = 1
     end
+	
+	--五岳剑派
+	if MPPD(pid) == 14 then
+	    local mpdj = MPDJ(pid) + 4
+	    if math.random(10) < (mpdj) then
+            WAR.WYJP = 1
+			if WAR.L_WYJFA6 ~= 1 then
+				WAR.Person[id][CC.TXWZ1] = "剑气冲霄"
+			end	
+        end
+	end
 	
 	if DT(pid, 5) and WAR.TJZX > 0 then --沼跃鱼：张三丰太极之形
         local zhongshu=WAR.TJZX
@@ -42515,7 +43271,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	    --WAR.TLHS = 1
 	end
 	
-    if DT(pid,583) and WAR.LQZ[pid] == 100 then
+    if DT(pid,546) and WAR.LQZ[pid] == 100 then
 		zssdz(pid)
         for i = 12, 30 do
             NewDrawString(-1, -1, "森罗万道 万道莫名", C_WHITE, 25 + i)
@@ -42580,7 +43336,8 @@ function War_Fight_Sub(id, wugongnum, x, y)
       for i = 0, WAR.PersonNum - 1 do
         if WAR.Person[i]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and WAR.Person[i]["死亡"] == false then
           SetWarMap(WAR.Person[i]["坐标X"], WAR.Person[i]["坐标Y"], 4, 1)
-		  WAR.QJZB[WAR.Person[i]["人物编号"]] = 100
+		  local tmppid = WAR.Person[i]["人物编号"]
+		  WAR.QJZB[tmppid] = 100
         end
       end
       WAR.Person[id][CC.TXDH] = 76
@@ -46167,7 +46924,7 @@ function War_Manual_Sub()
     end     
   
     --隼人森罗指令
-    if CXTRT(pid, 583) then
+    if CXTRT(pid, 546) then
     if WAR.SLZL > 0 then
     	warmenu[11][3] = 0
     end
@@ -49150,7 +49907,7 @@ end
 	  end
 	end		
 
-    if ownPD(pid,583) then --隼人森罗指令
+    if ownPD(pid,546) then --隼人森罗指令
 		if WAR.SLZL == 0 then
 			local qishu = JYMsgBox("森罗", "要使用以下那种战术进行战斗？", {"天地","奇正", "阴阳", "生灭",  "取消"}, 5, pid)
 			if qishu == 1 then
@@ -51620,21 +52377,21 @@ function GetJiqi()
     end
     end
     local function getnewmove1(a, b, flag)
-    local x = (a * 2 + b) / 3
-    if not flag then
-      x = x * 2
-    end
-    if x > 5600 then
-      return 8 + math.min((x - 5600) / 1200, 3)
-    elseif x > 3600 then
-      return 6 + (x - 3600) / 1200
-    elseif x > 2000 then
-      return 4 + (x - 2000) / 1000
-    elseif x > 800 then
-      return 2 + (x - 800) / 800
-    else
-      return x / 400
-    end
+		local x = (a * 2 + b) / 3
+		if not flag then
+			x = x * 2
+		end
+		if x > 5600 then
+		  return 8 + math.min((x - 5600) / 1200, 3)
+		elseif x > 3600 then
+		  return 6 + (x - 3600) / 1200
+		elseif x > 2000 then
+		  return 4 + (x - 2000) / 1000
+		elseif x > 800 then
+		  return 2 + (x - 800) / 800
+		else
+		  return x / 400
+		end
     end
     for i = 0, WAR.PersonNum - 1 do
 		if not WAR.Person[i]["死亡"] then
@@ -51647,7 +52404,7 @@ function GetJiqi()
 			end
 			if T11CJR(id) then nsyxjq = 0 end
 			if MPPD(id) == 11 and MPDJ(id) > 2 then nsyxjq = 0 end
-				WAR.Person[i].TimeAdd = math.modf(getnewmove(WAR.Person[i]["轻功"]*0.85, inteam(id)) + getnewmove1(JY.Person[id]["内力"]/5, JY.Person[id]["内力最大值"]/5, inteam(id)) - JY.Person[id]["中毒程度"] / 10 - nsyxjq + JY.Person[id]["体力"] / 30 + 5)
+			WAR.Person[i].TimeAdd = math.modf(getnewmove(WAR.Person[i]["轻功"]*0.85, inteam(id)) + getnewmove1(JY.Person[id]["内力"]/5, JY.Person[id]["内力最大值"]/5, inteam(id)) - math.modf(nsyxjq/2) + JY.Person[id]["体力"] / 30 + 5)
 		  
 			if (JY.Person[id]["内力性质"] == 3) or JY.Person[id]["内力性质"] == 2 then --武骧金星：调和效果
 				--WAR.Person[i].TimeAdd = math.modf(getnewmove(WAR.Person[i]["轻功"], inteam(id)) + 2 * getnewmove1(JY.Person[id]["内力"], JY.Person[id]["内力最大值"], inteam(id)) - JY.Person[id]["中毒程度"] / 20 - nsyxjq + JY.Person[id]["体力"] / 30 + 5)	  
@@ -52760,7 +53517,32 @@ function GetJiqi()
 					end
 				end	
 			end	 
-			  
+			
+			for j = 0, WAR.PersonNum-1 do 
+				local df = WAR.Person[j]["人物编号"] 			
+				local offset1 = math.abs(WAR.Person[i]["坐标X"] - WAR.Person[j]["坐标X"]) 
+				local offset2 = math.abs(WAR.Person[i]["坐标Y"] - WAR.Person[j]["坐标Y"])
+				local offset=offset1+offset2
+				if WAR.WXJQT1[df] ~= nil then		
+					if WAR.Person[j]["我方"] == WAR.Person[i]["我方"] and WAR.Person[j]["死亡"] == false and (offset1<= 8 and offset2<= 8) then
+						local xn = math.modf((JY.Person[df]["内力"] - JY.Person[id]["内力"]) / 200)
+						if xn <= 10 then
+							xn = 10
+						end
+						if offset <= 10 then
+							xn = math.modf( xn * ( 1 + (10 - offset) / 10))
+						end
+						if xn >= 40 then
+							xn = 40
+						end
+						if DT(df,615) then
+							xn = 40
+						end
+						WAR.Person[i].TimeAdd = math.modf(WAR.Person[i].TimeAdd * (1-0.005 * xn))
+					end
+				end	
+			end
+			
 			for j = 0, WAR.PersonNum - 1 do --沼跃鱼：萧峰帝释天威效果--敌方减速
 				if DT(WAR.Person[j]["人物编号"], 50) and (WAR.Person[j]["人物编号"]==0 or WAR.Person[j]["人物编号"]==50) and WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[i]["我方"] then
 					local aa = WAR.Person[j]["人物编号"]
@@ -52781,7 +53563,7 @@ function GetJiqi()
 				if WAR.Person[j]["人物编号"]==0 and WAR.BFQL[WAR.Person[j]["人物编号"]] == 1 and WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[i]["我方"] then
 					WAR.Person[i].TimeAdd = math.modf(WAR.Person[i].TimeAdd * 0.7)
 				end
-			end	
+			end
 			
 			for j = 0, WAR.PersonNum - 1 do --豸苗：降龙伏虎
 				if WAR.Person[j]["人物编号"] == 0 and WAR.XLFH[WAR.Person[j]["人物编号"]] ~= nil and WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[i]["我方"] then
@@ -52866,7 +53648,7 @@ function GetJiqi()
 				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd+math.modf((sixi(id,1) + sixi(id,2)) * 0.5)
 			end   	
 		
-            if DT(id, 583) then --隼人天隐集气速度
+            if DT(id, 546) then --隼人天隐集气速度
 				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd+math.modf(sixi(id,1) * sixi(id,2) * sixi(id,3) * sixi(id,4) *  sixi(id,5))
 			end			
 		
@@ -52942,9 +53724,9 @@ function GetJiqi()
 			
 			--冰封减集气
 			if WAR.ICE[id] ~= nil and WAR.BPD[id] == nil and not (DT(id,48) and JX(id)) then
-				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - 6
+				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - 3
 				if WAR.ICE[id] > 50 then
-					WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - (WAR.ICE[id]) / 4
+					WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - math.modf((WAR.ICE[id]) / 4)
 				end
 				if WAR.Person[i].TimeAdd < 0 then
 					WAR.Person[i].TimeAdd = 0
@@ -52957,11 +53739,14 @@ function GetJiqi()
 				if WAR.Person[i].Time < 0 then
 					WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - 0
 				elseif 	WAR.Person[i].Time >= 0 then
-					WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - (math.ceil(aa/33.3))
+					WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd - math.ceil(math.modf(aa/33.3))
 				end
 				if WAR.Person[i].TimeAdd < 0 then
 					WAR.Person[i].TimeAdd = 0
 				end
+			end	
+			if WAR.HBZQ5[id] ~= nil then
+				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd + 7
 			end	
 			--昆仑门人云龙三折
 			if PersonKF(id,205) then
@@ -54169,7 +54954,7 @@ function WarMain(warid, isexp)
         WAR.Person[i].Time = 900
     end
     
-    if DT(WAR.Person[i]["人物编号"], 583) then
+    if DT(WAR.Person[i]["人物编号"], 546) then
         WAR.Person[i].Time = 800
     end	
 	
@@ -54215,7 +55000,12 @@ function WarMain(warid, isexp)
 		else
 			WAR.Person[i].Time = 700
 		end
-	end
+	end	
+
+
+	if DT(WAR.Person[i]["人物编号"],22) then
+		WAR.HBZQ4[WAR.Person[i]["人物编号"]] = 3
+	end	
 	        
 	if getHZ(WAR.Person[i]["人物编号"], 2) then --御风令+300
 	  WAR.Person[i].Time = WAR.Person[i].Time + 300
@@ -54900,7 +55690,7 @@ end
   
     if WAR.ZDDH >= 0 then 
         for a = 0, WAR.PersonNum - 1 do
-            if DT(WAR.Person[a]["人物编号"], 583) then 
+            if DT(WAR.Person[a]["人物编号"], 546) then 
                 for i = 40, 80 do
                     NewDrawString(-1, -1, "无双霸者 隐剑门主", C_GOLD, i)
                     ShowScreen()
@@ -54917,7 +55707,46 @@ end
 	        end
 	    end
     end 
-
+	
+	--[[if WAR.ZDDH >= 0 then 
+        for a = 0, WAR.PersonNum - 1 do
+            local aid = WAR.Person[a]["人物编号"]
+			if T9ZY(aid) and juexing() > 0 then 
+                if JY.Person[aid]["武器"] == 255 then
+					for i = 40, 80 do
+						NewDrawString(-1, -1, "义之所至 生死相随", C_GOLD, i)
+						ShowScreen()
+						if i == 80 then
+							Cls()
+							NewDrawString(-1, -1, "义之所至 生死相随", C_GOLD, i)
+							ShowScreen()
+							lib.Delay(400)
+							--WaitKey()
+						else
+							lib.Delay(1)
+						end
+					end
+				end
+				if JY.Person[aid]["无用15"] == 230 then
+					for i = 40, 80 do
+						NewDrawString(-1, -1, "苍天为鉴 白马为证", C_GOLD, i)
+						ShowScreen()
+						if i == 80 then
+							Cls()
+							NewDrawString(-1, -1, "苍天为鉴 白马为证", C_GOLD, i)
+							ShowScreen()
+							lib.Delay(400)
+							--WaitKey()
+						else
+							lib.Delay(1)
+						end
+					end
+				end
+	        end
+	    end
+    end]] 
+	
+	
     if WAR.ZDDH >= 0 then 
         for a = 0, WAR.PersonNum - 1 do
             if DT(WAR.Person[a]["人物编号"], 617) then 
@@ -54994,13 +55823,13 @@ end
     --蓝烟清：新逆运走火，伤害、暴击率、连击率上升，七分失控
     for i = 0, WAR.PersonNum - 1 do
   	--敌人不会，已方才会走火失控
-  	if inteam(WAR.Person[i]["人物编号"])and PersonKF(WAR.Person[i]["人物编号"], 107) == false then
-	    if wglw(WAR.Person[i]["人物编号"],104) then --豸苗：逆运精义
-		WAR.L_NYZH[WAR.Person[i]["人物编号"]] = nil
-		elseif PersonKF(WAR.Person[i]["人物编号"], 104) then
-  		WAR.L_NYZH[WAR.Person[i]["人物编号"]] = 1; --没有九阴，逆运走火
+		if inteam(WAR.Person[i]["人物编号"])and PersonKF(WAR.Person[i]["人物编号"], 107) == false then
+			if wglw(WAR.Person[i]["人物编号"],104) then --豸苗：逆运精义
+			WAR.L_NYZH[WAR.Person[i]["人物编号"]] = nil
+			elseif PersonKF(WAR.Person[i]["人物编号"], 104) then
+			WAR.L_NYZH[WAR.Person[i]["人物编号"]] = 1; --没有九阴，逆运走火
+			end
 		end
-  	end
     end
   	
     --显示战斗说明
@@ -55512,7 +56341,7 @@ end
 		     WAR.JLDL = 0
 		end	 
 		local function zidong(p)
-			if WAR.ZDDH == 299 and (p == 55 or p == 583 or p == 584) then
+			if WAR.ZDDH == 299 and (p == 55 or p == 546 or p == 584) then
 				return true
 			end
 			if WAR.ZDDH == 342 and CC.MatchAuto == 1 then
@@ -55595,7 +56424,7 @@ end
 	        --end
 			if not hasTF(pid, 83) and WAR.ZDDH == 128 then
 				for i = 0, WAR.PersonNum - 1 do
-					if WAR.Person[i]["人物编号"] == 553 and JY.Person[553]["生命"] <= 0 then
+					if WAR.Person[i]["人物编号"] == 553 and JY.Person[553]["生命"] <= 0 and JX(WAR.Person[i]["人物编号"]) then
 					WAR.YZB = 1
 					WAR.FXDS[553] = nil
 					WAR.LXZT[553] = nil
@@ -55700,7 +56529,15 @@ end
 			if pid == WAR.AXL then --武骧金星：清空阿修罗标志
 				WAR.AXL = -1
 			end
-		
+			
+			if JY.Person[pid]["中毒程度"] > 0 and WAR.ZDTX[pid] ~= nil then
+				local aa = math.modf(JY.Person[pid]["中毒程度"]/2)
+				if math.random(JY.Person[pid]["中毒程度"]) > math.random(aa) then
+					WAR.Person[WAR.CurID]["生命点数"] = (WAR.Person[WAR.CurID]["生命点数"] or 0) + AddPersonAttrib(pid,"生命",-aa)
+					War_Show_Count(WAR.CurID, "毒发");
+				end
+			end	
+			
 	        --罗汉伏魔功 每回合回复生命10% 主功体20%
 			if PersonKF(pid, 96) and JY.Person[pid]["生命"] > 0 and WAR.XUEMO[pid] == nil
 				and JY.Person[pid]["生命"] < JY.Person[pid]["生命最大值"]
@@ -55816,6 +56653,10 @@ end
 			if WAR.YQHT[pid] == 2 then
 				WAR.YQHT[pid] = nil 
 			end
+		
+			if WAR.WXJQ[pid] ~= nil then
+				WAR.WXJQ[pid] = nil
+			end	
 			--昆仑门人昆仑道罡
 			if MPPD(pid) == 19 and PersonGT(pid,204) then
 				local aa = math.random(2)
@@ -55863,11 +56704,41 @@ end
 				WAR.LXZS[pid] = nil
 			end	
 			
+			if WAR.ZXJQ1[pid] ~= nil then
+				WAR.ZXJQ2[pid] = WAR.ZXJQ1[pid]
+				WAR.ZXJQ1[pid] = nil
+			end	
+			
 			if WAR.TZQJ4[pid] ~= nil then
 				WAR.TZQJ4[pid] = WAR.TZQJ4[pid] - 1
 				if WAR.TZQJ4[pid] < 1 then
 					WAR.TZQJ4[pid] = nil
 				end
+			end	
+			
+			if WAR.WXJQM1[pid] ~= nil then
+				local aa = math.modf(math.random(100,300) + JY.Person[pid]["中毒程度"])
+				WAR.Person[p]["内力点数"] = (WAR.Person[p]["内力点数"] or 0) + AddPersonAttrib(WAR.Person[p]["人物编号"],"内力",-aa)
+				--WAR.Person[p]["内力点数"] = (WAR.Person[p]["内力点数"] or 0) + AddPersonAttrib(WAR.Person[p]["人物编号"],"内力",-8000)
+			end
+			
+			if WAR.WXJQK == 1 then
+				if WAR.WXJQJ[pid] ~= nil then
+					WAR.WXJQJ[pid] = nil
+				end	
+				if WAR.WXJQM[pid] ~= nil then
+					WAR.WXJQM[pid] = nil
+				end
+				if WAR.WXJQS[pid] ~= nil then
+					WAR.WXJQS[pid] = nil
+				end
+				if WAR.WXJQH[pid] ~= nil then
+					WAR.WXJQH[pid] = nil
+				end
+				if WAR.WXJQT[pid] ~= nil then
+					WAR.WXJQT[pid] = nil
+				end
+				WAR.WXJQK = 0
 			end	
 			
 			if WAR.PJTX == 1 then
@@ -55892,7 +56763,7 @@ end
 				say("没意思，走了！",579,0,"安七")
 				WAR.Person[WAR.CurID]["死亡"] = true
 			end		
-		
+			
 			if pid == 0 and putong() == 10 then
 				WAR.LKZX = 0
 				local jl = math.modf(JY.Person[pid]["实战"] / 20)
@@ -56255,7 +57126,7 @@ end
 	        if PersonKF(id, 47) then
 				WAR.Person[p].Time = WAR.Person[p].Time + 200
 			end
-            if DT(id,583) then
+            if DT(id,546) then
 				WAR.Person[p].Time = WAR.Person[p].Time + 450
 			end	
 			if extrajq(id) > 0 then
@@ -56400,7 +57271,7 @@ end
 	        --小日本
 	        if not hasTF(pid, 83) and WAR.ZDDH == 128 then
 	          for i = 0, WAR.PersonNum - 1 do
-	            if WAR.Person[i]["人物编号"] == 553 and JY.Person[553]["生命"] <= 0 then
+	            if WAR.Person[i]["人物编号"] == 553 and JY.Person[553]["生命"] <= 0 and JX(WAR.Person[i]["人物编号"]) then
 	              WAR.YZB = 1
 	              WAR.FXDS[553] = nil
 	              WAR.LXZT[553] = nil
@@ -56632,7 +57503,7 @@ end
 			end	
 			
             --森罗万道
-			if DT(id,583) then
+			if DT(id,546) then
 				local aa = math.modf(WAR.SXTJ / 20)
 				aa = aa - WAR.SLWD
 				if aa > 0 then
@@ -57282,7 +58153,7 @@ end
 			   end
 			   WAR.SHML[pid] = nil
 			end   
-			if hasTF(pid, 65) or DT(pid,583) or DT(pid, 592) or DT(pid, 600) or NF(pid) or BJY(pid) or ((wglw1(pid,47) or DT(pid,592)) and WAR.DGJJ_ZJS == 1) or (WAR.KHZJ[pid] ~= nil) or (WAR.KLLY2[pid] ~= nil) then				
+			if hasTF(pid, 65) or DT(pid,546) or DT(pid, 592) or DT(pid, 600) or NF(pid) or BJY(pid) or ((wglw1(pid,47) or DT(pid,592)) and WAR.DGJJ_ZJS == 1) or (WAR.KHZJ[pid] ~= nil) or (WAR.KLLY2[pid] ~= nil) then				
 				War_RestMenu()
 			end
 			if T3XYK(pid) and JLSD(10, 60, pid) then				
@@ -57294,28 +58165,46 @@ end
 			    WAR.HOT[pid] = nil
 				--WAR.Person[WAR.CurID]["内力点数"] = AddPersonAttrib(pid, "内力", math.modf(JY.Person[pid]["内力最大值"]*0.1));
 				if JY.Person[pid]["内力"] > 200 then
-				    if WAR.ZXJQ[pid] == nil or WAR.ZXJQ[pid] < 10 then
-				        local a = 10
-					    if WAR.ZXJQ[pid] == nil then 
-					        a = 10 
-					    elseif WAR.ZXJQ[pid] ~= nil and WAR.ZXJQ[pid] < 10 then 
-					        a = a - WAR.ZXJQ[pid]
-					    end 
-				        if math.modf(JY.Person[pid]["内力"]/200) > a then
-					        WAR.ZXJQ[pid] = 10
-						    WAR.Person[WAR.CurID]["内力点数"] = AddPersonAttrib(pid, "内力", -a*200);
-					else
-					    if WAR.ZXJQ[pid] == nil then 
-						    WAR.ZXJQ[pid] = math.modf(JY.Person[pid]["内力"]/200)
+					local a = 10
+					local b = 1
+					if MPPD(pid) == 14 then
+						a = a + math.ceil(math.modf((JY.Person[pid]["内力最大值"] + 1)/1000)) - 1
+					end	
+					if WAR.ZXJQ[pid] == nil then 
+						b = a
+					elseif WAR.ZXJQ[pid] ~= nil and WAR.ZXJQ[pid] < a then 
+						b = a - WAR.ZXJQ[pid]
+					end 
+					if WAR.ZXJQ[pid] == nil or (WAR.ZXJQ[pid] ~= nil and WAR.ZXJQ[pid] < a) then
+						if math.modf(JY.Person[pid]["内力"]/200) > b then
+							local c = math.random(b)
+							addeffect(WAR.ZXJQ,pid,c)
+							if WAR.ZXJQ[pid] ~= nil and WAR.ZXJQ[pid] > a then
+								WAR.ZXJQ[pid] = a
+							end	
+							AddPersonAttrib(pid, "内力", -c*200);
+							DrawStrBox(-1, -1, "消耗" .. c*200 .."点内力，回复" .. c .."道剑气", C_ORANGE, CC.DefaultFont)
+							ShowScreen()
+							lib.Delay(800)
+							Cls()
+							ShowScreen()
 						else
-						    WAR.ZXJQ[pid] = WAR.ZXJQ[pid]+math.modf(JY.Person[pid]["内力"]/200)
+							local zx = math.modf(JY.Person[pid]["内力"]/200)
+							local c = math.random(zx)
+							addeffect(WAR.ZXJQ,pid,c)
+							if WAR.ZXJQ[pid] ~= nil and WAR.ZXJQ[pid] > a then
+								WAR.ZXJQ[pid] = a
+							end
+							AddPersonAttrib(pid, "内力", -c*200);
+							DrawStrBox(-1, -1, "消耗" .. c*200 .."点内力，回复" .. c .."道剑气", C_ORANGE, CC.DefaultFont)
+							ShowScreen()
+							lib.Delay(800)
+							Cls()
+							ShowScreen()
 						end
-						    WAR.Person[WAR.CurID]["内力点数"] = AddPersonAttrib(pid, "内力", -math.modf(JY.Person[pid]["内力"]/200)*200);
-					    end
-					        War_Show_Count(WAR.CurID)
-				    end
+					end	
 				end
-				WAR.Person[WAR.CurID]["内力点数"] = AddPersonAttrib(pid, "内力", math.modf(JY.Person[pid]["内力最大值"]*0.1));
+				WAR.Person[WAR.CurID]["内力点数"] = (WAR.Person[WAR.CurID]["内力点数"] or 0) + AddPersonAttrib(pid, "内力", math.modf(JY.Person[pid]["内力最大值"]*0.1));
 				War_Show_Count(WAR.CurID)
 			end
 			if NF(pid) then --创刀
@@ -57535,6 +58424,40 @@ end
 				end
 				WAR.HZD = {}
 			end			
+
+			if WAR.ZXJQ[pid] ~= nil and MPPD(pid) == 14  and WAR.Person[WAR.CurID]["我方"] then --and WAR.AutoFight ~= 1 		
+				local wgmenu = {}
+				for i = 1, CC.Kungfunum do
+					local tmp = JY.Person[pid]["武功" .. i]
+					if WAR.WYWXJ1[1] ~= nil and tmp >= 31 and tmp <= 34  then--恒山30
+						wgmenu[#wgmenu + 1] = {i, tmp}
+					elseif WAR.WYWXJ2[1] ~= nil and (tmp == 30 or (tmp >= 32 and tmp <= 34))  then--泰山31
+						wgmenu[#wgmenu + 1] = {i, tmp}
+					elseif WAR.WYWXJ3[1] ~= nil and (tmp == 31 or tmp == 33 or tmp == 30 or tmp == 34) then--衡山--32
+						wgmenu[#wgmenu + 1] = {i, tmp}
+					elseif WAR.WYWXJ4[1] ~= nil and (tmp == 31 or tmp == 32 or tmp == 30 or tmp == 34)  then--万岳33
+						wgmenu[#wgmenu + 1] = {i, tmp}
+					elseif WAR.WYWXJ5[1] ~= nil and tmp >= 30 and tmp <= 33  then--太岳34
+						wgmenu[#wgmenu + 1] = {i, tmp}	
+					end
+				end
+				if #wgmenu ~= 0 then
+					local tmp = wgmenu[math.random(#wgmenu)]
+					WAR.WXJQ[pid] = JY.Wugong[tmp[2]]["代号"]
+					DIYdisplay("五岳五行·同气联枝·"..JY.Wugong[tmp[2]]["名称"])
+					War_Fight_Sub(WAR.CurID, tmp[1])
+					if WAR.WXJQ[pid] ~= nil then
+						WAR.WXJQ[pid] = nil
+					end
+				end
+				WAR.WYWXJ1 = {}
+				WAR.WYWXJ2 = {}
+				WAR.WYWXJ3 = {}
+				WAR.WYWXJ4 = {}
+				WAR.WYWXJ5 = {}
+			end
+
+			
 
 			if (PersonGT(pid, 181) and (DT(pid, 455))) or (wglw(pid,181) and JLSD(10,45,pid) and PersonGTJL(pid,181,WAR.NGJL)) or (DT(pid,600) and JLSD(10,100,pid)) or (NF(pid) and JLSD(10,60,pid)and WAR.LQZ[pid] == 100 and juexing() > 1) then
 				local wgmenu = {}
@@ -57799,13 +58722,13 @@ end
 	                War_CalMoveStep(WAR.CurID, WAR.Person[WAR.CurID]["移动步数"], 0)
 	                local x, y = nil, nil
 	                while 1 do
-	                x, y = War_SelectMove()
-	                if x ~= nil then
-	                    WAR.ShowHead = 0
-	                    War_MovePerson(x, y)
-	                    break;
-	                end
-	            end
+						x, y = War_SelectMove()
+						if x ~= nil then
+							WAR.ShowHead = 0
+							War_MovePerson(x, y)
+							break;
+						end
+					end
 	            end
 	            WAR.FLHS5 = 0
 	            WAR.CurID = z
@@ -59433,11 +60356,15 @@ function AddPersonAttrib(id, str, value)
 		if T1LEQ(id) or hasTF(id, 93) then
 		  attribmax = 10000
 		end 
-		if DT(id, 583) then
+		if DT(id, 546) then
 		  attribmax = 10000
-		elseif DT(id, 600) then
+		end  
+		if DT(id, 600) then
 		  attribmax = 10000
-		end   
+		end
+		if DT(id, 592) then
+		  attribmax = 10000
+		end	
 		if DT(id, 603) then
 		  attribmax = 10000
 		end 
@@ -59485,6 +60412,10 @@ function AddPersonAttrib(id, str, value)
 			end
 			if MPPD(id) == 1 or MPPD(id) == 9 then
 				value = 0
+			end	
+			--九死龙爪
+			if (WAR.JSLZ1[id] or 0) > 0 and value < -3 then
+				value = -3
 			end	
 		end
 	elseif str == "中毒程度" and value > 0 then
@@ -59535,6 +60466,21 @@ function AddPersonAttrib(id, str, value)
 			end
 			if DT(id,114) and JX(id) and WAR.DUIZHAO == 3 and JY.Person[id]["内力"] > 8000 then --
 				value = 0
+			end	
+			if WAR.JYHT[id] ~= nil and WAR.JYHT[id] > 0 and (wglw(id,106) or (DT(id,9) and JX(id))) then
+				if JLSD(10,40,id) then
+					value = math.modf(value/2)
+				else
+					value = math.modf(value*3/4)
+				end
+			end
+			if WAR.JYZQJZS[id] ~= nil then
+				if JLSD(10,40,id) then
+					value = math.modf(value*1.5)
+				else
+					value = math.modf(value*1.25)
+				end
+				WAR.JYZQJZS[id] = nil
 			end	
 		end
     end
@@ -64498,15 +65444,8 @@ function Game_SMap()
 	    if JY.Person[0]["觉醒"] > 0 and GetS(99,1,0,0) > 0 then 
 		    if math.random(200) == 100 and JY.SubScene ~= 113 then
 			SetS(99,1,0,0,(GetS(99,1,0,0)+1))
-			local a = 0
-			if tianshu() <= 12 then 
-			   a = 130
-			end
-			if tianshu()> 12 and tianshu() <= 14 then 
-			   a = 128
-			end
 		    say("什么人？？",0)
-	            if WarMain(a) == false then
+	            if WarMain(128) == false then
 		           instruct_15(0);   
 		           instruct_0();  
 		           do return; end			
@@ -67328,654 +68267,699 @@ function DrawTimeBar()
 			else
 			  if WAR.Person[i]["死亡"] == false then
 				if not jtyl(jqid) then 
-				if WAR.YJZD[jqid] ~= nil then --以静制动
-					WAR.YJZD[jqid] = WAR.YJZD[jqid] - 1
-					if WAR.YJZD[jqid] <= 0 then
-						WAR.YJZD[jqid] = nil
-						WAR.YJZDPD[jqid] = 1
-						WAR.Person[i].Time = 1005
-					end			
-				elseif WAR.SH[jqid] ~= nil then --锁喉
-					WAR.SH[jqid] = WAR.SH[jqid] - 1	
-					if WAR.SH[jqid] <= 0 then
-						WAR.SH[jqid] = nil
-					end
-				elseif WAR.SH1[jqid] ~= nil then
-					WAR.SH1[jqid] = WAR.SH1[jqid] - 1
-					if JLSD(10,35,jqid) then
-						WAR.Person[i].Time = WAR.Person[i].Time + 35
-					end
-					if WAR.SH1[jqid] <= 0 then
-						WAR.SH1[jqid] = nil
-					end			
-				elseif WAR.HBZQ1[jqid] ~= nil then --1-10-寒冰真气
-					WAR.HBZQ1[jqid] = WAR.HBZQ1[jqid] - 1
-					if WAR.HBZQ1[jqid] <= 0 then
-						WAR.HBZQ1[jqid] = nil
-					end			
-				elseif WAR.JG[jqid] ~= nil then --金刚不坏
-					WAR.JG[jqid] = WAR.JG[jqid] - 1
-					if WAR.JG[jqid] <= 0 then
-						WAR.JG[jqid] = nil
-					end	
-				elseif WAR.YJMC[jqid] ~= nil then --瑜伽密乘
-					WAR.YJMC[jqid] = WAR.YJMC[jqid] - 1
-					if WAR.YJMC[jqid] <= 0 then
-						WAR.YJMC[jqid] = nil
-					end		
-				elseif WAR.SZWH[jqid] ~= nil and not nospeeddelay(jqid) then
-				elseif WAR.QJBMS[jqid] ~= nil and not nospeeddelay(jqid) then
-				elseif WAR.FXDS[WAR.Person[i]["人物编号"]] == nil or nospeeddelay(WAR.Person[i]["人物编号"]) then     	
-					if WAR.MENG[jqid] ~= nil then --回魂仙梦集气
-						local aa = math.modf(WAR.Person[i].TimeAdd * 0.5) + 1
-						local jq = math.random(aa)
-						if wglw2(jqid,193) and PersonKF(jqid,193) then
-							jq = math.modf(jq*math.random(3,5))
+					if WAR.YJZD[jqid] ~= nil then --以静制动
+						WAR.YJZD[jqid] = WAR.YJZD[jqid] - 1
+						if WAR.YJZD[jqid] <= 0 then
+							WAR.YJZD[jqid] = nil
+							WAR.YJZDPD[jqid] = 1
+							WAR.Person[i].Time = 1005
+						end			
+					elseif WAR.SH[jqid] ~= nil then --锁喉
+						WAR.SH[jqid] = WAR.SH[jqid] - 1	
+						if WAR.SH[jqid] <= 0 then
+							WAR.SH[jqid] = nil
+						end
+					elseif WAR.SH1[jqid] ~= nil then
+						WAR.SH1[jqid] = WAR.SH1[jqid] - 1
+						if JLSD(10,35,jqid) then
+							WAR.Person[i].Time = WAR.Person[i].Time + 35
+						end
+						if WAR.SH1[jqid] <= 0 then
+							WAR.SH1[jqid] = nil
+						end			
+					elseif WAR.HBZQ1[jqid] ~= nil then --1-10-寒冰真气
+						WAR.HBZQ1[jqid] = WAR.HBZQ1[jqid] - 1
+						if WAR.HBZQ3[jqid] ~= nil then
+							AddPersonAttrib(jqid,"生命",-(15+WAR.HBZQ3[jqid]))
 						end	
-						WAR.Person[i].Time = WAR.Person[i].Time + jq          
-						WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq 
-					elseif WAR.XSZW[jqid] ~= nil then --谢无悠
-						   WAR.XSZW[jqid] = WAR.XSZW[jqid] -1
-						if WAR.XSZW[jqid] <= 0 then
-						   WAR.XSZW[jqid] = nil
-						end
-						if jtyl(jqid) then 
-						   WAR.XSZW[jqid] = nil
-						end
-						WAR.Person[i].Time = WAR.Person[i].Time + math.random(-WAR.Person[i].TimeAdd,WAR.Person[i].TimeAdd)--math.random(WAR.Person[i].Time - math.modf(WAR.Person[i].TimeAdd*2),WAR.Person[i].Time + WAR.Person[i].TimeAdd)
-						if WAR.Person[i].Time <= -500 then 
-						   WAR.Person[i].Time = -500
-						end
-						WAR.JQSDXS[WAR.Person[i]["人物编号"]] =  WAR.Person[i].TimeAdd
-						if WAR.LQZ[jqid] == 100 then
-						WAR.JQSDXS[WAR.Person[i]["人物编号"]] =  WAR.Person[i].TimeAdd*2
-						end	
-					elseif WAR.bhbm[4000 + jqid] ~= nil then --八荒
-						   WAR.bhbm[4000 + jqid] = WAR.bhbm[4000 + jqid] -1
-						if WAR.bhbm[4000 + jqid] <= 0 then
-						   WAR.bhbm[4000 + jqid] = nil
-						end
-						if wglw2(jqid,193) and PersonKF(jqid,193) then
-							WAR.Person[i].Time = WAR.Person[i].Time + math.random(WAR.Person[i].TimeAdd,(WAR.Person[i].TimeAdd*2))
-						else	
-							WAR.Person[i].Time = WAR.Person[i].Time + math.random(-WAR.Person[i].TimeAdd,WAR.Person[i].TimeAdd)--math.random(WAR.Person[i].Time - math.modf(WAR.Person[i].TimeAdd*2),WAR.Person[i].Time + WAR.Person[i].TimeAdd)
-						end
-						if WAR.Person[i].Time <= -500 then 
-						   WAR.Person[i].Time = -500
-						end
-						WAR.JQSDXS[WAR.Person[i]["人物编号"]] =  WAR.Person[i].TimeAdd
-						if WAR.LQZ[jqid] == 100 then
-						WAR.JQSDXS[WAR.Person[i]["人物编号"]] =  WAR.Person[i].TimeAdd*2
-						end				
-					elseif WAR.LHFM[jqid] ~= nil and WAR.KLJZ ~= 2  then --罗汉伏魔
-						local jq1 = WAR.Person[i].TimeAdd
-						local jq2 = WAR.Person[i].TimeAdd
-						local jq3 = WAR.Person[i].TimeAdd
-						local x = 0
-						--jq1 = WAR.Person[i].TimeAdd
-						if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
-						   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-						   jq1 = math.modf(WAR.Person[i].TimeAdd*2)
-						   else
-						   jq1 = math.modf(WAR.Person[i].TimeAdd/2)
-						   end
-						end
-						if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
-						   if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-						   jq1 = math.modf(WAR.Person[i].TimeAdd*2)
-						   else
-						   jq1 = math.modf(WAR.Person[i].TimeAdd/2)
-						   end
-						end
-						   jq2 = jq1
-						   jq3 = jq1
-																																			 --[[ if WAR.ICE[jqid] ~= nil and WAR.ICE[jqid] >0 then
-																																				if WAR.ICE[jqid] > 0 and WAR.ICE[jqid] <= 20 then
-																																				x = 5
-																																				end
-																																				if WAR.ICE[jqid] > 20 then
-																																				x = 10
-																																				end
-																																				if WAR.ICE[jqid] > 20 and WAR.HBZQ[jqid] ~= nil then
-																																				x = 15
-																																				end
-																																				if WAR.ICE[jqid] > 30 and WAR.HBZQ[jqid] ~= nil then
-																																				x = 20
-																																				end
-																																				if WAR.ICE[jqid] > 40 and WAR.HBZQ[jqid] ~= nil then
-																																				x = 25
-																																				end
-																																			  end
-						if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) then --九龙功
-						jq3 = jq2 + x
-						elseif wglw1(jqid,176) or (DT(jqid,49) and PersonKF(jqid,176)) or DT(jqid,117) or DT(jqid,618) then --生死符
-						jq3 = jq2 + x
-						else
-						jq3 = jq2 - x
-						end
-						if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-						jq3 = jq2 + x
-						end]]
-						if WAR.LQZ[jqid] == 100 then
-							if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-								jq3=jq3*2
-							else
-
-							end
-						end
-						if WAR.Person[i].TimeAdd > 0 and jq3 < 5 then 
-						   jq3 = 5 
-						end
-						if putong() == 2 and jqid == 0 then 
-						 local jsyx = wgnumber(0, 2)
-						 jq3 = jq3+5 * (jsyx)
-						end		 
-						if MPPD(jqid) == 11 and MPDJ(jqid) > 2 then 
-							if putong() == 2 and jqid == 0 then 
-							local jsyx = wgnumber(0, 2)
-							jq3 = WAR.YDSD[jqid]+5 * (jsyx)
-							else 
-							jq3 = WAR.YDSD[jqid]
-							end
-						end
-						if DT(jqid, 617) then 
-						   jq3 = 100
-						end   
-						if jq3 > 100 then 
-						   jq3 = 100 
-						end   
-						if WAR.LQZ[jqid] == 100 then
-						   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-							jq3=jq3*2
-						   else
-
-						   end
-						end
-						if WAR.LQZ[jqid] == 100 then
-						  if jq3<=100 then
-						  jq3 = 200 - jq3
-						  else
-						  
-						  end
-						else
-						  if jq3<=50 then
-						  jq3 = 100 - jq3
-						  else
-						  
-						  end
-						end
-						
-						WAR.Person[i].Time = WAR.Person[i].Time - jq3
-					
-						if WAR.LQZ[jqid] == 100 then
-						  WAR.Person[i].Time = WAR.Person[i].Time - jq3
-						end
-						if WAR.Person[i].Time <= -500 then 
-						   WAR.Person[i].Time = -500
-						end 
-						WAR.JQSDXS[WAR.Person[i]["人物编号"]] = -jq3
-					elseif jqid == 0 and WAR.BHCS[jqid] == 1 then --魔音·碧海潮生12.26
-						local jq = 0
-						for j = 0, WAR.PersonNum - 1 do
-						if WAR.Person[j]["我方"] ~= WAR.Person[i]["我方"] then
-						   jq = math.random(math.floor(WAR.Person[j].TimeAdd/2),WAR.Person[j].TimeAdd)
-						end
-						if WAR.Person[j]["我方"] == WAR.Person[i]["我方"] then
-						   jq = math.random(WAR.Person[j].TimeAdd,math.floor(WAR.Person[j].TimeAdd*1.5))
-						end	
-						WAR.Person[j].Time = WAR.Person[j].Time + jq 
-						WAR.JQSDXS[WAR.Person[j]["人物编号"]] =  jq
-						end
-					elseif WAR.CYSH[jqid] ~= nil then --豸苗：李秋水
-							local jq = 0
-							if JY.Person[jqid]["内力"] >= 8000 then
-							   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.5),WAR.Person[i].TimeAdd)
-							elseif JY.Person[jqid]["内力"] >= 6000 and JY.Person[jqid]["内力"] < 8000 then
-							   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.6),WAR.Person[i].TimeAdd)
-							elseif JY.Person[jqid]["内力"] >= 4000 and JY.Person[jqid]["内力"] < 6000 then  
-							   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.7),WAR.Person[i].TimeAdd)
-							elseif JY.Person[jqid]["内力"] >= 2000 and JY.Person[jqid]["内力"] < 4000 then 
-							   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.8),WAR.Person[i].TimeAdd)					
-							elseif JY.Person[jqid]["内力"] >= 0 and JY.Person[jqid]["内力"] < 2000 then  
-							   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.9),WAR.Person[i].TimeAdd)
-							end				
-						WAR.Person[i].Time = WAR.Person[i].Time + jq 
-						WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq						
-					elseif PersonKF(jqid, 104) == false and (WAR.HOT[jqid] or 0) < 20 then --如果没学逆运，正常集气
-						local jq1 = WAR.Person[i].TimeAdd
-						local jq2 = WAR.Person[i].TimeAdd
-						local jq3 = WAR.Person[i].TimeAdd
-						local x = 0
-						--jq1 = WAR.Person[i].TimeAdd
-						if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
-						   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-						   jq1 = math.modf(WAR.Person[i].TimeAdd*2)
-						   elseif PersonKF(jqid,143) and MPPD(jqid) == 5 and MPDJ(jqid) >= 2 then
-							if WAR.CHZ[jqid] > 30 then
-								jq1 = math.modf(WAR.Person[i].TimeAdd*1.5)
-							elseif WAR.CHZ[jqid] <= 30 then
-								jq1 = WAR.Person[i].TimeAdd
-							end
-						   else
-						   jq1 = math.modf(WAR.Person[i].TimeAdd/2)
-						   end
-						end
-						   jq2 = jq1
-						   jq3 = jq1
-						if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
-							if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-								jq1 = math.modf(WAR.Person[i].TimeAdd*2)
-							else
-								jq1 = math.modf(WAR.Person[i].TimeAdd/2)
-							end
-						end
-																															 --[[ if WAR.ICE[jqid] ~= nil and WAR.ICE[jqid] >0 then
-																																if WAR.ICE[jqid] > 0 and WAR.ICE[jqid] <= 20 then
-																																x = 5
-																																end
-																																if WAR.ICE[jqid] > 20 then
-																																x = 10
-																																end
-																																if WAR.ICE[jqid] > 20 and WAR.HBZQ[jqid] ~= nil then
-																																x = 15
-																																end
-																																if WAR.ICE[jqid] > 30 and WAR.HBZQ[jqid] ~= nil then
-																																x = 20
-																																end
-																																if WAR.ICE[jqid] > 40 and WAR.HBZQ[jqid] ~= nil then
-																																x = 25
-																																end
-																															  end]]
-						if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) then --九龙功
-						jq3 = jq2 + x
-						elseif wglw1(jqid,176) or (DT(jqid,49) and PersonKF(jqid,176)) or DT(jqid,117) or DT(jqid,618) then --生死符
-						jq3 = jq2 + x
-						else
-						jq3 = jq2 - x
-						end
-						if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-							jq3 = jq2 + x
-						end
-						if WAR.Person[i].TimeAdd > 0 and jq3 < 5 then 
-						   jq3 = 5 
-						end
-						if putong() == 2 and jqid == 0 then 
-						 local jsyx = wgnumber(0, 2)
-						 jq3 = jq3+5 * (jsyx)
-						end		 
-						if MPPD(jqid) == 11 and MPDJ(jqid) > 2 then 
-						 if putong() == 2 and jqid == 0 then 
-						 local jsyx = wgnumber(0, 2)
-						 jq3 = WAR.YDSD[jqid]+5 * (jsyx)
-						 else 
-						 jq3 = WAR.YDSD[jqid]
-						 end
-						end
-						if MPPD(jqid)==8 and PersonKF(jqid, 118) and math.random(10) >= 5 then
-							WAR.Person[i].Time = WAR.Person[i].Time + (25*MPDJ(jqid))+25
-							jq3 = jq3 + 10
-						end	
-						if wglw(jqid,189) and WAR.YSJS[jqid] ~=nil and WAR.YSJS[jqid] > 0 and math.random(10) >= 5 then
-							WAR.Person[i].Time = WAR.Person[i].Time + 250
-							jq3 = jq3 + 20
-						end	
-						if DT(jqid, 617) then 
-						   jq3 = 100
-						end   
-						if (jqid == 0 and GetS(114,0,0,0) > 0) or DT(jqid,667) then
-							jq3 = jq3 + 25
-							if jq3 < 30 and wglw2(jqid,193) then
-								jq3 = 30
+						if WAR.HBZQ1[jqid] <= 0 then
+							WAR.HBZQ1[jqid] = nil
+							if WAR.HBZQ3[jqid] ~= nil then
+								WAR.HBZQ3[jqid] = nil
 							end	
-							if jq3 > 120 and not wglw2(jqid,190) then 
-								jq3 = 120
+						end			
+					elseif WAR.JG[jqid] ~= nil then --金刚不坏
+						WAR.JG[jqid] = WAR.JG[jqid] - 1
+						if WAR.JG[jqid] <= 0 then
+							WAR.JG[jqid] = nil
+						end	
+					elseif WAR.YJMC[jqid] ~= nil then --瑜伽密乘
+						WAR.YJMC[jqid] = WAR.YJMC[jqid] - 1
+						if WAR.YJMC[jqid] <= 0 then
+							WAR.YJMC[jqid] = nil
+						end		
+					elseif WAR.SZWH[jqid] ~= nil and not nospeeddelay(jqid) then
+					elseif WAR.QJBMS[jqid] ~= nil and not nospeeddelay(jqid) then
+					elseif WAR.WXJQM1[jqid] ~= nil and WAR.UNDEAD[jqid] ~= nil and  not nospeeddelay(jqid) then
+						if JLSD(10,40,jqid) then
+							local x1 = WAR.Person[i]["坐标X"]
+							local y1 = WAR.Person[i]["坐标Y"]
+							for ex = x1 - 8, x1 + 8 do
+								for ey = y1 - 8, y1 + 8 do
+									SetWarMap(ex, ey, 4, 1)
+									if GetWarMap(ex, ey, 2) ~= nil and GetWarMap(ex, ey, 2) > -1 then
+										local ep = GetWarMap(ex, ey, 2)
+											if WAR.Person[i]["我方"] ~= WAR.Person[ep]["我方 "] then
+											WAR.LSZD[WAR.Person[ep]["人物编号"]] = 1
+											AddPersonAttrib(WAR.Person[ep]["人物编号"],"中毒程度",20)
+										end
+									end
+								end
+							end	
+						end	
+					elseif WAR.FXDS[WAR.Person[i]["人物编号"]] == nil or nospeeddelay(WAR.Person[i]["人物编号"]) then     	
+						if WAR.MENG[jqid] ~= nil then --回魂仙梦集气
+							local aa = math.modf(WAR.Person[i].TimeAdd * 0.5) + 1
+							local jq = math.random(aa)
+							if wglw2(jqid,193) and PersonKF(jqid,193) then
+								jq = math.modf(jq*math.random(3,5))
+							end	
+							WAR.Person[i].Time = WAR.Person[i].Time + jq          
+							WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq 
+						elseif WAR.XSZW[jqid] ~= nil then --谢无悠
+							   WAR.XSZW[jqid] = WAR.XSZW[jqid] -1
+							if WAR.XSZW[jqid] <= 0 then
+							   WAR.XSZW[jqid] = nil
 							end
-						else   
+							if jtyl(jqid) then 
+							   WAR.XSZW[jqid] = nil
+							end
+							WAR.Person[i].Time = WAR.Person[i].Time + math.random(-WAR.Person[i].TimeAdd,WAR.Person[i].TimeAdd)--math.random(WAR.Person[i].Time - math.modf(WAR.Person[i].TimeAdd*2),WAR.Person[i].Time + WAR.Person[i].TimeAdd)
+							if WAR.Person[i].Time <= -500 then 
+							   WAR.Person[i].Time = -500
+							end
+							WAR.JQSDXS[WAR.Person[i]["人物编号"]] =  WAR.Person[i].TimeAdd
+							if WAR.LQZ[jqid] == 100 then
+							WAR.JQSDXS[WAR.Person[i]["人物编号"]] =  WAR.Person[i].TimeAdd*2
+							end	
+						elseif WAR.bhbm[4000 + jqid] ~= nil then --八荒
+							   WAR.bhbm[4000 + jqid] = WAR.bhbm[4000 + jqid] -1
+							if WAR.bhbm[4000 + jqid] <= 0 then
+							   WAR.bhbm[4000 + jqid] = nil
+							end
+							if wglw2(jqid,193) and PersonKF(jqid,193) then
+								WAR.Person[i].Time = WAR.Person[i].Time + math.random(WAR.Person[i].TimeAdd,(WAR.Person[i].TimeAdd*2))
+							else	
+								WAR.Person[i].Time = WAR.Person[i].Time + math.random(-WAR.Person[i].TimeAdd,WAR.Person[i].TimeAdd)--math.random(WAR.Person[i].Time - math.modf(WAR.Person[i].TimeAdd*2),WAR.Person[i].Time + WAR.Person[i].TimeAdd)
+							end
+							if WAR.Person[i].Time <= -500 then 
+							   WAR.Person[i].Time = -500
+							end
+							WAR.JQSDXS[WAR.Person[i]["人物编号"]] =  WAR.Person[i].TimeAdd
+							if WAR.LQZ[jqid] == 100 then
+							WAR.JQSDXS[WAR.Person[i]["人物编号"]] =  WAR.Person[i].TimeAdd*2
+							end				
+						elseif WAR.LHFM[jqid] ~= nil and WAR.KLJZ ~= 2  then --罗汉伏魔
+							local jq1 = WAR.Person[i].TimeAdd
+							local jq2 = WAR.Person[i].TimeAdd
+							local jq3 = WAR.Person[i].TimeAdd
+							local x = 0
+							--jq1 = WAR.Person[i].TimeAdd
+							if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
+							   if wglw(jqid,178) or wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
+							   jq1 = math.modf(WAR.Person[i].TimeAdd*2)
+							   else
+								local chjs = math.modf((100-WAR.CHZ[jqid])/100)
+								jq1 = math.modf(WAR.Person[i].TimeAdd*chjs)
+							   end
+							end
+							   jq2 = jq1
+							   jq3 = jq1
+																																				 --[[ if WAR.ICE[jqid] ~= nil and WAR.ICE[jqid] >0 then
+																																					if WAR.ICE[jqid] > 0 and WAR.ICE[jqid] <= 20 then
+																																					x = 5
+																																					end
+																																					if WAR.ICE[jqid] > 20 then
+																																					x = 10
+																																					end
+																																					if WAR.ICE[jqid] > 20 and WAR.HBZQ[jqid] ~= nil then
+																																					x = 15
+																																					end
+																																					if WAR.ICE[jqid] > 30 and WAR.HBZQ[jqid] ~= nil then
+																																					x = 20
+																																					end
+																																					if WAR.ICE[jqid] > 40 and WAR.HBZQ[jqid] ~= nil then
+																																					x = 25
+																																					end
+																																				  end
+							if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) then --九龙功
+							jq3 = jq2 + x
+							elseif wglw1(jqid,176) or (DT(jqid,49) and PersonKF(jqid,176)) or DT(jqid,117) or DT(jqid,618) then --生死符
+							jq3 = jq2 + x
+							else
+							jq3 = jq2 - x
+							end
+							if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+							jq3 = jq2 + x
+							end]]
+							if WAR.LQZ[jqid] == 100 then
+								if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+									jq3=jq3*2
+								else
+
+								end
+							end
+							if WAR.Person[i].TimeAdd > 0 and jq3 < 5 then 
+							   jq3 = 5 
+							end
+							if putong() == 2 and jqid == 0 then 
+							 local jsyx = wgnumber(0, 2)
+							 jq3 = jq3+5 * (jsyx)
+							end		 
+							if MPPD(jqid) == 11 and MPDJ(jqid) > 2 then 
+								if putong() == 2 and jqid == 0 then 
+								local jsyx = wgnumber(0, 2)
+								jq3 = WAR.YDSD[jqid]+5 * (jsyx)
+								else 
+								jq3 = WAR.YDSD[jqid]
+								end
+							end
+							if DT(jqid, 617) then 
+							   jq3 = 100
+							end   
 							if jq3 > 100 then 
-								jq3 = 100 
+							   jq3 = 100 
+							end   
+							if WAR.LQZ[jqid] == 100 then
+							   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
+								jq3=jq3*2
+							   else
+
+							   end
 							end
-						end   
-						WAR.Person[i].Time = WAR.Person[i].Time + jq3
-						WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
-						if WAR.LQZ[jqid] == 100 then
-						   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-						  WAR.Person[i].Time = WAR.Person[i].Time + jq3*2
-						  WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*3
-						   else
-						  WAR.Person[i].Time = WAR.Person[i].Time + jq3
-						  WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
-						   end
-						end
-						
-						if WAR.LQZ[jqid] == 100 then --太极加速
-							if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3*2
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*3
+							if WAR.LQZ[jqid] == 100 then
+							  if jq3<=100 then
+							  jq3 = 200 - jq3
+							  else
+							  
+							  end
 							else
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
-						   end
-						end				
-						
-					else --如果没学九阴，集气絮乱	--------------------------------------
-						local jq1 = WAR.Person[i].TimeAdd
-						local jq2 = WAR.Person[i].TimeAdd
-						local jq3 = WAR.Person[i].TimeAdd
-						local x = 0
-						--jq1 = WAR.Person[i].TimeAdd
-						if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
-						   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-						   jq1 = math.modf(WAR.Person[i].TimeAdd*2)
-						   else
-						   jq1 = math.modf(WAR.Person[i].TimeAdd/2)
-						   end
-						end
-						   jq2 = jq1
-						   jq3 = jq1
-						if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
-							if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-								jq1 = math.modf(WAR.Person[i].TimeAdd*2)
-							else
-								jq1 = math.modf(WAR.Person[i].TimeAdd/2)
+							  if jq3<=50 then
+							  jq3 = 100 - jq3
+							  else
+							  
+							  end
 							end
-						end
-			  --[[f WAR.ICE[jqid] ~= nil and WAR.ICE[jqid] >0 then
-				if WAR.ICE[jqid] > 0 and WAR.ICE[jqid] <= 20 then
-				x = 5
-				end
-				if WAR.ICE[jqid] > 20 then
-				x = 10
-				end
-				if WAR.ICE[jqid] > 20 and WAR.HBZQ[jqid] ~= nil then
-				x = 15
-				end
-				if WAR.ICE[jqid] > 30 and WAR.HBZQ[jqid] ~= nil then
-				x = 20
-				end
-				if WAR.ICE[jqid] > 40 and WAR.HBZQ[jqid] ~= nil then
-				x = 25
-				end
-			  end]]
-				if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-				jq3 = jq2 + x
-				elseif wglw1(jqid,176) or (DT(jqid,49) and PersonKF(jqid,176)) or DT(jqid,117) or DT(jqid,618) then --生死符
-				jq3 = jq2 + x
-				else
-				jq3 = jq2 - x
-				end
-				if WAR.Person[i].TimeAdd > 0 and jq3 < 5 then 
-				   jq3 = 5 
-				end
-				if putong() == 2 and jqid == 0 then 
-				 local jsyx = wgnumber(0, 2)
-				 jq3 = jq3+5 * (jsyx)
-				end
-				if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-					jq3 = jq2 + x
-				end	
-			  if MPPD(jqid) == 11 and MPDJ(jqid) > 2 then 
-				 if putong() == 2 and jqid == 0 then 
-				 local jsyx = wgnumber(0, 2)
-				 jq3 = WAR.YDSD[jqid]+5 * (jsyx)
-				 else 
-				 jq3 = WAR.YDSD[jqid]
-				 end
-			  end
-				if DT(jqid, 617) then 
-				   jq3 = 100
-				end		
-				if jq3 > 100 then 
-				   jq3 = 100 
-				end  
-						local yqzsmy = math.modf(JY.Person[jqid]["内力"]/JY.Person[jqid]["内力最大值"])
-						if (PersonKF(jqid, 107) == false or (WAR.HOT[jqid] or 0) >= 20) and WAR.Person[i].TimeAdd > 0 then          
-							--local jq = 0; --蓝烟清：逆运集气速度变化           	
-							if WAR.L_NYZH[WAR.Person[i]["人物编号"]] == nil then
-								if wglw(jqid,104) then --豸苗：逆运精义
-								   jq3 = math.random(math.floor(jq3*1.5),math.floor(jq3*2))
-								   if WAR.LQZ[jqid] == 100 then
-								   jq3 = math.random(math.floor(jq3*2.5),math.floor(jq3*3))
-								   end
-								elseif DT(jqid, 60) or DT(jqid, 620) then --豸苗：逆运精义
-								   jq3 = math.random(jq3,math.floor(jq3*1.25))
-								   if math.random(10) <= 2 and JX(jqid) then
-								   jq3 = jq3+math.random(5,10)
-								   end
-								elseif wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功  
-								   jq3 = math.random(jq3,math.floor(jq3*1.5))
-								elseif (wglw1(jqid,176) or (DT(jqid,59) and PersonKF(jqid,176)) or DT(jqid,117) or DT(jqid,618)) and ((WAR.HOT[jqid] or 0) >= 20) then --生死符
-								   jq3 = math.random(jq3,math.floor(jq3*1.5))
-								elseif wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-								   jq3 = math.random(jq3,math.floor(jq3*1.5))
-								elseif wglw1(jqid,68) and yqzsmy >= 0.25 then  
-								else
-								   jq3 = math.random(jq3) + 1	   
-								end   
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3							
-							elseif WAR.L_NYZH[WAR.Person[i]["人物编号"]] == 1 or (WAR.HOT[jqid] or 0) >= 20 then		--新逆运走火集气变化
-								if T11CJR(jqid) and JY.Person[jqid]["内力性质"] == 0 and juexing() > 0 then --  
-								   jq3 = math.random(math.floor(jq3*1.5),math.floor(jq3*2))
-								   if WAR.LQZ[jqid] == 100 then
-								   jq3 = math.random(math.floor(jq3*2.5),math.floor(jq3*3))
-								   end
-								elseif PersonGT(jqid, 104) then
-									jq3 = math.random(math.floor(jq3/2),jq3*2)
-								else
-									jq3 = math.random(math.floor(jq3/3),jq3*2)
+							
+							WAR.Person[i].Time = WAR.Person[i].Time - jq3
+						
+							if WAR.LQZ[jqid] == 100 then
+							  WAR.Person[i].Time = WAR.Person[i].Time - jq3
+							end
+							if WAR.Person[i].Time <= -500 then 
+							   WAR.Person[i].Time = -500
+							end 
+							WAR.JQSDXS[WAR.Person[i]["人物编号"]] = -jq3
+						elseif jqid == 0 and WAR.BHCS[jqid] == 1 then --魔音·碧海潮生12.26
+							local jq = 0
+							for j = 0, WAR.PersonNum - 1 do
+							if WAR.Person[j]["我方"] ~= WAR.Person[i]["我方"] then
+							   jq = math.random(math.floor(WAR.Person[j].TimeAdd/2),WAR.Person[j].TimeAdd)
+							end
+							if WAR.Person[j]["我方"] == WAR.Person[i]["我方"] then
+							   jq = math.random(WAR.Person[j].TimeAdd,math.floor(WAR.Person[j].TimeAdd*1.5))
+							end	
+							WAR.Person[j].Time = WAR.Person[j].Time + jq 
+							WAR.JQSDXS[WAR.Person[j]["人物编号"]] =  jq
+							end
+						elseif WAR.CYSH[jqid] ~= nil then --豸苗：李秋水
+								local jq = 0
+								if JY.Person[jqid]["内力"] >= 8000 then
+								   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.5),WAR.Person[i].TimeAdd)
+								elseif JY.Person[jqid]["内力"] >= 6000 and JY.Person[jqid]["内力"] < 8000 then
+								   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.6),WAR.Person[i].TimeAdd)
+								elseif JY.Person[jqid]["内力"] >= 4000 and JY.Person[jqid]["内力"] < 6000 then  
+								   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.7),WAR.Person[i].TimeAdd)
+								elseif JY.Person[jqid]["内力"] >= 2000 and JY.Person[jqid]["内力"] < 4000 then 
+								   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.8),WAR.Person[i].TimeAdd)					
+								elseif JY.Person[jqid]["内力"] >= 0 and JY.Person[jqid]["内力"] < 2000 then  
+								   jq = math.random(math.floor(WAR.Person[i].TimeAdd * 0.9),WAR.Person[i].TimeAdd)
+								end				
+							WAR.Person[i].Time = WAR.Person[i].Time + jq 
+							WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq						
+						elseif PersonKF(jqid, 104) == false and (WAR.HOT[jqid] or 0) < 25 then --如果没学逆运，正常集气
+							local jq1 = WAR.Person[i].TimeAdd
+							local jq2 = WAR.Person[i].TimeAdd
+							local jq3 = WAR.Person[i].TimeAdd
+							local x = 0
+							--jq1 = WAR.Person[i].TimeAdd
+							if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
+							   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
+							   jq1 = math.modf(WAR.Person[i].TimeAdd*2)
+							   elseif PersonKF(jqid,143) and MPPD(jqid) == 5 and MPDJ(jqid) >= 2 then
+								if WAR.CHZ[jqid] > 30 then
+									jq1 = math.modf(WAR.Person[i].TimeAdd*1.5)
+								elseif WAR.CHZ[jqid] <= 30 then
+									jq1 = WAR.Person[i].TimeAdd
 								end
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-							end	            
-							--絮乱状态下额外的集气加成，两次判断
-							if (math.random(10) == 8 or (PersonGT(jqid, 104) and math.random(10) == 8)) and MPPD(jqid)~=8 then
-								if wglw(jqid,104) or DT(jqid,620) then--豸苗：逆运精义
-									if WAR.NYZJ[jqid] ~= nil then
-									WAR.Person[i].Time = WAR.Person[i].Time + 50
-									jq3 = jq3 + 50;
-									else
-									WAR.Person[i].Time = WAR.Person[i].Time
-									jq3 = jq3 
-									end
+							   else
+							   jq1 = math.modf(WAR.Person[i].TimeAdd/2)
+							   end
+							end
+							   jq2 = jq1
+							   jq3 = jq1
+							if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
+								if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+									jq1 = math.modf(WAR.Person[i].TimeAdd*2)
 								else
-									WAR.Person[i].Time = WAR.Person[i].Time + 50
-									jq3 = jq3 + 50;
+									jq1 = math.modf(WAR.Person[i].TimeAdd/2)
 								end
-							elseif MPPD(jqid)==8 and (PersonGT(jqid, 104) and math.random(10) >= 8) then
-								WAR.Person[i].Time = WAR.Person[i].Time + 25*MPDJ(jqid)
-								jq3 = jq3 + 25*MPDJ(jqid);
-								if wglw(jqid,104) or DT(jqid,620) then--豸苗：逆运精义
-									if WAR.NYZJ[jqid] ~= nil then
-									WAR.Person[i].Time = WAR.Person[i].Time + 50
-									jq3 = jq3 + 50;
-									else
-									WAR.Person[i].Time = WAR.Person[i].Time
-									jq3 = jq3 + 25 
-									end
-								end
-							elseif MPPD(jqid)==8 and (PersonKF(jqid, 118) and math.random(10) >= 0) then
-									WAR.Person[i].Time = WAR.Person[i].Time + 15*MPDJ(jqid)
-									jq3 = jq3 + 25
-							elseif wglw(jqid,184) or DT(jqid,665) then --瑜伽密乘
-									if WAR.YJMC[jqid] ~= nil then
-										WAR.Person[i].Time = WAR.Person[i].Time + 100
-										jq3 = jq3 + 100
-									else
-										WAR.Person[i].Time = WAR.Person[i].Time 
-										jq3 = jq3 + 50
-									end	
+							end
+																																 --[[ if WAR.ICE[jqid] ~= nil and WAR.ICE[jqid] >0 then
+																																	if WAR.ICE[jqid] > 0 and WAR.ICE[jqid] <= 20 then
+																																	x = 5
+																																	end
+																																	if WAR.ICE[jqid] > 20 then
+																																	x = 10
+																																	end
+																																	if WAR.ICE[jqid] > 20 and WAR.HBZQ[jqid] ~= nil then
+																																	x = 15
+																																	end
+																																	if WAR.ICE[jqid] > 30 and WAR.HBZQ[jqid] ~= nil then
+																																	x = 20
+																																	end
+																																	if WAR.ICE[jqid] > 40 and WAR.HBZQ[jqid] ~= nil then
+																																	x = 25
+																																	end
+																																  end]]
+							if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) then --九龙功
+							jq3 = jq2 + x
+							elseif wglw1(jqid,176) or (DT(jqid,49) and PersonKF(jqid,176)) or DT(jqid,117) or DT(jqid,618) then --生死符
+							jq3 = jq2 + x
 							else
-								WAR.Person[i].Time = WAR.Person[i].Time 
-								jq3 = jq3 ;
+							jq3 = jq2 - x
+							end
+							if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+								jq3 = jq2 + x
+							end
+							if WAR.Person[i].TimeAdd > 0 and jq3 < 5 then 
+							   jq3 = 5 
+							end
+							if putong() == 2 and jqid == 0 then 
+							 local jsyx = wgnumber(0, 2)
+							 jq3 = jq3+5 * (jsyx)
+							end		 
+							if MPPD(jqid) == 11 and MPDJ(jqid) > 2 then 
+							 if putong() == 2 and jqid == 0 then 
+							 local jsyx = wgnumber(0, 2)
+							 jq3 = WAR.YDSD[jqid]+5 * (jsyx)
+							 else 
+							 jq3 = WAR.YDSD[jqid]
+							 end
+							end
+							if MPPD(jqid)==8 and PersonKF(jqid, 118) and math.random(10) >= 5 then
+								WAR.Person[i].Time = WAR.Person[i].Time + (25*MPDJ(jqid))+25
+								jq3 = jq3 + 10
+							end	
+							if wglw(jqid,189) and WAR.YSJS[jqid] ~=nil and WAR.YSJS[jqid] > 0 and math.random(10) >= 5 then
+								WAR.Person[i].Time = WAR.Person[i].Time + 250
+								jq3 = jq3 + 20
+							end	
+							if DT(jqid, 617) then 
+							   jq3 = 100
+							end   
+							if (jqid == 0 and GetS(114,0,0,0) > 0) or DT(jqid,667) then
+								jq3 = jq3 + 25
+								if jq3 < 30 and wglw2(jqid,193) then
+									jq3 = 30
+								end	
+								if jq3 > 120 and not wglw2(jqid,190) then 
+									jq3 = 120
+								end
+							else   
+								if jq3 > 100 then 
+									jq3 = 100 
+								end
+							end   
+							WAR.Person[i].Time = WAR.Person[i].Time + jq3
+							WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
+							if WAR.LQZ[jqid] == 100 then
+							   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
+							  WAR.Person[i].Time = WAR.Person[i].Time + jq3*2
+							  WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*3
+							   else
+							  WAR.Person[i].Time = WAR.Person[i].Time + jq3
+							  WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+							   end
+							end
+							
+							if WAR.LQZ[jqid] == 100 then --太极加速
+								if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3*2
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*3
+								else
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+							   end
+							end				
+							
+						else --如果没学九阴，集气絮乱	--------------------------------------
+							local jq1 = WAR.Person[i].TimeAdd
+							local jq2 = WAR.Person[i].TimeAdd
+							local jq3 = WAR.Person[i].TimeAdd
+							local x = 0
+							--jq1 = WAR.Person[i].TimeAdd
+							if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
+							   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
+							   jq1 = math.modf(WAR.Person[i].TimeAdd*2)
+							   else
+							   jq1 = math.modf(WAR.Person[i].TimeAdd/2)
+							   end
+							end
+							   jq2 = jq1
+							   jq3 = jq1
+							if WAR.CHZ[jqid] ~= nil and WAR.CHZ[jqid] > 0 then 
+								if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+									jq1 = math.modf(WAR.Person[i].TimeAdd*2)
+								else
+									jq1 = math.modf(WAR.Person[i].TimeAdd/2)
+								end
+							end
+				  --[[f WAR.ICE[jqid] ~= nil and WAR.ICE[jqid] >0 then
+					if WAR.ICE[jqid] > 0 and WAR.ICE[jqid] <= 20 then
+					x = 5
+					end
+					if WAR.ICE[jqid] > 20 then
+					x = 10
+					end
+					if WAR.ICE[jqid] > 20 and WAR.HBZQ[jqid] ~= nil then
+					x = 15
+					end
+					if WAR.ICE[jqid] > 30 and WAR.HBZQ[jqid] ~= nil then
+					x = 20
+					end
+					if WAR.ICE[jqid] > 40 and WAR.HBZQ[jqid] ~= nil then
+					x = 25
+					end
+				  end]]
+							if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
+							jq3 = jq2 + x
+							elseif wglw1(jqid,176) or (DT(jqid,49) and PersonKF(jqid,176)) or DT(jqid,117) or DT(jqid,618) then --生死符
+							jq3 = jq2 + x
+							else
+							jq3 = jq2 - x
+							end
+							if WAR.Person[i].TimeAdd > 0 and jq3 < 5 then 
+							   jq3 = 5 
+							end
+							if putong() == 2 and jqid == 0 then 
+							 local jsyx = wgnumber(0, 2)
+							 jq3 = jq3+5 * (jsyx)
+							end
+							if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+								jq3 = jq2 + x
+							end	
+							  if MPPD(jqid) == 11 and MPDJ(jqid) > 2 then 
+								 if putong() == 2 and jqid == 0 then 
+								 local jsyx = wgnumber(0, 2)
+								 jq3 = WAR.YDSD[jqid]+5 * (jsyx)
+								 else 
+								 jq3 = WAR.YDSD[jqid]
+								 end
+							  end
+							if DT(jqid, 617) then 
+							   jq3 = 100
 							end		
-							--蓝烟清：刷新逆运絮乱集气时的速度
-							WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3;           
-							if JY.Person[WAR.Person[i]["人物编号"]]["体力"] < 20 then
-								WAR.tmp[1000 + jqid] = nil
-							end
-						else		--如果学了九阴，正常集气
-							if wglw(jqid,104) or DT(jqid,620) then --豸苗：逆运精义
-								--local jq = 0    
-								jq3 = math.random(jq3*1.5,math.floor(jq3*2))
-								if math.random(10) > 8 and WAR.NYZJ[jqid] ~= nil then
-								   WAR.Person[i].Time = WAR.Person[i].Time + 50
-								   jq3 = jq3 + 50;
-								end
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
-								if WAR.LQZ[jqid] == 100 then
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3 * 2
-								--WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
-								end
-							elseif T11CJR(jqid) and JY.Person[jqid]["内力性质"] == 0 and juexing() > 0 then
-								jq3 = math.random(jq3*1.5,math.floor(jq3*2))
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
-								if WAR.LQZ[jqid] == 100 then
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3 * 2
-								end
-							elseif (DT(jqid, 60) or DT(jqid, 620)) and JX(jqid) then	
-								--local jq = 0  
-								jq3 = math.random(jq3,jq3*2)
-								   if math.random(10) <= 2 then
-								   jq3 = jq3 + math.random(10,20)
-								   end
-								if math.random(10) > 8 then
-								   WAR.Person[i].Time = WAR.Person[i].Time + 100
-								   jq3 = jq3 + 100;
-								end  
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
-								if WAR.LQZ[jqid] == 100 then
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
-								--WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
-								end
-							elseif DT(jqid, 599) then	
-								--local jq = 0  
-								jq3 = math.random(jq3*2,jq3*3)
-								   if math.random(10) <= 2 then
-								   jq3 = jq3 + math.random(10,20)
-								   end
-								if math.random(10) > 8 then
-								   local congqi=math.random(100,300)
-								   WAR.Person[i].Time = WAR.Person[i].Time +congqi
-								   jq3 = jq3 + congqi;
-								end  
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
-								if WAR.LQZ[jqid] == 100 then
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
-								--WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
-								end
-							else
-								WAR.Person[i].Time = WAR.Person[i].Time + jq3
-								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
-								if WAR.LQZ[jqid] == 100 then
-						   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-						  WAR.Person[i].Time = WAR.Person[i].Time + jq3*2
-						  WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*3
-						   else
-						  WAR.Person[i].Time = WAR.Person[i].Time + jq3
-						  WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
-						   end
-								end
-								if WAR.LQZ[jqid] == 100 then
-									if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-										WAR.Person[i].Time = WAR.Person[i].Time + jq3*2
-										WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*3
+							if jq3 > 100 then 
+							   jq3 = 100 
+							end  
+							local yqzsmy = math.modf(JY.Person[jqid]["内力"]/JY.Person[jqid]["内力最大值"])
+							if (PersonKF(jqid, 107) == false or (WAR.HOT[jqid] or 0) >= 25) and WAR.Person[i].TimeAdd > 0 then          
+								--local jq = 0; --蓝烟清：逆运集气速度变化           	
+								if WAR.L_NYZH[WAR.Person[i]["人物编号"]] == nil then
+									if wglw(jqid,104) then --豸苗：逆运精义
+									   jq3 = math.random(math.floor(jq3*1.5),math.floor(jq3*2))
+									   if WAR.LQZ[jqid] == 100 then
+									   jq3 = math.random(math.floor(jq3*2.5),math.floor(jq3*3))
+									   end
+									elseif DT(jqid, 60) or DT(jqid, 620) then --豸苗：逆运精义
+									   jq3 = math.random(jq3,math.floor(jq3*1.25))
+									   if math.random(10) <= 2 and JX(jqid) then
+									   jq3 = jq3+math.random(5,10)
+									   end
+									elseif wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功  
+									   jq3 = math.random(jq3,math.floor(jq3*1.5))
+									elseif (wglw1(jqid,176) or (DT(jqid,59) and PersonKF(jqid,176)) or DT(jqid,117) or DT(jqid,618)) and ((WAR.HOT[jqid] or 0) >= 25) then --生死符
+									   jq3 = math.random(jq3,math.floor(jq3*1.5))
+									elseif wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+									   jq3 = math.random(jq3,math.floor(jq3*1.5))  
 									else
-										WAR.Person[i].Time = WAR.Person[i].Time + jq3
-										WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+									   jq3 = math.random(jq3) + 1	   
+									end   
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3							
+								elseif WAR.L_NYZH[WAR.Person[i]["人物编号"]] == 1 then		--新逆运走火集气变化
+									if T11CJR(jqid) and JY.Person[jqid]["内力性质"] == 0 and juexing() > 0 then --  
+									   jq3 = math.random(math.floor(jq3*1.5),math.floor(jq3*2))
+									   if WAR.LQZ[jqid] == 100 then
+									   jq3 = math.random(math.floor(jq3*2.5),math.floor(jq3*3))
+									   end
+									elseif PersonGT(jqid, 104) then
+										jq3 = math.random(math.floor(jq3),jq3*2)
+									else
+										jq3 = math.random(math.floor(jq3*2/3),jq3*2)
+									end	
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+								elseif (WAR.HOT[jqid] or 0) >= 25 then
+									if wglw1(jqid,68) and yqzsmy >= 0.25 then
+									else
+										jq3 = math.random(math.floor(jq3*7/10),math.floor(jq3*3/2))
+										if WAR.LQZ[jqid] >= 100 then
+											jq3 =jq3*2
+										end	
+									end	
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+								end	            
+								--絮乱状态下额外的集气加成，两次判断
+								if (math.random(10) == 8 or (PersonGT(jqid, 104) and math.random(10) == 8)) and MPPD(jqid)~=8 then
+									if wglw(jqid,104) or DT(jqid,620) then--豸苗：逆运精义
+										if WAR.NYZJ[jqid] ~= nil then
+										WAR.Person[i].Time = WAR.Person[i].Time + 50
+										jq3 = jq3 + 50;
+										else
+										WAR.Person[i].Time = WAR.Person[i].Time
+										jq3 = jq3 
+										end
+									else
+										WAR.Person[i].Time = WAR.Person[i].Time + 50
+										jq3 = jq3 + 50;
 									end
+								elseif MPPD(jqid)==8 and (PersonGT(jqid, 104) and math.random(10) >= 8) then
+									WAR.Person[i].Time = WAR.Person[i].Time + 25*MPDJ(jqid)
+									jq3 = jq3 + 25*MPDJ(jqid);
+									if wglw(jqid,104) or DT(jqid,620) then--豸苗：逆运精义
+										if WAR.NYZJ[jqid] ~= nil then
+										WAR.Person[i].Time = WAR.Person[i].Time + 50
+										jq3 = jq3 + 50;
+										else
+										WAR.Person[i].Time = WAR.Person[i].Time
+										jq3 = jq3 + 25 
+										end
+									end
+								elseif MPPD(jqid)==8 and (PersonKF(jqid, 118) and math.random(10) >= 0) then
+										WAR.Person[i].Time = WAR.Person[i].Time + 15*MPDJ(jqid)
+										jq3 = jq3 + 25
+								elseif wglw(jqid,184) or DT(jqid,665) then --瑜伽密乘
+										if WAR.YJMC[jqid] ~= nil then
+											WAR.Person[i].Time = WAR.Person[i].Time + 100
+											jq3 = jq3 + 100
+										else
+											WAR.Person[i].Time = WAR.Person[i].Time 
+											jq3 = jq3 + 50
+										end	
+								else
+									WAR.Person[i].Time = WAR.Person[i].Time 
+									jq3 = jq3 ;
+								end		
+								--蓝烟清：刷新逆运絮乱集气时的速度
+								WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3;           
+								if JY.Person[WAR.Person[i]["人物编号"]]["体力"] < 20 then
+									WAR.tmp[1000 + jqid] = nil
+								end
+							else		--如果学了九阴，正常集气
+								if wglw(jqid,104) or DT(jqid,620) then --豸苗：逆运精义
+									--local jq = 0    
+									jq3 = math.random(jq3*1.5,math.floor(jq3*2))
+									if math.random(10) > 8 and WAR.NYZJ[jqid] ~= nil then
+									   WAR.Person[i].Time = WAR.Person[i].Time + 50
+									   jq3 = jq3 + 50;
+									end
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
+									if WAR.LQZ[jqid] == 100 then
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3 * 2
+									--WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+									end
+								elseif T11CJR(jqid) and JY.Person[jqid]["内力性质"] == 0 and juexing() > 0 then
+									jq3 = math.random(jq3*1.5,math.floor(jq3*2))
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
+									if WAR.LQZ[jqid] == 100 then
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3 * 2
+									end
+								elseif (DT(jqid, 60) or DT(jqid, 620)) and JX(jqid) then	
+									--local jq = 0  
+									jq3 = math.random(jq3,jq3*2)
+									   if math.random(10) <= 2 then
+									   jq3 = jq3 + math.random(10,20)
+									   end
+									if math.random(10) > 8 then
+									   WAR.Person[i].Time = WAR.Person[i].Time + 100
+									   jq3 = jq3 + 100;
+									end  
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
+									if WAR.LQZ[jqid] == 100 then
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+									--WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+									end
+								elseif DT(jqid, 599) then	
+									--local jq = 0  
+									jq3 = math.random(jq3*2,jq3*3)
+									   if math.random(10) <= 2 then
+									   jq3 = jq3 + math.random(10,20)
+									   end
+									if math.random(10) > 8 then
+									   local congqi=math.random(100,300)
+									   WAR.Person[i].Time = WAR.Person[i].Time +congqi
+									   jq3 = jq3 + congqi;
+									end  
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
+									if WAR.LQZ[jqid] == 100 then
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+									--WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+									end
+								else
+									WAR.Person[i].Time = WAR.Person[i].Time + jq3
+									WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3
+									if WAR.LQZ[jqid] == 100 then
+							   if wglw(jqid,178) or (DT(jqid,69) and PersonKF(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
+							  WAR.Person[i].Time = WAR.Person[i].Time + jq3*2
+							  WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*3
+							   else
+							  WAR.Person[i].Time = WAR.Person[i].Time + jq3
+							  WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+							   end
+									end
+									if WAR.LQZ[jqid] == 100 then
+										if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+											WAR.Person[i].Time = WAR.Person[i].Time + jq3*2
+											WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*3
+										else
+											WAR.Person[i].Time = WAR.Person[i].Time + jq3
+											WAR.JQSDXS[WAR.Person[i]["人物编号"]] = jq3*2
+										end
+									end	
 								end	
 							end	
-						end	
-					end
-
-				  
-				else  
-					WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
-					if WAR.FXDS[jqid] > 50 then --17-2-12--
-					   WAR.FXDS[jqid] = 50 
-					end 
-					if PersonKF(jqid, 108) then --易筋解穴
-						WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
-					end
-
-					if PersonGT(jqid, 108) then --易筋主功体解穴加倍
-						WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
-					end
-
-					if PersonGT(jqid, 107) then --九阴主功体时序解穴
-						WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
-					end
-
-				  
-				  --brolycjw: 九阳9时序解除封穴
-					if PersonGT(jqid, 106) then
-						if WAR.JYFX[jqid] == nil then
-							WAR.JYFX[jqid] = 1;
-						elseif WAR.JYFX[jqid] < 9 then
-							WAR.JYFX[jqid] = WAR.JYFX[jqid] + 1;
-						else
-							WAR.JYFX[jqid] = nil;
-							WAR.FXDS[jqid] = 0;
 						end
-					end
-					
-					--武当九阳功
-					if PersonKF(jqid, 185) then
-						if WAR.JYFX[jqid] == nil then
-							WAR.JYFX[jqid] = 1;
-						elseif WAR.JYFX[jqid] < 20 then
-							WAR.JYFX[jqid] = WAR.JYFX[jqid] + 1;
-						else
-							WAR.JYFX[jqid] = nil;
-							WAR.FXDS[jqid] = 0;
+					else --没有以上那些特殊集气状况，以及封穴不为空值的情形。 
+						WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
+						if WAR.FXDS[jqid] > 50 then --17-2-12--
+						   WAR.FXDS[jqid] = 50 
+						end 
+						if PersonKF(jqid, 108) then --易筋解穴
+							WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
 						end
-						if PersonGT(jqid, 185) then
+
+						if PersonGT(jqid, 108) then --易筋主功体解穴加倍
+							WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
+						end
+
+						if PersonGT(jqid, 107) then --九阴主功体时序解穴
+							WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
+						end
+
+					  
+					  --brolycjw: 九阳9时序解除封穴
+						if PersonGT(jqid, 106) then
 							if WAR.JYFX[jqid] == nil then
 								WAR.JYFX[jqid] = 1;
-							elseif WAR.JYFX[jqid] < 10 then
+							elseif WAR.JYFX[jqid] < 9 then
 								WAR.JYFX[jqid] = WAR.JYFX[jqid] + 1;
 							else
 								WAR.JYFX[jqid] = nil;
 								WAR.FXDS[jqid] = 0;
-							end	
+							end
 						end
-					end			
-					
-					--金丝背心时序解穴2点
-					if JY.Person[jqid]["防具"] == 60 then						
-						WAR.FXDS[jqid] = WAR.FXDS[jqid] - 10
-					end
-					
-					if WAR.LQZ[jqid] == 100 then
-						WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
-					end
-					if hasTF(jqid, 134) or WAR.KHZJ[jqid] ~= nil or WAR.JYHT[jqid] ~= nil then--17-2-8
-						WAR.FXDS[jqid] = 0
-					end	
-					if T2SQ(jqid) and juexing() > 1 then
-						WAR.FXDS[jqid] = 0
-					end
-					if NF(jqid) and juexing() > 2 then
-						WAR.FXDS[jqid] = 0
-					end
-					if jtyl(jqid) then --谢无悠
-						WAR.FXDS[jqid] = 0
-					end	
-					if wglw(jqid,104) and DT(jqid,602) then
-						WAR.FXDS[jqid] = 0
-					end				
-					if WAR.FXDS[jqid] < 1 then
-						WAR.FXDS[jqid] = nil
-					end
-				end  
+						--武当九阳功
+						if PersonKF(jqid, 185) then
+							if WAR.JYFX[jqid] == nil then
+								WAR.JYFX[jqid] = 1;
+							elseif WAR.JYFX[jqid] < 20 then
+								WAR.JYFX[jqid] = WAR.JYFX[jqid] + 1;
+							else
+								WAR.JYFX[jqid] = nil;
+								WAR.FXDS[jqid] = 0;
+							end
+							if PersonGT(jqid, 185) then
+								if WAR.JYFX[jqid] == nil then
+									WAR.JYFX[jqid] = 1;
+								elseif WAR.JYFX[jqid] < 10 then
+									WAR.JYFX[jqid] = WAR.JYFX[jqid] + 1;
+								else
+									WAR.JYFX[jqid] = nil;
+									WAR.FXDS[jqid] = 0;
+								end	
+							end
+						end
+						if (wglw(jqid,89) or DT(jqid,19)) and PersonGT(jqid,89) then
+							AddPersonAttrib(jqid,"生命",50)
+							AddPersonAttrib(jqid,"內力",300)
+							--lib.Debug("时序加内力")
+							addeffect(WAR.FXDS,jqid,-5)
+						end	
+						--金丝背心时序解穴2点
+						if JY.Person[jqid]["防具"] == 60 then						
+							WAR.FXDS[jqid] = WAR.FXDS[jqid] - 10
+						end
+						
+						if WAR.LQZ[jqid] == 100 then
+							WAR.FXDS[jqid] = WAR.FXDS[jqid] - 1
+						end
+						if hasTF(jqid, 134) or WAR.KHZJ[jqid] ~= nil or WAR.JYHT[jqid] ~= nil then--17-2-8
+							WAR.FXDS[jqid] = 0
+						end	
+						if T2SQ(jqid) and juexing() > 1 then
+							WAR.FXDS[jqid] = 0
+						end
+						if NF(jqid) and juexing() > 2 then
+							WAR.FXDS[jqid] = 0
+						end
+						if jtyl(jqid) then --谢无悠
+							WAR.FXDS[jqid] = 0
+						end	
+						if wglw(jqid,104) and DT(jqid,602) then
+							WAR.FXDS[jqid] = 0
+						end				
+						if WAR.FXDS[jqid] < 1 then
+							WAR.FXDS[jqid] = nil
+						end
+					end  
 				end
 				
+				if JY.Person[jqid]["中毒程度"] > 0 then--中毒特效
+					if DT(jqid,60) or DT(jqid,620) then
+					elseif DT(jqid,61) and JX(jqid) then
+					elseif jtyl(jqid) then
+					elseif DT(jqid,46) then
+					elseif jqid == 0 and putong() == 8 then
+					elseif wglw(jqid,87) or wglw(jqid,95) then
+					elseif MPPD(jqid) == 1 then
+					elseif MPPD(jqid) == 8 then
+					else
+						WAR.ZDTX[jqid] = 1
+					end
+				end
+				
+				if (wglw(jqid,89) or DT(jqid,19)) and PersonGT(jqid,89) and WAR.FXDS[jqid] ~= nil and WAR.FXDS[jqid] > 0 then--紫霞神功
+					AddPersonAttrib(jqid,"生命",50)
+					AddPersonAttrib(jqid,"内力",300)
+				end			
 				--九阳神功回内
 				if PersonKF(jqid, 106) and (JY.Person[jqid]["内力性质"] == 1 or JY.Person[jqid]["内力性质"] == 3) then
 				  AddPersonAttrib(jqid, "内力",  4 + math.random(2))
@@ -68374,21 +69358,39 @@ function DrawTimeBar()
 				
 				if WAR.BPD[jqid] ~= nil and WAR.BPD[jqid] > 0 then
 					if WAR.Person[i].TimeAdd < 10 then
-					AddPersonAttrib(jqid, "生命", -15)
+						AddPersonAttrib(jqid, "生命", -15)
 					end
-					WAR.BPD[jqid] = WAR.BPD[jqid] - 1
-					if WAR.BPD[jqid] <= 0 then
-						WAR.BPD[jqid] = 0
+					if WAR.ZDTX[jqid] ~= nil and JY.Person[jqid]["中毒程度"] > 0 then
+						if JLSD(0,math.modf(120-JY.Person[jqid]["中毒程度"]),jqid) then
+							WAR.BPD[jqid] = WAR.BPD[jqid] - 1
+						end	
+					else	
+						WAR.BPD[jqid] = WAR.BPD[jqid] - 1
+					end	
+					if WAR.BPD[jqid] < 1 then
+						WAR.BPD[jqid] = nil
 					end	
 				end
 				
-				--铁掌领悟 反噬
-				if wglw1(jqid,13) and JY.Person[jqid]["内力性质"] ~= 1 and JLSD(10,20,jqid) then
-					WAR.HOT[jqid] = (WAR.HOT[jqid] or 0) + 10
-					WAR.FXDS[jqid] = (WAR.FXDS[jqid] or 0) + 20
-				elseif wglw1(jqid,13) and JY.Person[jqid]["内力性质"] == 1 then
-					WAR.HOT[jqid] = (WAR.HOT[jqid] or 0) - 5
-				end
+				if JY.Person[jqid]["受伤程度"] > 0 then
+					if jqid == 0 and putong() == 5 then
+					elseif JY.Person[jqid]["等级"] > 6 then
+					elseif wglw(jqid,102) or (DT(jqid,38) and PersonKF(jqid,102)) then
+					elseif wglw(jqid,592) then
+					else
+						for s = 1, JY.WugongNum-1 do 
+							if JY.Wugong[s]["等级"] > 10 and wglw(jqid,s) then
+								break
+							else
+								if math.random(10) > 8 then
+									addeffect(WAR.ZDNS,jqid,3)
+								end
+							end
+						end
+					end
+				end	
+						
+				
 				
 				--铁掌领悟 儒君子气
 				if WAR.RJZQ[jqid] ~= nil and WAR.RJZQ[jqid] > 0 and JLSD(10,30,jqid) then 
@@ -68397,13 +69399,6 @@ function DrawTimeBar()
 					WAR.RJZQ[jqid] = WAR.RJZQ[jqid] - 1
 					if WAR.Person[i].Time < -500 then WAR.Person[i].Time = -500 end
 				end	
-				--寒冰绵掌领悟 反噬
-				if wglw1(jqid,5) and JY.Person[jqid]["内力性质"] ~= 0 and JLSD(10,20,jqid) then
-					WAR.ICE[jqid] = (WAR.ICE[jqid] or 0) + 10
-					WAR.LXZT[jqid] = (WAR.LXZT[jqid] or 0) + 20
-				elseif wglw1(jqid,13) and JY.Person[jqid]["内力性质"] == 0 then
-					WAR.ICE[jqid] = (WAR.ICE[jqid] or 0) - 5
-				end
 				
 				if WAR.ZDNS[jqid] ~= nil then--重伤特效
 					WAR.ZDNS[jqid] = WAR.ZDNS[jqid] - 1
@@ -68421,7 +69416,6 @@ function DrawTimeBar()
 						WAR.SZZX1[jqid] = nil
 					end
 				end
-				
 				
 				if WAR.XYLS[jqid] ~= nil then
 					WAR.XYLS[jqid] = WAR.XYLS[jqid] - 1
@@ -68629,12 +69623,13 @@ function DrawTimeBar()
 					end	
 				end
 				if WAR.LSZD1[jqid] ~= nil then
-					WAR.LSZD1[jqid] = WAR.LSZD1[jqid] - 1
-					for i = 1, 5 do
-						if JY.Person["技能"..i] ~= nil and JY.Person["技能"..i] > 0 then
-							JY.Person["技能"..i] = nil
-						end
-					end	
+					if WAR.ZDTX[jqid] ~= nil and JY.Person[jqid]["中毒程度"] > 0 then
+						if JLSD(0,math.modf(120-JY.Person[jqid]["中毒程度"]),jqid) then
+							WAR.LSZD1[jqid] = WAR.LSZD1[jqid] - 1
+						end	
+					else	
+						WAR.LSZD1[jqid] = WAR.LSZD1[jqid] - 1
+					end
 					if WAR.LSZD1[jqid] < 1 then
 						WAR.LSZD1[jqid] = nil
 					end	
@@ -68642,35 +69637,35 @@ function DrawTimeBar()
 				--灵蛇拳法领悟
 				if WAR.LSQ[jqid] ~= nil and (WAR.FXDS[jqid] == nil or (WAR.FXDS[jqid] ~= nil and WAR.FXDS[jqid] == 0)) then
 					local tmppid = WAR.CurID
-						WAR.CurID = i
-						WarDrawMap(0)
-					local str = ""
-					local cc = JY.Person[jqid]["中毒程度"] or 0
-					local a = math.random(3)
-					local x1 = WAR.Person[i]["坐标X"];
-					local y1 = WAR.Person[i]["坐标Y"];
-					AddPersonAttrib(jqid,"生命",-cc)
-					AddPersonAttrib(jqid,"内力",-(cc*10))
-					for ex = x1 - 8, x1 + 8 do
-						for ey = y1 - 8, y1 + 8 do
-							SetWarMap(ex, ey, 4, 1)
-							if GetWarMap(ex, ey, 2) ~= nil and GetWarMap(ex, ey, 2) > -1 then
-								local ep = GetWarMap(ex, ey, 2)
-								if WAR.Person[i]["我方"] ~= WAR.Person[ep]["我方"] then 
-									if a == 1 then 
-									WAR.LSZD[WAR.Person[ep]["人物编号"]] = 1
-									str = "毒血漂橹"
-								   elseif a == 2 then 
-									WAR.LSZD2[WAR.Person[ep]["人物编号"]] = 1
-									str = "毒惑心智"
-								   elseif a == 3 then
-									WAR.LSZD1[WAR.Person[ep]["人物编号"]] = 10
-									str = "毒化本源"
-								   end  
+					WAR.CurID = i
+					WarDrawMap(0)
+						local str = ""
+						local cc = JY.Person[jqid]["中毒程度"] or 0
+						local a = math.random(3)
+						local x1 = WAR.Person[i]["坐标X"];
+						local y1 = WAR.Person[i]["坐标Y"];
+						AddPersonAttrib(jqid,"生命",-cc*a)
+						AddPersonAttrib(jqid,"内力",-(cc*10))
+						for ex = x1 - 8, x1 + 8 do
+							for ey = y1 - 8, y1 + 8 do
+								SetWarMap(ex, ey, 4, 1)
+								if GetWarMap(ex, ey, 2) ~= nil and GetWarMap(ex, ey, 2) > -1 then
+									local ep = GetWarMap(ex, ey, 2)
+									if WAR.Person[i]["我方"] ~= WAR.Person[ep]["我方"] then 
+										if a == 1 then 
+										WAR.LSZD[WAR.Person[ep]["人物编号"]] = 1
+										str = "毒血漂橹"
+										elseif a == 2 then 
+										WAR.LSZD2[WAR.Person[ep]["人物编号"]] = 1
+										str = "毒惑心智"
+										elseif a == 3 then
+										WAR.LSZD1[WAR.Person[ep]["人物编号"]] = 10
+										str = "毒化本源"
+										end  
+									end
 								end
 							end
 						end
-					end
 					DHdisplay(3185, 3200,"八岐乱世·"..str)
 					WAR.CurID=tmppid
 					WAR.LSQ[jqid] = nil	
@@ -69274,18 +70269,14 @@ function DrawTimeBar()
 			  end
 			--1-10-寒冰真气
 			  if WAR.HBZQ[jqid] ~= nil and WAR.HBZQ[jqid] > 0 then
-				 WAR.HBZQ[jqid] = WAR.HBZQ[jqid] -1
-				 if WAR.HBZQ[jqid] <= 0 then 
+				WAR.HBZQ[jqid] = WAR.HBZQ[jqid] -1
+				if WAR.HBZQ[jqid] <= 0 then 
 					WAR.HBZQ[jqid] = nil
-				 end
-				 if WAR.HBZQ[jqid] == 1 then 
+				end
+				if WAR.HBZQ[jqid] == 1 then 
 					WAR.HBZQ1[jqid] = 20
-				 end
-					if WAR.ICE[WAR.Person[i]["人物编号"]] == nil then 
-						WAR.ICE[WAR.Person[i]["人物编号"]] = 2 
-					else 
-						WAR.ICE[WAR.Person[i]["人物编号"]] = WAR.ICE[WAR.Person[i]["人物编号"]] + 2
-					end 
+				end
+				addeffect(WAR.ICE,jqid,math.modf(3,5))
 					local x1 = WAR.Person[i]["坐标X"];
 					local y1 = WAR.Person[i]["坐标Y"];
 					for ex = x1 - 8, x1 + 8 do
@@ -69383,7 +70374,7 @@ function DrawTimeBar()
 				--冰封状态减内
 				if DT(jqid,48) and JX(jqid) then
 					if WAR.ICE[jqid] ~= nil then
-						WAR.ICE[jqid] = WAR.ICE[jqid] - 0
+						--WAR.ICE[jqid] = WAR.ICE[jqid] - 0
 						AddPersonAttrib(jqid, "内力", 30)
 						if WAR.ICE[jqid] > 100 then
 							WAR.ICE[jqid] = 100 
@@ -69401,89 +70392,97 @@ function DrawTimeBar()
 									end
 								end	
 							else
-							WAR.ICE[jqid] = 50 
+								WAR.ICE[jqid] = 50 
 							end
 						end
 						local aa=1
 						local bb=1
 						if JY.Person[jqid]["受伤程度"]>=50 and JY.Person[jqid]["受伤程度"]<100 then
-						aa=2
+							aa=2
 						elseif JY.Person[jqid]["受伤程度"]>=100 then
-						aa=3
+							aa=3
 						else
-						aa=1
+							aa=1
 						end	
-					 if WAR.HOT[jqid] ~= nil and WAR.HOT[jqid] > 0 then  --冰封恢复，如果集气人物id的冰封值不为空
-						bb=2
+						if WAR.HOT[jqid] ~= nil and WAR.HOT[jqid] > 0 then  --冰封恢复，如果集气人物id的冰封值不为空
+							bb=2
 						end
-					if wglw(jqid,121) or (DT(jqid,59) and PersonKF(jqid,121)) or (DT(jqid,601) ) then --17-3-3-玉女经
-					   AddPersonAttrib(jqid, "生命", 10)
-					   AddPersonAttrib(jqid, "内力", 20)
-					elseif wglw1(jqid,176) or (DT(jqid,49) and PersonKF(jqid,176)) or DT(jqid,116) then --17-3-3-玉女经
-					   AddPersonAttrib(jqid, "内力", 30)
-					else	
-					if wglw(jqid,178) or (DT(jqid,69) and PersonGT(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-					  JY.Person[jqid]["内力"] = JY.Person[jqid]["内力"] + ((math.random(1,5) + math.modf(JY.Person[jqid]["受伤程度"] / 5*aa))*bb) 
-					else 
-					  JY.Person[jqid]["内力"] = JY.Person[jqid]["内力"] - ((math.random(1,5) + math.modf(JY.Person[jqid]["受伤程度"] / 5*aa))*bb) 
-					end	  
-					  if WAR.ICE[jqid] > 30 then
-						if wglw(jqid,178) or (DT(jqid,69) and PersonGT(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then --九龙功
-						   JY.Person[jqid]["内力"] = JY.Person[jqid]["内力"] + ((math.random(6,10) + math.modf(JY.Person[jqid]["受伤程度"] / 5*aa))*bb)  
-						else 
-						   JY.Person[jqid]["内力"] = JY.Person[jqid]["内力"] - ((math.random(6,10) + math.modf(JY.Person[jqid]["受伤程度"] / 5*aa))*bb)  
-						end
-					  end
-					end  
-					
-					if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-						JY.Person[jqid]["内力"] = JY.Person[jqid]["内力"] + (math.random(1,5) + math.modf(JY.Person[jqid]["受伤程度"] / 5*2))
-					else 
-						JY.Person[jqid]["内力"] = JY.Person[jqid]["内力"] - (math.random(1,5) + math.modf(JY.Person[jqid]["受伤程度"] / 5*2)) 
-					end	  
-					if WAR.ICE[jqid] > 30 then
-						if wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
-						   JY.Person[jqid]["内力"] = JY.Person[jqid]["内力"] + (math.random(6,10) + math.modf(JY.Person[jqid]["受伤程度"] / 5*2))  
-						else 
-						   JY.Person[jqid]["内力"] = JY.Person[jqid]["内力"] - (math.random(6,10) + math.modf(JY.Person[jqid]["受伤程度"] / 5*2))  
-						end
-					end 		
-					
-					  WAR.ICE[jqid] = WAR.ICE[jqid] - 1
-					  if PersonKF(jqid, 106) then
-						WAR.ICE[jqid] = WAR.ICE[jqid] - 1
-					  end
-					  if PersonKF(jqid,108) then
-						WAR.ICE[jqid] = WAR.ICE[jqid] - 1
-					  end
-					  if PersonGT(jqid, 99) then
-						WAR.ICE[jqid] = WAR.ICE[jqid] - 1
-					  end
-					  if PersonGT(jqid,106) then
-						WAR.ICE[jqid] = WAR.ICE[jqid] - 1
-					  end
-					  if PersonGT(jqid,152) then
-						WAR.ICE[jqid] = WAR.ICE[jqid] - 1
-					  end
-					  if hasTF(jqid, 134) or WAR.KHZJ[jqid] ~= nil or WAR.JYHT[jqid] ~= nil then--17-2-8
-						WAR.ICE[jqid] = 0
-					  end
-					   if JY.Person[jqid]["防具"] == 63 then  --皮衣时序回冰封2点
-						WAR.ICE[jqid] = WAR.ICE[jqid] - 10
-					  end
-					  if T2SQ(jqid) and juexing() > 1 then
-						WAR.ICE[jqid] = 0
-					  end
-					  if wglw(jqid, 99) or DT(jqid,5) then--17-2-8
-						WAR.ICE[jqid] = 0
-					  end
-						if jtyl(jqid) then --谢无悠
+						if wglw(jqid,121) or (DT(jqid,59) and PersonKF(jqid,121)) or (DT(jqid,601)) then --17-3-3-玉女经
+							AddPersonAttrib(jqid, "生命", 10)
+							AddPersonAttrib(jqid, "内力", 20)
+						elseif wglw1(jqid,176) or (DT(jqid,49) and PersonKF(jqid,176)) or DT(jqid,116) then --17-3-3-玉女经
+							AddPersonAttrib(jqid, "内力", 30)
+						elseif wglw(jqid,178) or (DT(jqid,69) and PersonGT(jqid,178)) or T9ZY(jqid) or DT(jqid,602) or (DT(jqid,50) and JX(jqid)) then
+							local cc = math.modf(JY.Person[jqid]["受伤程度"] / 5*aa)
+								AddPersonAttrib(jqid, "内力", math.modf((math.random(1,5) + cc)*bb))
+								if WAR.ICE[jqid] > 30 then
+									AddPersonAttrib(jqid, "内力", math.modf((math.random(6,10) + cc)*bb))
+								end
+						elseif wglw(jqid,182) or (DT(jqid,5) and PersonGT(jqid,182)) then 
+							local dd = math.modf(JY.Person[jqid]["受伤程度"] / 5*2)
+							AddPersonAttrib(jqid, "内力", math.modf((math.random(1,5) + dd)*bb))
+							if WAR.ICE[jqid] > 30 then
+								AddPersonAttrib(jqid, "内力", math.modf((math.random(6,10) + dd)*bb))
+							end
+						else
+							local ee = math.modf(JY.Person[jqid]["受伤程度"] / 5*aa)
+							AddPersonAttrib(jqid, "内力", -math.modf((math.random(1,5) + ee)*bb))	  
+							if WAR.ICE[jqid] > 30 then
+								AddPersonAttrib(jqid, "内力", -math.modf((math.random(6,10) + ee)*bb))
+							end
+						end   		
+						--时序减冰封
+						if WAR.HBZQ1[jqid] ~= nil then
+						elseif (wglw(jqid,124) or DT(jqid,22)) and PersonGT(jqid,124) then
+							addeffect(WAR.HBZQ5,jqid,WAR.ICE[jqid])
+							if WAR.HBZQ5[jqid] > 50 then
+								WAR.HBZQ5[jqid] = 50
+							end
 							WAR.ICE[jqid] = 0
-						end		  
-					  if WAR.ICE[jqid] <= 0 then
-						WAR.ICE[jqid] = nil
-					  end
+						else
+							WAR.ICE[jqid] = WAR.ICE[jqid] - 1
+							if PersonKF(jqid, 106) then
+								WAR.ICE[jqid] = WAR.ICE[jqid] - 1
+							end
+							if PersonKF(jqid,108) then
+								WAR.ICE[jqid] = WAR.ICE[jqid] - 1
+							end
+							if PersonGT(jqid, 99) then
+								WAR.ICE[jqid] = WAR.ICE[jqid] - 1
+							end
+							if PersonGT(jqid,106) then
+								WAR.ICE[jqid] = WAR.ICE[jqid] - 1
+							end
+							if PersonGT(jqid,152) then
+								WAR.ICE[jqid] = WAR.ICE[jqid] - 1
+							end
+							if hasTF(jqid, 134) or WAR.KHZJ[jqid] ~= nil or WAR.JYHT[jqid] ~= nil then--17-2-8
+								WAR.ICE[jqid] = 0
+							end
+							if JY.Person[jqid]["防具"] == 63 then  --皮衣时序回冰封2点
+								WAR.ICE[jqid] = WAR.ICE[jqid] - 10
+							end
+							if T2SQ(jqid) and juexing() > 1 then
+								WAR.ICE[jqid] = 0
+							end
+							if wglw(jqid, 99) or DT(jqid,5) then--17-2-8
+								WAR.ICE[jqid] = 0
+							end
+							if jtyl(jqid) then --谢无悠
+								WAR.ICE[jqid] = 0
+							end		  
+							if WAR.ICE[jqid] <= 0 then
+								WAR.ICE[jqid] = nil
+							end
+						end	
 					end				
+				end	
+				
+				if WAR.HBZQ5[jqid] ~= nil then
+					WAR.HBZQ5[jqid] = WAR.HBZQ5[jqid] - 1
+					if WAR.HBZQ5[jqid] < 1 then
+						WAR.HBZQ5[jqid] = nil
+					end
 				end	
 				
 				--主角医生回生，减内伤，减中毒
@@ -69561,6 +70560,9 @@ function DrawTimeBar()
 							JY.Person[jqid]["生命"] = JY.Person[jqid]["生命"] - ((math.random(3)+ math.modf(JY.Person[jqid]["受伤程度"] / 10))*aa*math.random(3)) 
 						end	
 					end
+					if WAR.WXJQJ1[jqid] ~= nil then
+						AddPersonAttrib(jqid,"生命",-2)
+					end	
 					if JY.Person[jqid]["生命"] < 1 then
 						JY.Person[jqid]["生命"] = 1
 					end
@@ -69626,13 +70628,20 @@ function DrawTimeBar()
 				end
 
 				if PersonKF(jqid, 89) then --紫霞1/5恢复内伤
-					if JLSD(10, 30, jqid) or (PersonGT(jqid, 89) and JLSD(10, 60, jqid)) then
-						if JY.Person[jqid]["受伤程度"] <= 50 then
-							AddPersonAttrib(jqid, "受伤程度", -1)
-						elseif JLSD(10, 60, jqid) or PersonGT(jqid, 89) then
-							AddPersonAttrib(jqid, "受伤程度", -1)
+					if (wglw(jqid,89) or DT(jqid,19)) and WAR.ZXJQ[jqid] ~= nil and WAR.ZXJQ[jqid] > 0 then
+						if JY.Person[jqid]["受伤程度"] > 0 then
+							addeffect(WAR.ZXJQ,jqid,-1)
+							JY.Person[jqid]["受伤程度"] = 0
+						end	
+					else	
+						if JLSD(10, 30, jqid) or (PersonGT(jqid, 89) and JLSD(10, 60, jqid)) then
+							if JY.Person[jqid]["受伤程度"] <= 50 then
+								AddPersonAttrib(jqid, "受伤程度", -1)
+							elseif JLSD(10, 60, jqid) or PersonGT(jqid, 89) then
+								AddPersonAttrib(jqid, "受伤程度", -1)
+							end
 						end
-					end		
+					end	
 				end
 
 				--洗髓经时序清内伤
@@ -69791,7 +70800,7 @@ function DrawTimeBar()
 					end
 				end	  
 				
-				if DT(jqid,583) then
+				if DT(jqid,546) then
 					if WAR.LQZ[jqid] == nil then
 						WAR.LQZ[jqid] = 1
 					elseif WAR.LQZ[jqid] < 100 then
@@ -69895,7 +70904,7 @@ function DrawTimeBar()
 							WAR.HOT[jqid] = nil;
 						end				
 					end	
-					if WAR.ICE[jqid] ~= nil then
+					if WAR.ICE[jqid] ~= nil and WAR.HBZQ1[jqid] == nil then
 						WAR.ICE[jqid] = WAR.ICE[jqid] - 1
 						AddPersonAttrib(jqid, "生命", juexing()*5)
 						if WAR.ICE[jqid] < 1 then
@@ -69964,7 +70973,7 @@ function DrawTimeBar()
 							WAR.HOT[jqid] = nil;
 						end				
 					end	
-					if WAR.ICE[jqid] ~= nil then
+					if WAR.ICE[jqid] ~= nil and WAR.HBZQ1[jqid] == nil then
 						WAR.ICE[jqid] = WAR.ICE[jqid] - 1
 						AddPersonAttrib(jqid, "生命", mpdj*5)
 						AddPersonAttrib(jqid, "内力", mpdj*15)
@@ -70346,7 +71355,13 @@ function DrawTimeBar()
 						--JY.Person[jqid]["中毒程度"] = JY.Person[jqid]["中毒程度"] + 1
 							AddPersonAttrib(jqid,"中毒程度" ,1)
 							JY.Person[jqid]["生命"] = JY.Person[jqid]["生命"] - math.modf(JY.Person[jqid]["生命"]/150);
-							WAR.L_WNGZL[jqid] = WAR.L_WNGZL[jqid] -1;
+							if WAR.ZDTX[jqid] ~= nil and JY.Person[jqid]["中毒程度"] > 0 then
+								if JLSD(0,math.modf(120-JY.Person[jqid]["中毒程度"]),jqid) then
+									WAR.L_WNGZL[jqid] = WAR.L_WNGZL[jqid] -1;
+								end	
+							else	
+								WAR.L_WNGZL[jqid] = WAR.L_WNGZL[jqid] -1;
+							end	
 							if WAR.L_WNGZL[jqid] <= 0 then
 								WAR.L_WNGZL[jqid] = nil;
 								flag = 1;
@@ -70436,7 +71451,7 @@ function DrawTimeBar()
 					end
 				end
 				
-				  if WAR.HOT[jqid] ~= nil then --灼烧恢复
+				if WAR.HOT[jqid] ~= nil then --灼烧恢复
 					if WAR.HOT[jqid] > 50 then --17-2-12--
 					   if wglw1(jqid,68) then
 							if WAR.HOT[jqid] > 100 then
@@ -70479,7 +71494,10 @@ function DrawTimeBar()
 					if PersonGT(jqid, 124) then
 						WAR.HOT[jqid] = WAR.HOT[jqid] - 1
 					end	
-					if wglw1(jqid,68) then
+					if WAR.WXJQH1[jqid] ~= nil then
+						WAR.HOT[jqid] = WAR.HOT[jqid] + math.random(3)
+					end	
+					if wglw1(jqid,68) or WAR.WXJQH1[jqid] ~= nil then
 					else	
 						if hasTF(jqid, 134) or WAR.KHZJ[jqid] ~= nil or WAR.JYHT[jqid] ~= nil then --17-2-8
 							WAR.HOT[jqid] = 0
@@ -70499,6 +71517,9 @@ function DrawTimeBar()
 						if wglw(jqid,121) or (DT(jqid,59) and PersonKF(jqid,121)) or (DT(jqid,601) ) then --17-3-3-玉女经
 							WAR.HOT[jqid] = 0
 						end
+						if wglw(jqid,124) and PersonGT(jqid,124) then
+							WAR.HOT[jqid] = WAR.HOT[jqid] - 10
+						end	
 					end	
 					if WAR.HOT[jqid] <= 0 then
 						WAR.HOT[jqid] = nil
@@ -70922,7 +71943,7 @@ function DrawTimeBar()
 					end
 				end
 				
-				if (wglw(jqid,95) or ((DT(jqid,60) or DT(jqid,620)) and PersonKF(jqid,95))) and WAR.Person[i]["死亡"] == false and WAR.HMJT[WAR.Person[i]["人物编号"]] ~= nil 
+				if (wglw(jqid,95) or ((DT(jqid,60) or DT(jqid,620)) and JX(jqid))) and PersonKF(jqid,95) and WAR.Person[i]["死亡"] == false and WAR.HMJT[WAR.Person[i]["人物编号"]] ~= nil 
 				  and WAR.HMJT[WAR.Person[i]["人物编号"]] > 0 then --蛤蟆九天17-2-23
 					local a = 20 
 					if inteam(WAR.Person[i]["人物编号"]) then 
@@ -71070,7 +72091,7 @@ function DrawTimeBar()
 					WAR.XXQF[df]=WAR.XXQF[df] or 0 + xx
 					WAR.XXQG[jqid]=WAR.XXQG[jqid] or 0 + xx
 					end
-					end		    		
+				end		    		
 			end
 			
 			--落英领悟，散华领域
@@ -71666,7 +72687,13 @@ function DrawTimeBar()
 				end	
 				
 				if WAR.OYFSD[jqid] ~= nil and WAR.OYFSD[jqid] > 0 then --豸苗：欧阳锋蛇毒
-					WAR.OYFSD[jqid] = WAR.OYFSD[jqid] - 1
+					if WAR.ZDTX[jqid] ~= nil and JY.Person[jqid]["中毒程度"] > 0 then
+						if JLSD(0,math.modf(120-JY.Person[jqid]["中毒程度"]),jqid) then
+							WAR.OYFSD[jqid] = WAR.OYFSD[jqid] - 1
+						end	
+					else	
+						WAR.OYFSD[jqid] = WAR.OYFSD[jqid] - 1
+					end
 					if WAR.OYFSD[jqid] <= 0 then
 						WAR.OYFSD[jqid] = nil
 					end		
@@ -72109,7 +73136,7 @@ function SBLNewGame()
 	JY.Wugong[14]["攻击力10"] = 1100
 	JY.Wugong[39]["名称"] = "北斗罡剑"
 	JY.Wugong[42]["名称"] = "玉女剑法"
-	JY.Wugong[104]["名称"] = "逆运筋脉"
+	JY.Wugong[104]["名称"] = "逆运经脉"
 	JY.Wugong[132]["武功类型"] = 1 --白虹掌法
 	JY.Wugong[133]["武功类型"] = 1 --参合指
 	JY.Thing[238]["需资质"] = 0
@@ -72531,6 +73558,9 @@ function SBLNewGame()
     JY.Person[29]["体力"] =  100
     JY.Person[29]["武学常识"] =  15
     JY.Person[29]["实战"] =  150
+	JY.Person[29]["出招动画帧数4"] = 10
+	JY.Person[29]["出招动画延迟4"] = 7
+	JY.Person[29]["武功音效延迟4"] = 6
 	JY.Person[30]["武功1"] = 0 --郭靖1
 	JY.Person[30]["武功等级1"] = 0
 	JY.Person[30]["携带物品3"] = 260
@@ -72932,7 +73962,12 @@ function SBLNewGame()
 	JoinMP(141,14,3)
     JoinMP(142,14,3)
     JoinMP(140,14,3) --风清扬
-	JY.Person[149]["排行"] = 1 --方证
+	JY.Person[149]["排行"] = 5 --方证
+	JY.Person[149]["武功1"] = 24 
+	JY.Person[149]["武功等级1"] = 999
+	JY.Person[149]["武功2"] = 108
+	JY.Person[149]["武功等级2"] = 800
+	JY.Person[149]["声望"] = 108
 	JoinMP(149,5,5)
 	JY.Person[151]["武功1"] = 13 --文泰来
 	JY.Person[151]["排行"] = 3
@@ -73199,21 +74234,47 @@ function SBLNewGame()
 	JY.Person[517]["半身像"] = 257
 	JY.Person[517]["头像代号"] = 333
 	JY.Person[517]["出招动画帧数3"] = 14
-	
 	for i = 537, 557 do --日本大名
-		JY.Person[i]["技能1"] = 83
-		JY.Person[i]["技能2"] = 99
-		JY.Person[i]["技能3"] = 101
-		JY.Person[i]["武器"] = 296
-		JY.Person[i]["防具"] = 60		
+		if i ~= 546 then
+			JY.Person[i]["技能1"] = 83
+			JY.Person[i]["技能2"] = 99
+			JY.Person[i]["技能3"] = 101
+			JY.Person[i]["武器"] = 296
+			JY.Person[i]["防具"] = 60	
+		end	
 	end
-	for i = 559, 577 do --日本战犯
-		JY.Person[i]["技能1"] = 126
-		JY.Person[i]["技能2"] = 99
-		JY.Person[i]["技能3"] = 101
-		JY.Person[i]["武器"] = 306
-		JY.Person[i]["防具"] = 59		
-	end
+	JY.Person[546]["姓名"] = "隼人天隐"    --隼人天隐
+	JY.Person[546]["等级"] = 10
+	JY.Person[546]["生命"] = 1200
+	JY.Person[546]["生命最大值"] = 1200	
+	JY.Person[546]["内力"] = 10000
+	JY.Person[546]["内力最大值"] = 10000
+	JY.Person[546]["内力性质"] = 3
+	--JY.Person[546]["声望"] = 182
+	--JY.Person[546]["外号"] = 180
+	JY.Person[546]["武功1"] = 98
+	JY.Person[546]["武功等级1"] = 999
+	JY.Person[546]["拳掌功夫"] = 600
+    JY.Person[546]["御剑能力"] = 600
+    JY.Person[546]["耍刀技巧"] = 600
+    JY.Person[546]["特殊兵器"] = 600
+    JY.Person[546]["暗器技巧"] = 600
+	JY.Person[546]["攻击力"] = 300
+	JY.Person[546]["防御力"] = 300
+	JY.Person[546]["轻功"] = 200
+	JY.Person[546]["性别"] = 0
+	JY.Person[546]["资质"] = 100
+	JY.Person[546]["半身像"] = 545
+	JY.Person[546]["头像代号"] = 302
+	JY.Person[546]["排行"] = 8
+	JY.Person[546]["技能1"] = 103
+	JY.Person[546]["技能2"] = 112
+	JY.Person[546]["技能3"] = 134
+	JY.Person[546]["技能4"] = 143
+	JY.Person[546]["技能5"] = 145	
+	JY.Person[546]["出招动画帧数4"] = 20
+	JY.Person[546]["出招动画延迟4"] = 15
+	JY.Person[546]["武功音效延迟4"] = 11
     JY.Person[558]["姓名"] = "霍山" 
 	JY.Person[558]["生命最大值"] = 990
 	JY.Person[558]["内力最大值"] = 8300
@@ -73243,7 +74304,13 @@ function SBLNewGame()
 	JY.Person[558]["出招动画延迟2"] = 8
 	JY.Person[558]["武功音效延迟2"] = 7
     JoinMP(558,13,5)
-
+	for i = 559, 577 do --日本战犯
+		JY.Person[i]["技能1"] = 126
+		JY.Person[i]["技能2"] = 99
+		JY.Person[i]["技能3"] = 101
+		JY.Person[i]["武器"] = 306
+		JY.Person[i]["防具"] = 59		
+	end
     JY.Person[49]["姓名"] = "虚竹" 
 	--JoinMP(49,7,1)
 	JY.Person[578]["拳掌功夫"] = 0
@@ -73269,38 +74336,6 @@ function SBLNewGame()
 	JY.Person[582]["技能2"] = 32
 	JY.Person[582]["技能3"] = 42
 	JY.Person[582]["技能4"] = 28 --木婉清
-    JY.Person[583]["姓名"] = "隼人天隐"    --隼人天隐
-	JY.Person[583]["等级"] = 10
-	JY.Person[583]["生命"] = 1200
-	JY.Person[583]["生命最大值"] = 1200	
-	JY.Person[583]["内力"] = 10000
-	JY.Person[583]["内力最大值"] = 10000
-	JY.Person[583]["内力性质"] = 3
-	--JY.Person[583]["声望"] = 182
-	--JY.Person[583]["外号"] = 180
-	JY.Person[583]["武功1"] = 98
-	JY.Person[583]["武功等级1"] = 999
-	JY.Person[583]["拳掌功夫"] = 600
-    JY.Person[583]["御剑能力"] = 600
-    JY.Person[583]["耍刀技巧"] = 600
-    JY.Person[583]["特殊兵器"] = 600
-    JY.Person[583]["暗器技巧"] = 600
-	JY.Person[583]["攻击力"] = 300
-	JY.Person[583]["防御力"] = 300
-	JY.Person[583]["轻功"] = 200
-	JY.Person[583]["性别"] = 0
-	JY.Person[583]["资质"] = 100
-	JY.Person[583]["半身像"] = 545
-	JY.Person[583]["头像代号"] = 302
-	JY.Person[583]["排行"] = 8
-	JY.Person[583]["技能1"] = 103
-	JY.Person[583]["技能2"] = 112
-	JY.Person[583]["技能3"] = 134
-	JY.Person[583]["技能4"] = 143
-	JY.Person[583]["技能5"] = 145	
-	JY.Person[583]["出招动画帧数5"] = 20
-	JY.Person[583]["出招动画延迟5"] = 15
-	JY.Person[583]["武功音效延迟5"] = 11
 	JY.Person[585]["生命最大值"] = 999 --神秘小二
 	JY.Person[585]["等级"] = 20
 	JY.Person[585]["内力性质"] = 2
@@ -74148,7 +75183,7 @@ function SBLNewGame()
 		else
 		end	
 			
-		if i == 558 then
+		if i == 558 or i == 546 then
 		--[[elseif i == 516 or i == 517 then
 			JoinMP(i, 11, 3)
 			JY.Person[i]["武功2"] = 180
@@ -74608,20 +75643,34 @@ function JLSD(s1, s2, dw)
 		p = p + 5;
 	end
 	
-	if WAR.SPIRIT[dw] ~= nil and WAR.SPIRIT[dw] > 100 then
-		p = p + 5
-		if wglw2(dw,199) and WAR.SPIRIT[dw] > 120 then
+	if JY.Status == GAME_WMAP then
+		if WAR.SPIRIT[dw] ~= nil and WAR.SPIRIT[dw] > 100 then
 			p = p + 5
+			if wglw2(dw,199) and WAR.SPIRIT[dw] > 120 then
+				p = p + 5
+			end
+			if T9ZY(dw) and WAR.SPIRIT[dw] > 120 then
+				p = p + 5
+			end
 		end
-		if T9ZY(dw) and WAR.SPIRIT[dw] > 120 then
-			p = p + 5
+		if WAR.XYLS[dw] ~= nil then
+			p = p - 10
+		end
+		if WAR.BXJF3 > 0 then
+			if wglw1(dw,48) then
+			else
+				if WAR.BXJF3 == 1 then
+					p = p - 18
+				elseif WAR.BXJF3 == 2 then
+					p = p - 24
+				elseif WAR.BXJF3 == 3 then
+					p = p - 30
+				end
+			end		
 		end
 	end
 	if JY.Person[dw]["实战"] ~= nil and JY.Person[dw]["实战"] > 0 then
 		p = p + math.modf(JY.Person[dw]["实战"]/100)
-	end
-	if WAR.XYLS[dw] ~= nil then
-		p = p - 10
 	end
 	if PersonKF(dw,102) then
 		if PersonGT(dw,102) then
@@ -74629,16 +75678,9 @@ function JLSD(s1, s2, dw)
 		else
 			p = p + 2
 		end
-	end	
-	if WAR.BXJF3 > 0 then
-		if WAR.BXJF3 == 1 then
-			p = p - 18
-		elseif WAR.BXJF3 == 2 then
-			p = p - 24
-		elseif WAR.BXJF3 == 3 then
-			p = p - 30
-		end
-		--if wglw(dw,)	
+	end
+	if GetS(22, 0, 0, 0) == 5 and putong() == 6 then
+		p = p + 5
 	end	
     --if inteam(dw) then return true end  --测试用	
 	--[[
@@ -75686,8 +76728,8 @@ SetGlobalConst = function()
 	GRTSSAY[58] = "效果：可以切换使用不同的门派技能，每场战斗限一次"	
 	
 	--隼人森罗指令
-	GRTS[583] = "森罗"
-	GRTSSAY[583] = "效果：战场中使用不同战术，无限制使用次数"	
+	GRTS[546] = "森罗"
+	GRTSSAY[546] = "效果：战场中使用不同战术，无限制使用次数"	
 
 	--张召重激励指令
 	GRTS[80] = "激励"
@@ -77796,6 +78838,7 @@ CC.TFWG={
 	{146, 69, 2},--六仙 毒龙鞭法
 	{147, 69, 2},--六仙 毒龙鞭法
 	{148, 69, 2},--六仙 毒龙鞭法
+	{149, 24, 2},--方证 须弥山掌
 	{150, 37, 1.5},--冯锡范 两仪剑
 	{151, 13, 1.5},--文泰来 铁掌
 	{152, 36, 1.5},--无尘 柔云剑
@@ -78059,6 +79102,7 @@ CC.TFNG={
 	{129, 100, 3},--王重阳 先天功
 	--{140, 90, 3},--风清扬 混元功
 	--{160, 103, 3},--达尔巴 龙象
+	{149, 108, 3},--风清扬 混元功
 	{161, 121, 3},--李莫愁 玉女
 	{166, 204, 3},--班淑娴 太清罡气
 	{167, 189, 3},--宗维侠 阴阳磨
@@ -78494,10 +79538,10 @@ function JY_Main_sub()
   math.randomseed(os.time())
   lib.EnableKeyRepeat(CONFIG.KeyRepeatDelay, CONFIG.KeyRePeatInterval)
   JY.Status = GAME_START
-   local ff = "title"..math.random(12)..".png"
-   ff = "title"..math.random(12)..".png"
+  local ff = "title"..math.random(12)..".png"
   ff = "title"..math.random(12)..".png"
-CC.FirstFile = CONFIG.PicturePath .. ff
+  ff = "title"..math.random(12)..".png"
+  CC.FirstFile = CONFIG.PicturePath .. ff
   lib.PicInit(CC.PaletteFile)
   Cls()
   PlayMIDI(30)
@@ -78511,9 +79555,10 @@ CC.FirstFile = CONFIG.PicturePath .. ff
   lib.PicLoadCache(2, 339 * 2, (CC.ScreenW - 4 * CC.StartMenuFontSize - 2 * CC.MenuBorderPixel) / 2+90, CC.StartMenuY + 60)
   lib.PicLoadCache(2, 339 * 2, (CC.ScreenW - 4 * CC.StartMenuFontSize - 2 * CC.MenuBorderPixel) / 2+270, CC.StartMenuY + 60)
   local menu = {
-{"始     ", nil, 1}, 
-{"临     ", nil, 1}, 
-{"归", nil, 1}}
+	{"始     ", nil, 1}, 
+	{"临     ", nil, 1}, 
+	{"归", nil, 1}
+	}
   local menux = (CC.ScreenW - 4 * CC.StartMenuFontSize - 2 * CC.MenuBorderPixel) / 2
   --DrawString(720, 580, CC.EVB107, C_GOLD, 20)
   local menuReturn = ShowMenu2(menu, 3, 0, menux-120, CC.StartMenuY + 30, 0, 0, 0, 0, 50, C_STARTMENU, C_GOLD)
@@ -78643,6 +79688,12 @@ CC.FirstFile = CONFIG.PicturePath .. ff
 		addHZ(35)
 		SetS(113,0,0,0,98)
 	end
+	if DT(0,19) then
+		JY.Person[0]["武功3"] = 198
+		JY.Person[0]["武功等级3"] = 900
+		JY.Person[0]["武功4"] = 0
+		JY.Person[0]["武功等级4"] = 0
+	end	
 	if BJY(0) then
 	    instruct_2(65)
 	    instruct_2(269) 
@@ -82011,7 +83062,7 @@ function PersonKF(p, kf)
     if WAR.PJTX == 1 and not DT(p,592) then --破尽天下
 	   return false
 	end
-	if WAR.TLHD == 1 and not DT(p,583) then
+	if WAR.TLHD == 1 and not DT(p,546) then
 		return false
 	end 	
 	if WAR.BMGT2 == p and JY.Person[p]["声望"] == kf then --北冥吸功体
@@ -82063,7 +83114,7 @@ function PersonKFJ(p, kf)
     if WAR.PJTX == 1 and not DT(p,592) then --破尽天下
 	   return false
 	end
-	if WAR.TLHD == 1 and not DT(p,583) then
+	if WAR.TLHD == 1 and not DT(p,546) then
 	   return false
 	end 
 	for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
@@ -85838,7 +86889,7 @@ function War_AnqiHurt(pid, emenyid, thingid)
     JY.Person[emenyid]["生命"] = 1
   end
   
-  if emenyid == 553 and JY.Person[emenyid]["生命"] <= 0 then
+  if emenyid == 553 and JY.Person[emenyid]["生命"] <= 0 and JX(emenyid) then
     WAR.YZB = 1
   end
   --[[if JY.Thing[thingid]["加中毒解毒"] > 0 then
@@ -87431,7 +88482,7 @@ function War_RestMenu()
 		WAR.HIDE[pid]=50
 	end
 
-    if DT(pid,583) then 
+    if DT(pid,546) then 
 	    local XK = nil
 		local NK = nil
 		local NS = nil
@@ -88372,7 +89423,7 @@ function War_ShowFight(pid, wugong, wugongtype, level, x, y, eft, ZHEN_ID)
 	kfname = "道若水兮柔攻坚"
 	elseif WAR.DUIZHAO == 13 and wglw(WAR.Person[ZHEN_ID]["人物编号"],43) then
 	kfname = "灿若繁星"
-	elseif WAR.DUIZHAO == 14 and DT(WAR.Person[ZHEN_ID]["人物编号"],583) then
+	elseif WAR.DUIZHAO == 14 and DT(WAR.Person[ZHEN_ID]["人物编号"],546) then
 	kfname = "森罗万道·天罗火道"
 	elseif WAR.DUIZHAO == 15 and KHTJF(WAR.Person[ZHEN_ID]["人物编号"]) then
 	kfname = "分水·江上弄笛"
@@ -89814,7 +90865,7 @@ function ShowPersonStatus_sub(id, page)
 	if DT(id, 592) then
       attribmax = 10000
     end		
-	if DT(id, 583) then
+	if DT(id, 546) then
 	  attribmax = 10000
 	elseif DT(id, 600) then
 	  attribmax = 10000

@@ -2725,7 +2725,7 @@ function NLJS(id, page) --能力说明
 		end
 	end
 	if JY.Thing[202][WZ7] >= 5 and (JY.Person[id]["无用12"] or 0) > 0 and (not duiyou(id)) and (#CC.NLJS[JY.Person[JY.Person[id]["无用12"]]["姓名"]] or 0) > 1 then
-		NLJS[name][#NLJS[name] + 1] = "（"..CC.NLJS[JY.Person[JY.Person[id]["无用12"]]["姓名"]][2].."）"
+		NLJS[name][#NLJS[name] + 1] = "（"..JY.Person[JY.Person[id]["无用12"]]["姓名"].."称号效果："..CC.NLJS[JY.Person[JY.Person[id]["无用12"]]["姓名"]][2].."）"
 	end
 	if id > 0 or (id == 0 and zjtype() == 3) or (id == 0 and T10XXZ(id)) then
 		for i = 1, 5 do

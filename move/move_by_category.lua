@@ -106,6 +106,7 @@ function createSceneData()
 		{JY.Scene[77]["名称"], JY.Scene[77]["进入条件"], 77}, -- 万鳄岛
 		{JY.Scene[78]["名称"], JY.Scene[78]["进入条件"], 78}, -- 浡泥岛
 		{"鸳鸯岛", JY.Scene[79]["进入条件"], 79}, -- 鸳鸯岛
+		{JY.Scene[104]["名称"], JY.Scene[104]["进入条件"], 104},
 		{JY.Scene[76]["名称"], JY.Scene[76]["进入条件"], 76} -- 台湾
 	}
     -- 迷宫秘境
