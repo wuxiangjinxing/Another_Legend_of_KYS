@@ -2280,6 +2280,9 @@ function hasTF(pid, tf)
 				return false
 			end
 		end
+		if WAR.LSZD1[pid] ~= nil then
+			return false
+		end	
 	end
 	if pid == zj() and zjtype() == 4 then
 		if tf <= #CC.SKlist and CC.SKlist[tf][3] == 1 then
