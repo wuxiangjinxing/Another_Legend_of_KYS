@@ -47831,9 +47831,42 @@ function War_WXMenu(flag, flag2)
 				Cls()		
 				local dxp = {}
 				local num = 1
+				local function Canselect(wid)
+					if wid <= 0 or wid >= JY.WugongNum or JY.Wugong[wid]["类型"] ~= 0 then return false end
+					if wid == 98 then return false end --小无不能选择
+					if wid == 43 and (JY.Person[50]["姓名"] ~= "乔峰" or not hasthing(147)) then return false end --斗转需要完成天龙邪
+					if wid == 180 and MPPD(pid) ~= 11 then return false end --太虚剑意需要门派是一刀流
+					if wid == 181 and GetS(86, 2, 10, 5) ~= 1 then return false end --玄武真功需要打赢过夫妻阵
+					if wid == 203 and GetS(86, 10, 20, 5) ~= 1 then return false end -- 怒海剑涛需要打赢过独孤求败					
+					return true
+				end
+				local function Appendtodxp(num,wid)
+					dxp[num] = {}
+					dxp[num][1] = JY.Wugong[wid]["名称"]
+					dxp[num][2] = nil
+					dxp[num][3] = 1
+					dxp[num][4] = wid					
+				end
 				for i = 1, HHH_GAME_SETTING["WG_COUNT_MAX"] do
 					local wid = JY.Person[pid]["武功" .. i]
-					if wid == 9999 then wid = JY.Thing[224]["加攻击力"] end
+					if wid == 9999 then 
+						wid = JY.Thing[224]["加攻击力"]
+						if Canselect(wid) then 
+							Appendtodxp(num,wid)
+							num = num + 1
+						end
+						wid = JY.Thing[224]["加防御力"]
+						if Canselect(wid) then 
+							Appendtodxp(num,wid)
+							num = num + 1
+						end						
+					else
+						if Canselect(wid) then 
+							Appendtodxp(num,wid)
+							num = num + 1
+						end					
+					end
+					--[[
 					if wid > 0 and wid <= JY.WugongNum - 1 and JY.Wugong[wid]["类型"] == 0 then
 						if wid == 98 then --小无不能选择
 						elseif wid == 43 and (JY.Person[50]["姓名"] ~= "乔峰" or not hasthing(147)) then --斗转需要完成天龙邪
@@ -47849,6 +47882,7 @@ function War_WXMenu(flag, flag2)
 							num = num + 1
 						end
 					end
+					]]
 				end
 				if num <= 1 then
 					DrawStrBoxWaitKey("没有可幻化的武功", C_WHITE, 30)
