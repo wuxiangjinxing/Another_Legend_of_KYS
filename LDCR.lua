@@ -1084,6 +1084,10 @@ function wglw(pid, f) --内功领悟
 		   return true
 		end 		
 		
+        if JY.Person[pid]["武器"] == 247 and JY.Thing[247]["加攻击力"] >= 800 and PersonGT(pid,f) and (f ~= 592 and f ~= 203) then	--逍遥神仙环
+			return true
+		end 		
+		
 		if (ZJ(pid) and MPPD(pid) == 7 and MPDJ(pid) == 5 and GetS(111,0,0,0) == 998) and PersonKF(pid,98) then
 			if PersonGT(pid,f) or (PersonKF(pid,101) and f == 101) or (PersonKF(pid,85) and f == 85) then 
 				return true
@@ -4242,6 +4246,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    end
 	end	
 
+    if JY.Person[pid]["武器"] == 293 and JY.Thing[293]["加攻击力"] >= 300 and JLSD(10,40,pid)  then  --刺针指环
+		WAR.BZ[eid] = 1
+	end 	
+
     if WAR.HYZF == 3 then
         local d = math.modf(JY.Person[pid]["内力"] / 300)
 		if d < 20 then
@@ -4267,6 +4275,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			end	
 		end 
 	end 		
+	
+    if JY.Person[pid]["武器"] == 300 and JY.Thing[300]["加攻击力"] >= 650 and JLSD(10,40,pid)  then	--峨眉刺
+		WAR.LXZT[eid] = WAR.LXZT[eid] or 0 + 50
+	end		
 	
     --霹雳刀气破防、内伤、流血(敌、我都会流血)
 	if (DT(pid, 585) or wglw1(pid, 141)) and JLSD(15, 65, pid) and WAR.Person[emenyid]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and yongdao(wugong) then
@@ -4415,22 +4427,22 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
         hurt = hurt * a
 	end 
 	
-    if JY.Person[pid]["武器"] == 293 and JLSD(10,40,pid)  then  --刺针指环
+    if JY.Person[pid]["武器"] == 293 and JLSD(10,40,pid) then  --刺针指环
 		local a = JY.Person[pid]["暗器技巧"] / 10
         hurt = hurt * a
 	end 
 		
-    if JY.Person[pid]["武器"] == 300 and JLSD(10,40,pid)  then	--峨眉刺
+    if JY.Person[pid]["武器"] == 300 and JLSD(10,40,pid) then	--峨眉刺
 		local a = JY.Person[pid]["御剑能力"] / 10
         hurt = hurt * a
 	end 	
 		
-    if JY.Person[pid]["武器"] == 305 and JLSD(10,40,pid)  then	--紫金八卦刀
+    if JY.Person[pid]["武器"] == 305 and JLSD(10,40,pid) then	--紫金八卦刀
 		local a = JY.Person[pid]["耍刀技巧"] / 10
         hurt = hurt * a
 	end 		
 		
-    if JY.Person[pid]["武器"] == 311 and JLSD(10,40,pid)  then	--圣火令
+    if JY.Person[pid]["武器"] == 311 and JLSD(10,40,pid) then	--圣火令
 		local a = JY.Person[pid]["轻功"] / 10
         hurt = hurt * a
 	end 		
@@ -4654,6 +4666,16 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	        end
 		end
 	end		
+
+    if JY.Person[pid]["武器"] == 311 and JY.Thing[311]["加攻击力"] >= 300 and JLSD(10,40,pid) then --圣火令
+		for j = 0, WAR.PersonNum - 1 do 
+            if WAR.FXXS[WAR.Person[j]["人物编号"]] ~= nil then
+				WAR.FXXS[WAR.Person[j]["人物编号"]] = WAR.FXXS[WAR.Person[j]["人物编号"]] + math.random(10,20)
+			else
+				WAR.FXXS[WAR.Person[j]["人物编号"]] = math.random(10,20)
+			end 	
+		end 
+	end 		
 
     if wglw(pid,185) or (PersonGT(pid,185) and DT(pid,5)) or DT(pid,666) then
 		if JLSD(10,40,pid) then
@@ -5697,7 +5719,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	    end	
 	end	
 	
-	--if 
+	if JY.Person[pid]["武器"] == 54 and JY.Thing[54]["加攻击力"] >= 300 and JLSD(10,40,pid) then  --焦尾琴
+		local a = JY.Person[pid]["生命"]
+		AddPersonAttrib(eid, "生命", -a);
+	end	
 	
     if JY.Person[pid]["武器"] == 54 and DWPD() == false and JLSD(10,40,pid) then  --焦尾琴
         local fhurt = 100 + Rnd(10)
@@ -5717,6 +5742,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 5);
 		end 		
 		
+        if JY.Person[pid]["武器"] == 40 and JY.Thing[52]["加攻击力"] >= 300 and JLSD(10,40,pid) then  --金蛇剑	
+			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid, "生命", -350);
+		end			
+		
 		if JY.Person[pid]["武器"] == 46 and JLSD(10,40,pid)  then  --碧波香露刀
 			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid, "中毒程度", 30);
 			WAR.Person[emenyid]["体力点数"] = (WAR.Person[emenyid]["体力点数"] or 0) + AddPersonAttrib(eid, "体力", -10);
@@ -5731,20 +5760,28 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 8);
 		end		
 		
+        if JY.Person[pid]["武器"] == 52 and JY.Thing[52]["加攻击力"] >= 300 and JLSD(10,40,pid)  then  --鳄嘴剪
+			AddPersonAttrib(eid, "受伤程度", 15)
+		end			
+		
 		if JY.Person[pid]["武器"] == 53 and JLSD(10,40,pid)  then  --判官笔
 			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid, "中毒程度", 10);
 			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 10);
 		end			
 		
-		if JY.Person[pid]["武器"] == 236 and JLSD(10,40,pid)  then  --太极剑	
+        if JY.Person[pid]["武器"] == 53 and JY.Thing[53]["加攻击力"] >= 300 and JLSD(10,40,pid)  then  --判官笔
+			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid, "生命", -150);
+		end			
+		
+		if JY.Person[pid]["武器"] == 236 and JLSD(10,40,pid) then  --太极剑	
 			WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", -200);
 		end	
 		
-		if JY.Person[pid]["武器"] == 244 and JLSD(10,40,pid)  then  --金蜈钩
+		if JY.Person[pid]["武器"] == 244 and JLSD(10,40,pid) then  --金蜈钩
 			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid, "中毒程度", 80);
 		end	
 		
-		if JY.Person[pid]["武器"] == 252 and JLSD(10,40,pid)  then  --西毒蛇杖
+		if JY.Person[pid]["武器"] == 252 and JLSD(10,40,pid) then  --西毒蛇杖
 			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid, "中毒程度", 100);
 			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 50);
 		end 			
@@ -5758,21 +5795,41 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid, "中毒程度", 50);
 		end 	
 		
-		if JY.Person[pid]["武器"] == 295 and JLSD(10,40,pid)  then  --柔蚕丝
+        if JY.Person[pid]["武器"] == 291 and JY.Thing[291]["加攻击力"] >= 300 and JLSD(10,40,pid) then  --银烟管	
+			WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", -300);
+		end 	
+		
+		if JY.Person[pid]["武器"] == 295 and JLSD(10,40,pid) then  --柔蚕丝
 			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid, "中毒程度", 20);
 			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 20);
 		end 	
 		
-		if JY.Person[pid]["武器"] == 296 and JLSD(10,40,pid)  then  --阴阳扇
+		if JY.Person[pid]["武器"] == 295 and JY.Thing[295]["加攻击力"] >= 300 and JLSD(10,40,pid) then  --柔蚕丝
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -300);
+		end 
+		
+		if JY.Person[pid]["武器"] == 296 and JLSD(10,40,pid) then  --阴阳扇
 			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid, "生命", -150);
 			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid, "中毒程度", 30);
 			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 30);
 		end	
 		
+        if JY.Person[pid]["武器"] == 296 and JY.Thing[296]["加攻击力"] >= 300 and JLSD(10,40,pid) then  --阴阳扇	
+			WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", -300);
+		end		
+		
 		if JY.Person[pid]["武器"] == 297 and JLSD(10,40,pid)  then  --含沙射影
 			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid, "生命", -200);
 			WAR.Person[emenyid]["中毒点数"] = (WAR.Person[emenyid]["中毒点数"] or 0) + AddPersonAttrib(eid, "中毒程度", 50);
 		end		
+		
+        if JY.Person[pid]["武器"] == 297 and JY.Thing[297]["加攻击力"] >= 650 and JLSD(10,40,pid) then  --含沙射影	
+			WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) + AddPersonAttrib(eid, "内力", -1000);
+		end				
+		
+        if JY.Person[pid]["武器"] == 298 and JY.Thing[298]["加攻击力"] >= 650 and JLSD(10,40,pid) then  --绣花针	
+			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 100);
+		end			
 		
 		if JY.Person[pid]["武器"] == 303 and JLSD(10,40,pid)  then  --紫薇软剑
 			WAR.Person[emenyid]["真伤点数"] = (WAR.Person[emenyid]["真伤点数"] or 0) + AddPersonAttrib(eid, "生命", -300);
@@ -5781,6 +5838,47 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		if JY.Person[pid]["武器"] == 304 and JLSD(10,40,pid)  then  --玉箫
 			WAR.Person[emenyid]["内力点数"] = (WAR.Person[emenyid]["内力点数"] or 0) +  AddPersonAttrib(eid, "内力", -500);
 		end		
+		
+        if JY.Person[pid]["武器"] == 306 and JY.Thing[306]["加攻击力"] >= 650 and JLSD(10,30,pid) then --火枪
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -1500);
+		end 				
+		
+        if JY.Person[pid]["武器"] == 303 and JY.Thing[306]["加攻击力"] >= 650 and JLSD(10,40,pid)  then  --紫薇软剑
+			WAR.LXZT[eid] = WAR.LXZT[eid] or 0 + 100
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -800);
+		end 			
+		
+        if JY.Person[pid]["武器"] == 39 and JY.Thing[39]["加攻击力"] >= 300 and JLSD(10,40,pid)  then  --白龙剑
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -200);
+		end 				
+		
+        if JY.Person[pid]["武器"] == 41 and JY.Thing[41]["加攻击力"] >= 300 and JLSD(10,40,pid)  then  --凝碧剑
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -300);
+		end 		
+		
+        if JY.Person[pid]["武器"] == 42 and JY.Thing[42]["加攻击力"] >= 300 and JLSD(10,40,pid)  then  --白虹剑
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -400);
+		end 		
+		
+		if JY.Person[pid]["武器"] == 43 and JY.Thing[42]["加攻击力"] >= 650 and JLSD(10,40,pid)  then  --屠龙刀
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -500);
+		end 		 
+		
+        if JY.Person[pid]["武器"] == 249 and JY.Thing[42]["加攻击力"] >= 650 and JLSD(10,40,pid) then	 --闯王军刀	
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -450);
+		end 		 	
+		
+        if JY.Person[pid]["武器"] == 307 and JY.Thing[307]["加攻击力"] >= 300 and JLSD(10,40,pid) then --四丈银鞭	
+			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 30);
+		end			
+		
+        if JY.Person[pid]["武器"] == 308 and JY.Thing[308]["加攻击力"] >= 300 and JLSD(10,40,pid) then --银丝拂尘	
+			WAR.Person[emenyid]["内伤点数"] = (WAR.Person[emenyid]["内伤点数"] or 0) + AddPersonAttrib(eid, "受伤程度", 20);
+		end		
+		
+        if JY.Person[pid]["武器"] == 309 and JY.Thing[308]["加攻击力"] >= 300 and JLSD(10,40,pid) then  --软红蛛索
+			WAR.Person[emenyid]["生命点数"] = (WAR.Person[emenyid]["生命点数"] or 0) + AddPersonAttrib(eid, "生命", -300);
+		end 		
 		
 		if JY.Person[pid]["武器"] == 306 and math.random(10) > 7 and WAR.HQZT ~= 2 then  --火枪
 			local aa = math.random(200,400)
@@ -5821,6 +5919,13 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	if PersonGT(pid,182) and WAR.Actup[pid] ~= nil then
         if WAR.LQZ[eid] == 100 then
 	        WAR.LQZ[eid] = WAR.LQZ[eid] - 15
+        end
+    end
+
+    if JY.Person[pid]["武器"] == 36 and JY.Thing[36]["加攻击力"] >= 650 and JLSD(10,40,pid) then  --玄铁剑
+		WAR.L_NOT_MOVE[eid] = 1	
+		if WAR.LQZ[eid] == 100 then
+	        WAR.LQZ[eid] = WAR.LQZ[eid] - 20
         end
     end
 
@@ -6248,6 +6353,16 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
         hurt = math.modf(hurt * (JY.Person[pid]["内力最大值"] / 30)) 
 	end 
 
+    --金刀黑剑
+    if JY.Person[pid]["武器"] == 48 and JY.Thing[48]["加攻击力"] >= 650 and JLSD(10,40,pid) then
+		WAR.BZ[eid] = 1
+	end 	
+
+    --打狗棒
+    if JY.Person[pid]["武器"] == 49 and JY.Thing[49]["加攻击力"] >= 650 and JLSD(10,40,pid) then
+		WAR.YANGKANG[eid] = 1
+	end 
+
     if DT(pid,617) and JY.Person[eid]["生命"] <= 0 and DWPD() then
 		WAR.Person[emenyid]["我方"] = WAR.Person[WAR.CurID]["我方"]
 		JY.Person[eid]["生命"] = JY.Person[eid]["生命最大值"]
@@ -6503,6 +6618,11 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 	        WAR.LXZT[eid] = 100
 	    end	
 	end	
+	
+	--倚天剑
+    if JY.Person[pid]["武器"] == 37 and JY.Thing[37]["加攻击力"] >= 650 and JLSD(10,40,pid) then
+        WAR.BZ[eid] = 1		
+	end 	
 	
     if BJY(pid) and yongquan(wugong) and JLSD(10,40,pid) then
 		WAR.LXZT[eid] = WAR.LXZT[eid] or 0 + 30
@@ -7577,6 +7697,27 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		    WAR.FXDS[eid] = WAR.FXDS[eid] + 8
 	    end		
 	end	
+	
+	if JY.Person[pid]["武器"] == 245 and JY.Thing[245]["加攻击力"] >= 300 and JLSD(10,40,pid) then --幻蝶扇
+		WAR.FXXS[eid] = 1
+		WAR.FXDS[eid] = 15
+		if WAR.FXDS[eid] == nil then
+			WAR.FXDS[eid] = 15
+		else
+		    WAR.FXDS[eid] = WAR.FXDS[eid] + 15	
+		end
+	end	
+	
+    if JY.Person[pid]["武器"] == 51 and JY.Thing[51]["加攻击力"] >= 300 and JLSD(10,40,pid) then --金龙鞭	
+	    WAR.FXXS[eid] = 1
+		WAR.FXDS[eid] = 10
+		if WAR.FXDS[eid] == nil then
+			WAR.FXDS[eid] = 10
+		else
+		    WAR.FXDS[eid] = WAR.FXDS[eid] + 10	
+		end
+	end
+		
     if DT(pid, 58) or wglw1(pid,25) then
 		WAR.FXXS[eid] = 50
 		WAR.FXDS[eid] = 50
@@ -15203,6 +15344,17 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			WAR.LQZ[pid] = WAR.LQZ[pid] + 30
 		end
 	end
+    
+	--玄铁指环
+    if JY.Person[pid]["武器"] == 245 and JY.Thing[245]["加攻击力"] >= 650 and JLSD(10,40,pid) then 
+		if WAR.LQZ[pid] == nil then
+			WAR.LQZ[pid] = 10
+		elseif WAR.LQZ[pid] > 85 and WAR.LQZ[pid] ~= 100 then
+			WAR.LQZ[pid] = 100
+		elseif WAR.LQZ[pid]  < 100 then
+			WAR.LQZ[pid] = WAR.LQZ[pid] + 10
+		end
+	end
 
     --降龙柔劲
     if WAR.XLGJ == 2 or WAR.XLGJ == 4 or WAR.XLGJ == 5 then
@@ -17851,6 +18003,13 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 			WAR.Person[emenyid][CC.TXWZ1] = "三阳开泰气呈祥"
 		end	
 	end		
+		
+    if JY.Person[pid]["武器"] == 236 and JY.Thing[236]["加攻击力"] >= 650 and JLSD(10,40,pid)  then  --太极剑	
+		WAR.HOTXS[pid] = 1
+		WAR.HOT[pid] = 100
+		WAR.ICEXS[pid] = 1
+		WAR.ICE[pid] = 100
+	end 			
 		
     if (DT(eid,5) or DT(eid,9) or DT(eid,666)) or wglw1(eid,46) then
         if JY.Person[pid]["内力性质"] == 0 then
@@ -20798,9 +20957,14 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
     if fqdid(pid) and wugong == 62 then 
         ang = ang + WAR.FQDF*500
     end
-	if JY.Person[pid]["武器"] == 243 and JLSD(10,40,pid)  then --铂丝掌套
+	if JY.Person[pid]["武器"] == 243 and JLSD(10,40,pid) then --铂丝掌套
 		ang = ang + 600
 	end	
+	
+	if JY.Person[pid]["武器"] == 243 and JY.Thing["加攻击力"] >= 650 and JLSD(10,40,pid) then --铂丝掌套
+		ang = ang + 2000
+	end	
+	
     --计算是否破防，dng为0表示被破防
     ang = ang - dng
     if 0 < ang then
@@ -21535,7 +21699,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		WAR.BIPUO = 1 
 	end 	
 
-    if JY.Person[pid]["武器"] == 303 and JLSD(10,40,pid) then  --紫薇软剑
+    if JY.Person[pid]["武器"] == 303 then  --紫薇软剑
 		WAR.BIPUO = 1
 	end 	
 
@@ -22974,6 +23138,16 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(pid, "生命", math.modf(hurt * 0.3))
   	    WAR.XIXUE = WAR.XIXUE + math.modf(hurt * 0.3)
 	end	
+	
+	if JY.Person[pid]["武器"] == 44 and JY.Thing[44]["加攻击力"] >= 650 then  --血刀
+		WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(pid, "生命", math.modf(hurt * 0.3))
+  	    WAR.XIXUE = WAR.XIXUE + math.modf(hurt * 0.75)
+	end	
+
+    if JY.Person[pid]["武器"] == 244 and JY.Thing[244]["加攻击力"] >= 650 then  --金蜈钩
+		WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(pid, "生命", math.modf(hurt * 0.3))
+  	    WAR.XIXUE = WAR.XIXUE + math.modf(hurt * 0.5)
+	end	
 
     if pid==0 and putong() == 9 then --血手吸血
 	    WAR.Person[WAR.CurID]["真伤点数"] = (WAR.Person[WAR.CurID]["真伤点数"] or 0) + AddPersonAttrib(pid, "生命", math.modf((hurt) * (0.1+((WAR.LXZT[0] or 0)/150))));    
@@ -23689,6 +23863,10 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		WAR.KHCM[eid] = 1
 	end	
 
+    if JY.Person[pid]["武器"] == 292 and JY.Thing[292]["加攻击力"] >= 300 and JLSD(10,40,pid) then  --铁棋盘
+		WAR.KHCM[eid] = 1
+	end	
+
     --葵花刺目，40%机率MISS 
     if WAR.KHBX == 1 and 0 < hurt and (WAR.KHCM[eid] == nil or WAR.KHCM[eid] == 0) 
 	    and WAR.Person[emenyid]["我方"] ~= WAR.Person[WAR.CurID]["我方"] and eid ~= 13 and eid ~= 78 and eid ~= 130 and eid ~= 662 and MPPD(eid) ~= 9 then
@@ -23879,7 +24057,7 @@ function War_WugongHurtLife(emenyid, wugong, level, ang)
 		fxjl = fxjl + 40
 	end 	 	
 	
-    if JY.Person[pid]["武器"] == 48 and JLSD(10,40,pid)  then 	--金刀黑剑
+    if JY.Person[pid]["武器"] == 48 and JLSD(10,40,pid) then 	--金刀黑剑
 		WAR.BFX = 1
 	end	
 	
@@ -26337,24 +26515,38 @@ function WarSelectEnemy()
     	end
     	
     	if WAR.ZDDH == 226 and GetS(86, 1, 9, 5) == 1 then		--把练功点改成挑战四神组合
-    		if GetS(86, 2, 1, 5) == 3 then				--张三丰和乔峰
+    		if GetS(86, 2, 1, 5) == 3 then			--道门宗师
     			WAR.Data["敌人1"] = 5;
-    			WAR.Data["敌人2"] = 50;
-    		elseif GetS(86, 2, 2, 5) == 3 then		--张三丰和东方不败
+    			WAR.Data["敌人2"] = 129;
+				WAR.Data["敌人3"] = 599;
+				WAR.Data["敌人4"] = 116;
+    		elseif GetS(86, 2, 2, 5) == 3 then		--佛门高僧
+    			WAR.Data["敌人1"] = 114;
+    			WAR.Data["敌人2"] = 70;
+				WAR.Data["敌人3"] = 169;
+				WAR.Data["敌人4"] = 170;
+				WAR.Data["敌人5"] = 149;
+				WAR.Data["敌人6"] = 62;
+				WAR.Data["敌人7"] = 103;
+    		elseif GetS(86, 2, 3, 5) == 3 then		--巾帼英雄
+    			WAR.Data["敌人1"] = 117;
+    			WAR.Data["敌人2"] = 118;
+				WAR.Data["敌人3"] = 601;
+    		elseif GetS(86, 2, 4, 5) == 3 then		--正派高手
     			WAR.Data["敌人1"] = 5;
-    			WAR.Data["敌人2"] = 27;
-    		elseif GetS(86, 2, 3, 5) == 3 then		--张三丰和扫地神僧
-    			WAR.Data["敌人1"] = 5;
-    			WAR.Data["敌人2"] = 114;
-    		elseif GetS(86, 2, 4, 5) == 3 then		--乔峰和东方不败
-    			WAR.Data["敌人1"] = 50;
-    			WAR.Data["敌人2"] = 27;
-    		elseif GetS(86, 2, 5, 5) == 3 then		--乔峰和扫地神僧
-    			WAR.Data["敌人1"] = 50;
-    			WAR.Data["敌人2"] = 114;
-    		elseif GetS(86, 2, 6, 5) == 3 then		--东方不败和扫地神僧
+    			WAR.Data["敌人2"] = 69;
+				WAR.Data["敌人3"] = 129;
+				WAR.Data["敌人4"] = 70;
+    		elseif GetS(86, 2, 5, 5) == 3 then		--邪派高手
     			WAR.Data["敌人1"] = 27;
-    			WAR.Data["敌人2"] = 114;
+    			WAR.Data["敌人2"] = 60;
+				WAR.Data["敌人3"] = 26;
+				WAR.Data["敌人4"] = 97;
+    		elseif GetS(86, 2, 6, 5) == 3 then		--东瀛浪人
+    			WAR.Data["敌人1"] = 553;
+    			WAR.Data["敌人2"] = 516;
+				WAR.Data["敌人3"] = 517;
+				WAR.Data["敌人4"] = 546;
     		elseif GetS(86, 2, 7, 5) == 3 then		--五绝阵
     			WAR.Data["敌人1"] = 57;
     			WAR.Data["敌人2"] = 60;
@@ -26398,7 +26590,7 @@ function WarSelectEnemy()
 				WAR.Data["敌人4"] = 129;   --王重阳
 				WAR.Data["敌人5"] = 558;   --霍山
 				WAR.Data["敌人6"] = 599;   --黄裳
-				WAR.Data["敌人7"] = 601;  --林朝英
+				WAR.Data["敌人7"] = 601;   --林朝英
     		elseif GetS(86, 2, 12, 5) == 3 then	--武骧金星：四神封绝阵
                 WAR.Data["敌人1"] = 5;
     			WAR.Data["敌人2"] = 27;
@@ -30252,7 +30444,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	  JY.Wugong[24]["移动范围10"] = 15;
 	   WAR.XMS = 1
 	end 
-	
+
 	if wglw2(pid,191) and PersonKF(pid,191) then
 		WAR.ZHWY = 1
 		if yongquan(wugong) then
@@ -30830,6 +31022,16 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		fightnum = 2
 	end
   
+    --君子淑女
+    if JY.Person[pid]["武器"] == 38 and JY.Thing[38]["加攻击力"] >= 300 then
+		fightnum = 3
+	end 	
+	
+	--紫金八卦刀
+	if JY.Person[pid]["武器"] == 305 and JY.Thing[305]["加攻击力"] >= 300 then  
+		fightnum = 2
+	end 	
+
     --参合指领悟必连击
 	if wugong == 133 and (DT(pid, 113) or wglw1(pid,133)) then
 		fightnum = 2
@@ -30846,6 +31048,16 @@ function War_Fight_Sub(id, wugongnum, x, y)
 		fightnum = 3
 	end
   
+    --金铃索带
+	if JY.Person[id]["武器"] == 310 and JY.Thing[310]["加攻击力"] >= 300 and JLSD(10,40,pid) then
+		fightnum = 3
+	end
+	
+	--金铃索带
+	if JY.Person[id]["武器"] == 311 and JY.Thing[311]["加攻击力"] >= 650 then
+		fightnum = 3
+	end
+
     --欧阳锋，射中最后一场，十五邪战斗， WAR.tmp[1060]还没明白
     if DT(pid, 60) and WAR.tmp[1060] == 1 and (WAR.ZDDH == 176 or WAR.ZDDH == 133) then
         fightnum = 2
@@ -31003,7 +31215,7 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	    end
     end
 
-    if JY.Person[pid]["武器"] == 51 and JLSD(10,40,pid)  then --金龙鞭
+    if JY.Person[pid]["武器"] == 51 and JLSD(10,40,pid) then --金龙鞭
 		fightnum = 2
 	end	
 
@@ -31911,6 +32123,18 @@ function War_Fight_Sub(id, wugongnum, x, y)
 	if pid == WAR.AXL then --阿修罗指令必暴击
 		WAR.BJ = 1
 	end
+	
+    if JY.Person[pid]["武器"] == 50 and JY.Thing[50]["加攻击力"] >= 300 then --伏魔杵
+		WAR.BJ = 1
+	end		
+	
+	if JY.Person[pid]["武器"] == 312 and JY.Thing[312]["加攻击力"] >= 300 then --金轮
+		WAR.BJ = 1
+	end	
+	
+    if JY.Person[pid]["武器"] == 313 and JY.Thing[313]["加攻击力"] >= 300 then --银弧刀
+		WAR.BJ = 1
+	end		
 	
     if wugong == 49 and ((DT(pid, 53) or DT(pid, 602)) or wglw1(pid,49)) then --六脉领悟必暴击
 		WAR.BJ = 1
@@ -36043,6 +36267,19 @@ function War_Fight_Sub(id, wugongnum, x, y)
         WAR.XYKP = 1   
     end	
 	
+    if JY.Person[pid]["武器"] == 294 and JY.Thing[294]["加攻击力"] >= 650 and JLSD(10,60,pid) then --射雕弓	
+		ng = ng + 1000
+        WAR.WS = 1
+        for i = 1, 7 do
+            for j = 1, 7 do
+                SetWarMap(x + i - 1, y + j - 1, 4, 1)
+                SetWarMap(x - i + 1, y + j - 1, 4, 1)
+                SetWarMap(x + i - 1, y - j + 1, 4, 1)
+                SetWarMap(x - i + 1, y - j + 1, 4, 1)
+            end
+        end
+	end 	
+	
     if hasTF(pid, 144) and JY.Person[pid]["武功等级" .. wugongnum] >= 999 and JLSD(10, 90, pid) then
         if WAR.Person[id][CC.TXWZ3] ~= nil then
             ng = ng - 1400
@@ -38438,6 +38675,17 @@ function War_Fight_Sub(id, wugongnum, x, y)
         end	
 	end
 	
+	--冷月宝刀
+    if JY.Person[pid]["武器"] == 45 and JY.Thing[45]["加攻击力"] >= 650 and JLSD(10,40,pid) then
+	    for j = 0, WAR.PersonNum - 1 do
+		    local tmppid = WAR.Person[j]["人物编号"]
+			if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
+				WAR.ICEXS[tmppid] = 1
+				WAR.ICE[tmppid] = WAR.ICE[tmppid] or 0 + 50
+				WAR.XNXS[tmppid] = 1
+			end
+		end	
+	end		
 	
 	--黄沙万里鞭特殊加成-金龙鞭
 	if wugong == 78 and wglw1(pid,78) and JLSD(10, 35, pid) and JY.Person[pid]["武器"] == 51 then 
@@ -40051,6 +40299,36 @@ function War_Fight_Sub(id, wugongnum, x, y)
         ng = ng + 1200
     end
 	 
+    --碧波香露刀
+	if JY.Person[pid]["武器"] == 46 and JY.Thing[46]["加攻击力"] >= 300 and JLSD(10,40,pid) then
+		for j = 0, WAR.PersonNum - 1 do
+            if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
+                WAR.Person[j]["中毒点数"] = (WAR.Person[j]["中毒点数"] or 0) + AddPersonAttrib(WAR.Person[j]["人物编号"],"中毒程度",40)	
+				WAR.XNXS[WAR.Person[j]["人物编号"]] = 1
+			end 
+		end 
+	end 			
+	
+	--西毒蛇杖	
+    if JY.Person[pid]["武器"] == 252 and JY.Thing[252]["加攻击力"] >= 300 and JLSD(10,40,pid) then  
+		for j = 0, WAR.PersonNum - 1 do
+            if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
+                WAR.Person[j]["中毒点数"] = (WAR.Person[j]["中毒点数"] or 0) + AddPersonAttrib(WAR.Person[j]["人物编号"],"中毒程度",100)	
+				WAR.XNXS[WAR.Person[j]["人物编号"]] = 1
+			end 
+		end 
+	end 	
+	
+    --七星海棠	
+    if JY.Person[pid]["武器"] == 253 and JY.Thing[253]["加攻击力"] >= 300 and JLSD(10,40,pid) then  
+		for j = 0, WAR.PersonNum - 1 do
+            if WAR.Person[j]["死亡"] == false and WAR.Person[j]["我方"] ~= WAR.Person[WAR.CurID]["我方"] then
+                WAR.Person[j]["中毒点数"] = (WAR.Person[j]["中毒点数"] or 0) + AddPersonAttrib(WAR.Person[j]["人物编号"],"中毒程度",100)	
+				WAR.XNXS[WAR.Person[j]["人物编号"]] = 1
+			end 
+		end 
+	end 		
+	
     --程灵素 攻击全屏中毒+20 满毒减体力
     if DT(pid, 2) and WAR.ACT == 1 then
         for j = 0, WAR.PersonNum - 1 do
@@ -52945,6 +53223,10 @@ function GetJiqi()
 			if JY.Person[id]["武器"] == 39 then
 				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd + 12
 			end	 
+			--白龙剑
+			if JY.Person[id]["武器"] == 39 and JY.Thing[39]["加攻击力"] >= 300 then
+				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd + 24
+			end	 
 			--凝碧剑
 			if JY.Person[id]["武器"] == 41 then
 				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd + 15
@@ -52960,6 +53242,18 @@ function GetJiqi()
 			--金铃索带
 			if JY.Person[id]["武器"] == 310 then
 				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd + 35
+			end
+			--金刀
+			if JY.Person[id]["武器"] == 47 and JY.Thing[47]["加攻击力"] >= 300 then
+				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd + 20
+			end
+			--青竹棒
+            if JY.Person[id]["武器"] == 301 and JY.Thing[301]["加攻击力"] >= 300 then	
+				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd + 15
+			end
+			--玉箫
+            if JY.Person[id]["武器"] == 304 and JY.Thing[304]["加攻击力"] >= 300 then	
+				WAR.Person[i].TimeAdd = WAR.Person[i].TimeAdd + 18
 			end
 			--步惊云额外集气速度
 			if BJY(id) then
@@ -84383,6 +84677,12 @@ refw = function(wugong, level)
 		    a2 = 0
 		    m2 = 20
 		    a3 = 0
+		elseif JY.Person[pid]["武器"] == 294 and JY.Thing[294]["加攻击力"] >= 50 and yongan(wugong) then
+			m1 = 0
+		    a1 = 2
+		    a2 = 0
+		    m2 = 20
+		    a3 = 0
 		elseif wugong == 18 and (DT(pid, 57) or wglw1(pid,18)) then --弹指神通
 			m1 = 0
 		    a1 = 2
@@ -95959,6 +96259,9 @@ function twogt(pid) --装备两个功体
 	if DT(pid,666) or DT(pid,667) then
 		return true
 	end	
+    if JY.Person[pid]["武器"] == 302 and JY.Thing[302]["加攻击力"] >= 650 then	--木剑
+		return true
+	end
 	return false
 end
 
