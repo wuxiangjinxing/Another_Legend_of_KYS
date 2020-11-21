@@ -429,12 +429,17 @@ local menu = {
 					instruct_32(id)
 				end
 			end
-
+		end
+	},
+	{
+		"È«Ó¡ÐÅ",
+		nil,
+		function()
 			for i = 1, CC.HZNum do
 				addHZ(i);
 			end
 		end
-	}
+	},
 }
 
 diymenu(menu)
