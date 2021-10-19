@@ -86710,7 +86710,7 @@ function SetGlobal() --需添加
   JY.GTIME = 0
   JY.JB = 1
   JY.ZLXF = 0	--飞影彩蛋（真龙心法开关）
-  JY.YZYZ = 1	--以战养战模式（默认开启）
+  JY.YZYZ = 0	--以战养战模式（默认开启）
   JY.SJCZ = 0	--随机参战参数（默认关闭）
   JY.ZDZD = 0	--自动战斗参数（默认关闭）
   JY.GOLD = 0
